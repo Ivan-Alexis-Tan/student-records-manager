@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react"
 import { useMutation } from "@tanstack/react-query"
 
-import { capitalEveryWord } from "../services/helperFunctions"
-import { subjects } from "../services/helperFunctions"
-
+import { capitalEveryWord, subjects } from "../services/helperFunctions"
+import { createTeacherAccount } from "../services/studentsAPI"
 
 export default function CreateTeacherAccountPage() {
     const newAccDefault = {
@@ -36,9 +35,14 @@ export default function CreateTeacherAccountPage() {
 
     }, [messageStatus])
 
-    // const createAccountMutation = useMutation({
-    //     mutationFn:  
-    // })
+    const createTeacherAccMutation = useMutation({
+        mutationFn: (reqDetails) => createTeacherAccount(reqDetails),
+        onSuccess: () => {
+            setMessage(`Successfully created ${newAccDetails.username}'s account.`)
+            setMessageStatus('success')
+            setNewAccDetails({...newAccDefault})
+        }
+    })
     
     function handleSubmit() {
         const emptyEntry = Object.entries({...newAccDetails, confirmPw: confirmPw}).reduce((acc, [key, value]) => {
@@ -59,8 +63,7 @@ export default function CreateTeacherAccountPage() {
         }
 
         console.log(newAccDetails)
-        setMessage(`Successfully created ${newAccDetails.username}'s account.`)
-        setMessageStatus('success')
+        createTeacherAccMutation.mutate(newAccDetails)
     }
 
     return (
@@ -136,7 +139,11 @@ export default function CreateTeacherAccountPage() {
                 />
                 <br />
 
-                <button>Create</button>
+                <button 
+                    onClick={handleSubmit} 
+                    type="button"
+                    title={`Create account`}
+                >Create</button>
             </form>
 
             {/* <button onClick={handleSubmit}>test</button> */}
