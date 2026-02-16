@@ -157,7 +157,7 @@ export async function createStudentAccount(reqDetails) {
 }
 
 export async function createTeacherAccount(reqDetails) {
-    const res = await fetch(`http://localhost:8000/user?email=${reqDetails.email}`, {
+    const res = await fetch(`http://localhost:8000/teacher?email=${reqDetails.email}`, {
         method: "POST",
         credentials: "include",
         headers: {"Content-Type": "application/json"},
