@@ -1,8 +1,12 @@
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { getAPI, capitalEveryWord } from "../services/studentsAPI"
+import { 
+    getAPI, 
+    capitalEveryWord, 
+    deleteTeacherAccount 
+} from "../services/studentsAPI"
 
 export default function TeachersTable() {
     const {data, isLoading, error} = useQuery({
@@ -10,6 +14,15 @@ export default function TeachersTable() {
         queryFn: () => getAPI(`http://localhost:8000/teachers`, {method: "GET"}),
         retry: false
     })
+
+    const queryClient = useQueryClient()
+    const deleteTeacherAccMutation = useMutation({
+        mutationFn: (teacherId) => deleteTeacherAccount(teacherId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['teachers']})
+        }
+    })
+
     const navigate = useNavigate()
 
     const nullCoords = {rowId: '', col: ''}
@@ -93,7 +106,14 @@ export default function TeachersTable() {
                             </thead>
                             <tbody>
                                 {teachers.map(teacher => <tr key={teacher.id} onKeyUp={e => handleEscKey(e)}>
-                                    <td>{(isEditing === 'delete') && <button title={`Delete ${teacher.first_name} ${teacher.last_name}`}>🗑️</button>
+                                    <td>{(isEditing === 'delete') && <button 
+                                                title={`Delete ${teacher.first_name} ${teacher.last_name}`}
+                                                onClick={_ => {
+                                                    const confirmDel = window.confirm(`Delete ${teacher.first_name} ${teacher.last_name}'s account?`)
+                                                    if (!confirmDel) return null;
+                                                    deleteTeacherAccMutation.mutate(teacher.id) 
+                                                }}
+                                            >🗑️</button>
                                         } {teacher.id}
                                     </td>
 
