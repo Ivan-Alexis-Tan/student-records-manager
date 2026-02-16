@@ -137,13 +137,13 @@ export default function TeachersTable() {
                                         </td>
                                     }
 
-                                    {(coords.rowId === teacher.id && coords.col === 'field_speciality')
+                                    {(coords.rowId === teacher.id && coords.col === 'field_specialty')
                                         ? <td><input type="text" 
                                             value={editDetails.value}
                                             onChange={e => setEditDetails(capitalEveryWord(e.target.value))}
                                         /></td>
-                                        : <td onDoubleClick={_ => handleSetCoord(teacher.id, 'field_speciality', teacher.field_speciality)}>
-                                            {capitalEveryWord(teacher.field_speciality ?? "")}
+                                        : <td onDoubleClick={_ => handleSetCoord(teacher.id, 'field_specialty', teacher.field_speciality)}>
+                                            {capitalEveryWord(teacher.field_specialty ?? "")}
                                         </td>
                                     }
 
