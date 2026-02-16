@@ -164,7 +164,7 @@ def delete_quiz(id: str, db: db_dependency, current_user: user_dependency) -> No
     return {"message": "Successfully deleted a quiz record."}
 
 
-@router.post("/teachers")
+@router.post("/teacher")
 def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
@@ -186,12 +186,13 @@ def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_use
         hashed_password = hash_password(teacher.password),
         role = "teacher",
     )
+    db.flush(new_user)
 
     new_teacher = models.Teacher(
         first_name = teacher.first_name.capitalize(),
         last_name = teacher.last_name.capitalize(),
         field_specialty = teacher.field_specialty,
-        user_id = new_user
+        user_id = new_user.id
     )
     
     db.add_all([new_user, new_teacher])
