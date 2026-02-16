@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { getAPI, capitalEveryWord } from "../services/studentsAPI"
+import { getAPI, capitalEveryWord, deleteUserAccount } from "../services/studentsAPI"
 
 
 export default function UsersTable() {
@@ -10,6 +10,14 @@ export default function UsersTable() {
         queryKey: ["users"],
         queryFn: () => getAPI(`http://localhost:8000/users`, {method: "GET"}),
         retry: false
+    })
+
+    const queryClient = useQueryClient()
+    const deleteUserAccMutation = useMutation({
+        mutationFn: (userId) => deleteUserAccount(userId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ["users"]})
+        }
     })
 
     const [isEditing, setIsEditing] = useState('')
@@ -79,7 +87,11 @@ export default function UsersTable() {
                                     <td>{
                                         (isEditing === 'delete') && <button 
                                             title={`Delete ${user.username}`}
-                                            onClick={null}
+                                            onClick={_ => {
+                                                const confirmDel = window.confirm(`Confirm delete ${user.username}`)
+                                                if (!confirmDel) return null
+
+                                            }}
                                             >🗑️</button>
                                         } {user.id}
                                     </td>
