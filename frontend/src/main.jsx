@@ -33,8 +33,8 @@ import AddQuizRecord from './components/AddQuizRecord'
 import LoginPage from './pages/LoginPage'
 import NoPermision from './pages/NoPermision'
 import CookieExpired from './pages/CookieExpired'
-import CreateStudentAccountPage from './pages/CreateStudentAccount'
 import AdminPage from './pages/AdminPage'
+import CreateStudentAccountPage from './pages/CreateStudentAccount'
 import CreateTeacherAccountPage from './pages/CreateTeacherAccount'
 
 
