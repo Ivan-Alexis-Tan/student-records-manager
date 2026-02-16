@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 import { getAPI, capitalEveryWord } from "../services/studentsAPI"
-import { useState } from "react";
+
 
 export default function UsersTable() {
     const {data, isLoading, error} = useQuery({
@@ -13,6 +15,7 @@ export default function UsersTable() {
     const [isEditing, setIsEditing] = useState('')
     const [coords, setCoords] = useState({rowId: '', col:''})
     const [editTo, setEditTo] = useState('')
+    const [isAddingNew, setIsAddingNew] = useState(false)
 
     if (isLoading) return <h1>Loading...</h1>
     if (error) {
@@ -32,7 +35,7 @@ export default function UsersTable() {
             <div className="users-table__title-save-cancel-button">
                 <h2>Users</h2>
                 
-                <div>
+                <div className="users-table__btn-options">
                     {(isEditing)
                         ? <>
                             {(isEditing === 'edit') && <button>💾</button>}
@@ -42,10 +45,16 @@ export default function UsersTable() {
                                     setCoords({rowId: '', col: ''})
                             }}>❌</button>
                         </>
-                        : <>
-                            <button title="Add new account">➕</button>
+                        : <div className="users-table__add-and-delete-btn">
+                            {isAddingNew 
+                                ? <div className="users-table__in-add-btn-options">
+                                    <Link to={'/create-teacher-account'}>Teacher</Link>
+                                    <Link to={'/create-student-account'}>Student</Link>
+                                    <button onClick={_ => setIsAddingNew(false)}>❌</button>
+                                </div>
+                                :<button title="Add new account" onClick={_ => setIsAddingNew(true)}>➕</button>}
                             <button onClick={_ => setIsEditing('delete')} title="Delete account">🗑️</button>
-                        </>
+                        </div>
                     }
                 </div>
             </div>
