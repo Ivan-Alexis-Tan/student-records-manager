@@ -168,6 +168,16 @@ export async function createTeacherAccount(reqDetails) {
     return res.json()
 }
 
+export async function deleteTeacherAccount(id) {
+    const res = await fetch(`http://localhost:8000/teacher/${id}`, {
+        method: "DELETE",
+        credentials: 'include',
+    })
+
+    if (!res.ok) throw new Error(await res.text());
+    return res.json()
+}
+
 export function capitalEveryWord(str, sep = ' ') {
     const strings = `${str}`.split(sep)
     const altered = strings.map(str => str.charAt(0).toUpperCase() + str.slice(1))
