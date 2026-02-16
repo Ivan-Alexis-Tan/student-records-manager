@@ -169,7 +169,6 @@ def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_use
     if not current_user:
         raise credential_exception
     
-    print(f"current_user = {current_user.username}")
     if current_user.role not in {"teacher", "admin"}:
         raise credential_exception
 
@@ -187,7 +186,8 @@ def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_use
         hashed_password = hash_password(teacher.password),
         role = "teacher",
     )
-    db.flush(new_user)
+    db.add(new_user)
+    db.flush()
 
     new_teacher = models.Teacher(
         first_name = teacher.first_name.capitalize(),
@@ -195,10 +195,8 @@ def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_use
         field_specialty = teacher.field_specialty,
         user_id = new_user.id
     )
-
-    print(f"user id = {new_teacher.user_id}")
     
-    db.add_all([new_user, new_teacher])
+    db.add(new_teacher)
     db.commit()
     
     return {new_teacher, new_user}
