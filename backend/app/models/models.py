@@ -17,8 +17,14 @@ class User(BaseModel):
     hashed_password: Mapped[str] = mapped_column(String(255))
     role: Mapped[str] = mapped_column(String(50), default='user')
 
-    student_profile: Mapped["Student"] = relationship(back_populates='user')
-    teacher_profile: Mapped["Teacher"] = relationship(back_populates='user')
+    student_profile: Mapped["Student"] = relationship(
+        back_populates='user',
+        cascade="all, delete-orphan"
+    )
+    teacher_profile: Mapped["Teacher"] = relationship(
+        back_populates='user',
+        cascade="all, delete-orphan"
+    )
 
 
 class Student(BaseModel):
