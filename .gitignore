@@ -1,0 +1,30 @@
+# DB
+*.db
+db/
+
+
+# Logs
+*.log
+build/
+dist/
+*.egg-info/
+
+
+# Environment Variables
+.venv/
+
+.env
+.env.local
+
+
+# Python File
+db_migration.py
+
+__pycache__/
+*.pyc
+
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
