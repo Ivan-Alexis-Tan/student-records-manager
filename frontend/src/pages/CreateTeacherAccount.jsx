@@ -41,6 +41,7 @@ export default function CreateTeacherAccountPage() {
             setMessage(`Successfully created ${newAccDetails.username}'s account.`)
             setMessageStatus('success')
             setNewAccDetails({...newAccDefault})
+            setConfirmPw("")
         }
     })
     
