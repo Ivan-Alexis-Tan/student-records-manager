@@ -169,6 +169,7 @@ def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_use
     if not current_user:
         raise credential_exception
     
+    print(f"current_user = {current_user.username}")
     if current_user.role not in {"teacher", "admin"}:
         raise credential_exception
 
@@ -194,6 +195,8 @@ def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_use
         field_specialty = teacher.field_specialty,
         user_id = new_user.id
     )
+
+    print(f"user id = {new_teacher.user_id}")
     
     db.add_all([new_user, new_teacher])
     db.commit()
@@ -212,6 +215,22 @@ def remove_teacher(id: str, db: db_dependency, current_user: user_dependency):
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Teacher account does not exists.'
         )
-    
+
     db.delete(teacher)
+    db.commit()
+
+
+@router.delete('/user/{id}')
+def remove_user(id: str, db: db_dependency, current_user: user_dependency):
+    if current_user.role != "admin":
+        raise credential_exception
+    
+    user = db.query(models.User).filter(models.User.id == id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Account does not exists.'
+        )
+
+    db.delete(user)
     db.commit()
