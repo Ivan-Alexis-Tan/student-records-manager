@@ -203,7 +203,7 @@ def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_use
 
 @router.delete('/teacher/{id}')
 def remove_teacher(id: str, db: db_dependency, current_user: user_dependency):
-    if current_user.role != "admint":
+    if current_user.role != "admin":
         raise credential_exception
     
     teacher = db.query(models.Teacher).filter(models.Teacher.id == id).first()
