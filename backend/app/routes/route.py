@@ -199,3 +199,19 @@ def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_use
     db.commit()
     
     return {new_teacher, new_user}
+
+
+@router.delete('/teacher/{id}')
+def remove_teacher(id: str, db: db_dependency, current_user: user_dependency):
+    if current_user.role != "admint":
+        raise credential_exception
+    
+    teacher = db.query(models.Teacher).filter(models.Teacher.id == id).first()
+    if not teacher:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Teacher account does not exists.'
+        )
+    
+    db.delete(teacher)
+    db.commit()
