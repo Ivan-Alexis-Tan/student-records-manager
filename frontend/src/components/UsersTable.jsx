@@ -39,7 +39,7 @@ export default function UsersTable() {
                     {(isEditing)
                         ? <>
                             {(isEditing === 'edit') && <button>💾</button>}
-                            <button title="Exit editing or deleting"
+                            <button title="Cancel"
                                 onClick={_ => {
                                     setIsEditing('')
                                     setCoords({rowId: '', col: ''})
@@ -50,7 +50,10 @@ export default function UsersTable() {
                                 ? <div className="users-table__in-add-btn-options">
                                     <Link to={'/create-teacher-account'}>Teacher</Link>
                                     <Link to={'/create-student-account'}>Student</Link>
-                                    <button onClick={_ => setIsAddingNew(false)}>❌</button>
+                                    <button 
+                                        title="Cancel"
+                                        onClick={_ => setIsAddingNew(false)}
+                                    >❌</button>
                                 </div>
                                 :<button title="Add new account" onClick={_ => setIsAddingNew(true)}>➕</button>
                             }
@@ -75,7 +78,7 @@ export default function UsersTable() {
                                     {/* User ID */}
                                     <td>{
                                         (isEditing === 'delete') && <button 
-                                            title={`delete ${user.username}`}
+                                            title={`Delete ${user.username}`}
                                             onClick={null}
                                             >🗑️</button>
                                         } {user.id}

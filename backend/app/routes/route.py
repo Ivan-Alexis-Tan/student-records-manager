@@ -191,6 +191,7 @@ def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_use
         first_name = teacher.first_name.capitalize(),
         last_name = teacher.last_name.capitalize(),
         field_specialty = teacher.field_specialty,
+        user_id = new_user
     )
     
     db.add_all([new_user, new_teacher])
