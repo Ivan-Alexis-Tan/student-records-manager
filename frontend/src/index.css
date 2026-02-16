@@ -144,3 +144,16 @@ table  td {
   align-items: center;
   justify-content: space-between;
 }
+
+
+/* Users Table (Admin) */
+.users-table__add-and-delete-btn {
+  display: flex;
+}
+
+.users-table__in-add-btn-options {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1em;
+}

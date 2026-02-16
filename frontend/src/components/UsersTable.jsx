@@ -52,7 +52,9 @@ export default function UsersTable() {
                                     <Link to={'/create-student-account'}>Student</Link>
                                     <button onClick={_ => setIsAddingNew(false)}>❌</button>
                                 </div>
-                                :<button title="Add new account" onClick={_ => setIsAddingNew(true)}>➕</button>}
+                                :<button title="Add new account" onClick={_ => setIsAddingNew(true)}>➕</button>
+                            }
+                            
                             <button onClick={_ => setIsEditing('delete')} title="Delete account">🗑️</button>
                         </div>
                     }
