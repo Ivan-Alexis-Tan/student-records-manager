@@ -90,7 +90,7 @@ export default function UsersTable() {
                                             onClick={_ => {
                                                 const confirmDel = window.confirm(`Confirm delete ${user.username}`)
                                                 if (!confirmDel) return null
-
+                                                deleteUserAccMutation.mutate(user.id)
                                             }}
                                             >🗑️</button>
                                         } {user.id}
