@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 import { getAPI, capitalEveryWord } from "../services/studentsAPI"
-import { useState } from "react"
 
 export default function TeachersTable() {
     const {data, isLoading, error} = useQuery({
@@ -9,6 +10,7 @@ export default function TeachersTable() {
         queryFn: () => getAPI(`http://localhost:8000/teachers`, {method: "GET"}),
         retry: false
     })
+    const navigate = useNavigate()
 
     const nullCoords = {rowId: '', col: ''}
     const [isEditing, setIsEditing] = useState('')
@@ -54,13 +56,26 @@ export default function TeachersTable() {
                     <div>
                         {(isEditing)
                             ? <>
-                                {(isEditing === 'edit') && <button>💾</button>}
-                                <button onClick={_ => {
-                                    setCoords(nullCoords);
-                                    setIsEditing('')
-                                }}>❌</button>
+                                {(isEditing === 'edit') && <button
+                                    title="Save"
+                                >💾</button>
+                                }
+                                <button
+                                    title="Cancel"
+                                    onClick={_ => {
+                                        setCoords(nullCoords);
+                                        setIsEditing('')
+                                    }}
+                                >❌</button>
                             </>
-                            : <button onClick={_ => setIsEditing('delete')}>🗑️</button>
+                            : <>
+                                <button title="Create new teacher account" 
+                                    onClick={_ => navigate('/create-teacher-account')}
+                                >➕</button>
+                                <button title="Remove teacher account"
+                                    onClick={_ => setIsEditing('delete')}
+                                >🗑️</button>
+                            </>
                         }
                     </div>
                 </div>
@@ -78,7 +93,7 @@ export default function TeachersTable() {
                             </thead>
                             <tbody>
                                 {teachers.map(teacher => <tr key={teacher.id} onKeyUp={e => handleEscKey(e)}>
-                                    <td>{(isEditing === 'delete') && <button>🗑️</button>
+                                    <td>{(isEditing === 'delete') && <button title={`Delete ${teacher.first_name} ${teacher.last_name}`}>🗑️</button>
                                         } {teacher.id}
                                     </td>
 
