@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom"
 
 import { 
     getAPI, 
-    capitalEveryWord, 
-    deleteTeacherAccount 
+    capitalEveryWord,
+    deleteUserAccount
 } from "../services/studentsAPI"
 
 export default function TeachersTable() {
@@ -17,7 +17,7 @@ export default function TeachersTable() {
 
     const queryClient = useQueryClient()
     const deleteTeacherAccMutation = useMutation({
-        mutationFn: (teacherId) => deleteTeacherAccount(teacherId),
+        mutationFn: (teacherId) => deleteUserAccount(teacherId),
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['teachers']})
         }

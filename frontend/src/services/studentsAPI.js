@@ -168,8 +168,8 @@ export async function createTeacherAccount(reqDetails) {
     return res.json()
 }
 
-export async function deleteTeacherAccount(id) {
-    const res = await fetch(`http://localhost:8000/teacher/${id}`, {
+export async function deleteUserAccount(id) {
+    const res = await fetch(`http://localhost:8000/user/${id}`, {
         method: "DELETE",
         credentials: 'include',
     })
