@@ -54,7 +54,7 @@ export default function TeachersTable() {
                     <div>
                         {(isEditing)
                             ? <>
-                                {(isEditing === 'edit') ?? <button>💾</button>}
+                                {(isEditing === 'edit') && <button>💾</button>}
                                 <button onClick={_ => {
                                     setCoords(nullCoords);
                                     setIsEditing('')
