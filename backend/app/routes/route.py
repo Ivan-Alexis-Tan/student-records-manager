@@ -52,7 +52,7 @@ def add_student(student: NewStudent, current_user: user_dependency, db: db_depen
     if not current_user:
         raise credential_exception
     
-    if current_user.role not in {'teachers', 'admin'}:
+    if current_user.role not in {'teacher', 'admin'}:
         raise credential_exception
     
     new_student = Student(**student.model_dump())
@@ -78,7 +78,6 @@ def remove_student(id: str, db: db_dependency, current_user: user_dependency):
 
     db.delete(student)
     db.commit()
-    db.refresh(student)
 
 
 @router.get('/student')
