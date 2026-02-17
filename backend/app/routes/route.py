@@ -216,7 +216,14 @@ def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_use
     db.add(new_teacher)
     db.commit()
     
-    return {new_teacher, new_user}
+    return {
+        "teacher": new_teacher, 
+        "user": {
+            "username": new_user.username,
+            "email": new_user.email,
+            "role": new_user.role
+        }
+    }
 
 
 @router.delete('/user/{id}')
