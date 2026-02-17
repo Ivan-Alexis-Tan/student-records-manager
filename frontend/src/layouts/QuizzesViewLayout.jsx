@@ -1,7 +1,8 @@
 import { Link, Outlet, useParams} from 'react-router-dom'
 
+import { subjects } from "../services/helperFunctions"
+
 export default function QuizzesViewLayout() {
-    const subjectRoutes = ['Science', "Math", "English", "Aral. Pan.", "MAPEH", "Filipino", "ESP"]
     const { quarter, subject} = useParams()
 
     return (
@@ -13,7 +14,7 @@ export default function QuizzesViewLayout() {
             </div>
 
             <div className='quiz-nav__subject-nav' style={subjectNavStyles}>
-                {subjectRoutes.map(subj => <Link key={subj} to={`${quarter}/${subj}`}>{subj}</Link>)}
+                {subjects.map(subj => <Link key={subj} to={`${quarter}/${subj}`}>{subj}</Link>)}
             </div>
 
             <h2>Q{quarter}, {subject}</h2>

@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useParams, useLocation, Link, useNavigate } from "react-router-dom"
 
 import { createQuizRecord } from "../services/studentsAPI"
+import { subjects } from "../services/helperFunctions"
 
 export default function AddQuizRecord() {
     const queryClient = useQueryClient()
@@ -17,9 +18,7 @@ export default function AddQuizRecord() {
     const studentQuizRec = quizRecord.data
     const userPermissions = quizRecord.permissions
 
-    const subjectSelection = [
-        'Science', "Math", "English", "Aral. Pan.", "MAPEH", "Filipino", "ESP"
-    ].sort()
+    const subjectSelection = subjects.sort()
 
     const [newQuizMessage, setNewQuizMessage] = useState('')
     const today = new Date()
@@ -158,18 +157,18 @@ export default function AddQuizRecord() {
                     onChange={e => setNewQuiz(prev => ({...prev, topic: e.target.value}))}
                     placeholder="Topic"
                 />
-                <br />
             </form>
-            <button title="Save" 
-                onClick={_ => {
-                    saveNewQuiz()
-                    console.log('saving...')
-                }}
-                >💾</button>
-            <button title="Cancel" onClick={_ => {
-                navigate(-1)
-                setNewQuizMessage('')
-            }}>❌</button>
+
+            <button title="Save"
+                    onClick={_ => {
+                        saveNewQuiz()
+                        console.log('saving...')
+                    }}
+                    >💾</button>
+                <button title="Cancel" onClick={_ => {
+                    navigate(-1)
+                    setNewQuizMessage('')
+                }}>❌</button>
         </div>
     )
 }
