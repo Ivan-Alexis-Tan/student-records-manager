@@ -39,7 +39,7 @@ export default function Students() {
         if (!students) return null;
         if (!searchVal) return null;
         
-        return data.reduce((acc, student) => {
+        return students.reduce((acc, student) => {
             if (`${student[searchAttrib]}`.startsWith(searchVal)) acc.push(student);
             return acc;
         }, [])
@@ -77,7 +77,9 @@ export default function Students() {
         <div>
             <h1>Students</h1>
             <form>
-                <label onClick={toggleSearchAttrib}>Search: </label>
+                <label onClick={toggleSearchAttrib}
+                    title="Click to toggle search."
+                >Search: </label>
                 <input type="text" 
                     value={searchVal} 
                     onChange={e => setSearchVal(capitalEveryWord(e.target.value))} 
@@ -89,7 +91,7 @@ export default function Students() {
             </form>
             {(searchedStudent) && <ul>{
                     searchedStudent.map(student => <li key={student.id}>
-                        <Link to={`student/${student.id}`}>
+                        <Link to={`/student-profile/${student.id}`}>
                             (G{student.grade_lvl}) {student.last_name} {student.first_name}
                         </Link>
                     </li>)
