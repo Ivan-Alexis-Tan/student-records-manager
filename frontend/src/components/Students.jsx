@@ -46,7 +46,7 @@ export default function Students() {
     }, [students, searchVal])
 
     // User Page Authorization
-    if (user.isLoading) return <h1>Loading...</h1>
+    if (user.isLoading) return <h1>Loading user data...</h1>
     if (user.isError) return <Navigate to={"/login"} />
     if (!hasPermision(user.data?.role, rolesAllowed)) return <Navigate to={"/no-permision"} />
 
@@ -70,8 +70,11 @@ export default function Students() {
         console.log(typeof searchedStudent, searchedStudent)
     }
 
-    if (isLoading) return <p>Loading...</p>
-    if (error) return <h2>{error}</h2>
+    if (isLoading) return <p>Loading students' data...</p>
+    if (error) {
+        console.log(error)
+        return <h2>{error}</h2>
+    }
 
     return (
         <div>
