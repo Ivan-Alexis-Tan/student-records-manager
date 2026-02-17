@@ -70,6 +70,12 @@ def remove_student(id: str, db: db_dependency, current_user: user_dependency):
         raise credential_exception
     
     student = db.query(Student).get(id)
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Student does not exists.'
+        )
+
     db.delete(student)
     db.commit()
     db.refresh(student)
@@ -81,6 +87,11 @@ def get_student_details(search_attrib: str, search_str: str, db: db_dependency, 
         raise credential_exception
     
     if current_user.role  == "student":
+        if not current_user.student_profile:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='User has no student profile.'
+            )
         student = db.query(Student).filter(Student.id == current_user.student_profile.id).first()
     else:
         match search_attrib:
@@ -98,12 +109,11 @@ def get_student_details(search_attrib: str, search_str: str, db: db_dependency, 
 def get_student_quizzes(id: str, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
-    
-    if current_user.role not in {'student', 'teacher', 'admin'}:
-        raise credential_exception
 
     if current_user.role == "student":
         id = current_user.student_profile.id
+    elif current_user.role not in {'teacher', 'admin'}:
+        raise credential_exception
 
     return {
         "data": db.query(Quiz).filter(Quiz.student_id == id).all(), 
