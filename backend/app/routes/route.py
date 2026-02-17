@@ -5,7 +5,6 @@ from app.db import db_dependency
 from app.models.models import Student, Quiz
 import app.models.models as models
 from app.basemodels import NewStudent, QuizModel, UpdateQuiz
-from app.routes.auth import router as auth_router
 from app.schemas.auth import CreateTeacherRequest, CreateUserRequest
 from app.auth.auth import hash_password
 from app.auth.dependencies import user_dependency, credential_exception, usual_permissions
@@ -18,6 +17,9 @@ def get_students(current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception
     
+    if current_user.role not in {'teacher', 'admin'}:
+        raise credential_exception
+    
     students = db.query(Student).all()
     
     return students
@@ -26,6 +28,9 @@ def get_students(current_user: user_dependency, db: db_dependency):
 @router.get("/teachers")
 def get_teachers(current_user: user_dependency, db: db_dependency):
     if not current_user:
+        raise credential_exception
+    
+    if current_user.role not in {'teacher', 'admin'}:
         raise credential_exception
 
     return db.query(models.Teacher).all()
@@ -36,6 +41,9 @@ def get_users(current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception
     
+    if current_user.role != 'admin':
+        raise credential_exception
+
     return db.query(models.User).all()
 
 
@@ -71,22 +79,31 @@ def remove_student(id: str, db: db_dependency, current_user: user_dependency):
 def get_student_details(search_attrib: str, search_str: str, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
-
-    match search_attrib:
-        case 'last_name':
-            student = db.query(Student).filter(Student.last_name == search_str).first()
-        case 'first_name':
-            student = db.query(Student).filter(Student.first_name == search_str).first()
-        case 'id':
-            student = db.query(Student).filter(Student.id == search_str).first()
+    
+    if current_user.role  == "student":
+        student = db.query(Student).filter(Student.id == current_user.student_profile.id).first()
+    else:
+        match search_attrib:
+            case 'last_name':
+                student = db.query(Student).filter(Student.last_name == search_str).first()
+            case 'first_name':
+                student = db.query(Student).filter(Student.first_name == search_str).first()
+            case 'id':
+                student = db.query(Student).filter(Student.id == search_str).first()
     
     return student
 
 
 @router.get("/quizzes/student")
-def get_student_quizes(id: str, db: db_dependency, current_user: user_dependency):
+def get_student_quizzes(id: str, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
+    
+    if current_user.role not in {'student', 'teacher', 'admin'}:
+        raise credential_exception
+
+    if current_user.role == "student":
+        id = current_user.student_profile.id
 
     return {
         "data": db.query(Quiz).filter(Quiz.student_id == id).all(), 
