@@ -81,6 +81,16 @@ export async function findStudent(id) {
     return res.json()
 }
 
+export async function getStudentSelfDetails() {
+    const res = await fetch('http://localhost:8000/students/me', {
+        method: "GET",
+        credentials: "include"
+    })
+
+    if (!res.ok) throw new Error(await res.text());
+    return res.json()
+}
+
 export async function getQuizes(studentId) {
     const res = await fetch(`http://localhost:8000/students/${studentId}/quizzes`, {
         method: "GET",
