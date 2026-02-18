@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom"
 
-export default function NotFoundPage(message) {
+export default function NotFoundPage() {
     return (
         <div>
-            <h1>{message ?? `Oh no! Something went wrong. =(`}</h1>
-            <Link to={'/'}>Back to home</Link>
+            <h1>404 Page not found</h1>
+            <p>{`Oh no! Something went wrong. =(`}</p>
+            <Link to={'/login'}>Back to home</Link>
         </div>
     )
 }

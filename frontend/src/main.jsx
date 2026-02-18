@@ -169,7 +169,7 @@ const router = createBrowserRouter([
         ]
       },
 
-      { path: '*', element: <NotFoundPage />}
+      { path: '/not-found', element: <NotFoundPage />}
     ]
   },
 
