@@ -80,8 +80,8 @@ def remove_student(id: str, db: db_dependency, current_user: user_dependency):
     db.commit()
 
 
-@router.get('/student')
-def get_student_details(search_attrib: str, search_str: str, db: db_dependency, current_user: user_dependency):
+@router.get('/student/{id}')
+def get_student_details(id: str, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
     
@@ -91,17 +91,9 @@ def get_student_details(search_attrib: str, search_str: str, db: db_dependency, 
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail='User has no student profile.'
             )
-        student = db.query(Student).filter(Student.id == current_user.student_profile.id).first()
+        return db.query(Student).filter(Student.id == current_user.student_profile.id).first()
     else:
-        match search_attrib:
-            case 'last_name':
-                student = db.query(Student).filter(Student.last_name == search_str).first()
-            case 'first_name':
-                student = db.query(Student).filter(Student.first_name == search_str).first()
-            case 'id':
-                student = db.query(Student).filter(Student.id == search_str).first()
-    
-    return student
+        return db.query(Student).filter(Student.id == id).first()
 
 
 @router.get("/quizzes/student")
