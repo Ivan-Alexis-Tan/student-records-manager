@@ -22,7 +22,7 @@ export default function StudentProfile() {
 
     const student = useQuery({
         queryKey: ['studentProfile', id],
-        queryFn: () => findStudent('id', id)
+        queryFn: () => findStudent(id)
     })
 
     if (student.isPending) return <h1>Loading...</h1>

@@ -72,9 +72,8 @@ export async function removeStudents(student_id) {
     return res.json()
 }
 
-export async function findStudent(search_attrib, search_str) {
-    const fetchURL = new URLSearchParams({search_attrib, search_str})
-    const res = await fetch(`http://localhost:8000/student?${fetchURL}`, {
+export async function findStudent(id) {
+    const res = await fetch(`http://localhost:8000/student/${id}`, {
         method: "GET",
         credentials: "include",
     })
