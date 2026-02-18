@@ -61,7 +61,7 @@ def add_student(student: NewStudent, current_user: user_dependency, db: db_depen
     return student
 
 
-@router.delete('/students')
+@router.delete('/students/{id}')
 def remove_student(id: str, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
@@ -80,7 +80,7 @@ def remove_student(id: str, db: db_dependency, current_user: user_dependency):
     db.commit()
 
 
-@router.get('/student/{id}')
+@router.get('/students/{id}')
 def get_student_details(id: str, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
@@ -91,12 +91,12 @@ def get_student_details(id: str, db: db_dependency, current_user: user_dependenc
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail='User has no student profile.'
             )
-        return db.query(Student).filter(Student.id == current_user.student_profile.id).first()
-    else:
-        return db.query(Student).filter(Student.id == id).first()
+        return db.get(models.Student, current_user.student_profile.id)
+
+    return db.get(models.Student, id)
 
 
-@router.get("/quizzes/student")
+@router.get("/students/{id}/quizzes")
 def get_student_quizzes(id: str, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
@@ -112,8 +112,8 @@ def get_student_quizzes(id: str, db: db_dependency, current_user: user_dependenc
     }
 
 
-@router.patch('/quizzes/{quiz_id}')
-def update_quiz_score(quiz_id: str, payload: UpdateQuiz, db: db_dependency, current_user: user_dependency) -> None:
+@router.patch('/quizzes/{id}')
+def update_quiz_score(id: str, payload: UpdateQuiz, db: db_dependency, current_user: user_dependency) -> None:
     if not current_user:
         raise credential_exception
     
@@ -129,7 +129,7 @@ def update_quiz_score(quiz_id: str, payload: UpdateQuiz, db: db_dependency, curr
             detail="Score must not be greater than highest possible score."
         )
     
-    quiz = db.get(Quiz, quiz_id)
+    quiz = db.get(Quiz, id)
     if not quiz:
         raise HTTPException(status_code=404, detail="Quiz not found.")
 
@@ -142,7 +142,7 @@ def update_quiz_score(quiz_id: str, payload: UpdateQuiz, db: db_dependency, curr
     return quiz
 
 
-@router.post('/quiz')
+@router.post('/quizzes')
 def add_quiz_record(payload: QuizModel, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
@@ -158,7 +158,7 @@ def add_quiz_record(payload: QuizModel, db: db_dependency, current_user: user_de
     return new_quiz
 
 
-@router.delete('/quiz')
+@router.delete('/quizzes/{id}')
 def delete_quiz(id: str, db: db_dependency, current_user: user_dependency) -> None:
     """
     - `id`
@@ -182,7 +182,7 @@ def delete_quiz(id: str, db: db_dependency, current_user: user_dependency) -> No
     return {"message": "Successfully deleted a quiz record."}
 
 
-@router.post("/teacher")
+@router.post("/teachers")
 def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
@@ -232,7 +232,7 @@ def remove_user(id: str, db: db_dependency, current_user: user_dependency):
     if current_user.role != "admin":
         raise credential_exception
     
-    user = db.query(models.User).filter(models.User.id == id).first()
+    user = db.get(models.User, id)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

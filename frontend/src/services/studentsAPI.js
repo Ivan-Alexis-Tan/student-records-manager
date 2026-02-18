@@ -63,7 +63,7 @@ export async function createStudent(student_info) {
 }
 
 export async function removeStudents(student_id) {
-    const res = await fetch(`http://localhost:8000/students?id=${student_id}`, {
+    const res = await fetch(`http://localhost:8000/students/${student_id}`, {
         method: "DELETE",
         credentials: "include",
     });
@@ -73,7 +73,7 @@ export async function removeStudents(student_id) {
 }
 
 export async function findStudent(id) {
-    const res = await fetch(`http://localhost:8000/student/${id}`, {
+    const res = await fetch(`http://localhost:8000/students/${id}`, {
         method: "GET",
         credentials: "include",
     })
@@ -82,7 +82,7 @@ export async function findStudent(id) {
 }
 
 export async function getQuizes(studentId) {
-    const res = await fetch(`http://localhost:8000/quizzes/student?id=${studentId}`, {
+    const res = await fetch(`http://localhost:8000/students/${studentId}/quizzes`, {
         method: "GET",
         credentials: "include"
     });
@@ -112,7 +112,7 @@ export async function updateQuizScore(payload) {
 
 export async function createQuizRecord(payload) {
     console.log(`payload =`, payload)
-    const res = await fetch(`http://localhost:8000/quiz`, {
+    const res = await fetch(`http://localhost:8000/quizzes`, {
         method: "POST",
         credentials: "include",
         headers: {"Content-Type": "application/json"},
@@ -124,7 +124,7 @@ export async function createQuizRecord(payload) {
 }
 
 export async function deleteQuiz(quizId) {
-    const res = await fetch(`http://localhost:8000/quiz?id=${quizId}`, {
+    const res = await fetch(`http://localhost:8000/quizzes/${quizId}`, {
         method: "DELETE",
         credentials: "include",
         headers: {'Content-Type': "application/json"},
@@ -156,7 +156,7 @@ export async function createStudentAccount(reqDetails) {
 }
 
 export async function createTeacherAccount(reqDetails) {
-    const res = await fetch(`http://localhost:8000/teacher?email=${reqDetails.email}`, {
+    const res = await fetch(`http://localhost:8000/teachers`, {
         method: "POST",
         credentials: "include",
         headers: {"Content-Type": "application/json"},
