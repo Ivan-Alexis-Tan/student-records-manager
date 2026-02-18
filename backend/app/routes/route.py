@@ -85,15 +85,28 @@ def get_student_details(id: str, db: db_dependency, current_user: user_dependenc
     if not current_user:
         raise credential_exception
     
-    if current_user.role  == "student":
-        if not current_user.student_profile:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail='User has no student profile.'
-            )
-        return db.get(models.Student, current_user.student_profile.id)
+    if current_user.role not in {'teacher', 'admin'}:
+        raise credential_exception
 
     return db.get(models.Student, id)
+
+
+@router.get('/students/me')
+def get_student_self_details(db: db_dependency, current_user: user_dependency):
+    if current_user.role != "student":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='User must be a student.'
+        )
+    
+    if not current_user.student_profile:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User's student profile missing."
+        )
+    
+    return db.get(models.Student, current_user.student_profile.id)
+
 
 
 @router.get("/students/{id}/quizzes")
