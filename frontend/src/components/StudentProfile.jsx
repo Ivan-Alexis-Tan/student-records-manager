@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { findStudent } from '../services/studentsAPI'
+import { findStudent, getStudentSelfDetails } from '../services/studentsAPI'
 import { useAuth } from '../hooks/authQuery'
 
 const rolesAllowed = ["teacher", "admin"]
@@ -18,20 +18,22 @@ export default function StudentProfile() {
     const { pathname } = useLocation()
 
     const params = useParams()
-    const id = (user.role === "student") ? user.profile_id : params.id 
+    const isStudent = user.role === "student"
+    const id = isStudent ? user.profile_id : params.id 
 
-    const student = useQuery({
+    const {data: studentData, isLoading, isError} = useQuery({
         queryKey: ['studentProfile', id],
-        queryFn: () => findStudent(id)
+        queryFn: isStudent 
+            ? getStudentSelfDetails
+            : () => findStudent(id),
     })
 
-    if (student.isPending) return <h1>Loading...</h1>
-    if (student.isError) return <Navigate to={'/not-found'} replace />
-
-    const profileHeadUrl = (user.role === 'student') ? 'student' : 'student-profile'
+    if (isLoading) return <h1>Loading student's data...</h1>
+    if (isError) return <Navigate to={'/not-found'} replace />
+    
+    const profileHeadUrl = isStudent ? 'student' : 'student-profile'
 
     function test() {
-        console.log(student.data)
         const test = queryClient.getQueryData(["auth", "me"])
         console.log(`test =`, test)
         console.log(`useId=${user.id} | ${id}`)
@@ -43,7 +45,7 @@ export default function StudentProfile() {
     return (
         <div className='student-profile'>
             <div className='student-profile__name'>
-                <h2><strong>{student.data.last_name}</strong>, {student.data.first_name}</h2>
+                <h2><strong>{studentData.last_name}</strong>, {studentData.first_name}</h2>
 
                 <div id='student-profile__profile-records' style={{display: 'flex', gap: '2em'}}>
                     <Link to={`/${profileHeadUrl}/${id}`}><strong>Profile</strong></Link>
@@ -53,8 +55,8 @@ export default function StudentProfile() {
                 </div>
             </div>
 
-            <h3>Grade {student.data.grade_lvl}</h3>
-            <p><i>ID: {student.data.id}</i></p>
+            <h3>Grade {studentData.grade_lvl}</h3>
+            <p><i>ID: {studentData.id}</i></p>
             {rolesAllowed.includes(user.role) && <Link 
                 className='student-profile__create-student-account'
                 to={`create-account`}
