@@ -82,7 +82,7 @@ export async function findStudent(id) {
 }
 
 export async function getStudentSelfDetails() {
-    const res = await fetch('http://localhost:8000/students/me', {
+    const res = await fetch('http://localhost:8000/me/students', {
         method: "GET",
         credentials: "include"
     })
