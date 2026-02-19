@@ -78,20 +78,41 @@ export default function Students() {
 
     return (
         <div>
-            <h1>Students</h1>
-            <form>
-                <label onClick={toggleSearchAttrib}
-                    title="Click to toggle search."
-                >Search: </label>
-                <input type="text" 
-                    value={searchVal} 
-                    onChange={e => setSearchVal(capitalEveryWord(e.target.value))} 
-                    placeholder={capitalEveryWord(searchAttrib, '_')}
-                    onKeyUp={e => {
-                        if (e.key === 'Escape') setSearchVal('')
-                    }}
-                />
-            </form>
+            <h1>List of Students</h1>
+            
+            {/* Student Search Bar and Buttons */}
+            <div className="students-page__search-and-buttons">
+                <form>
+                    <label onClick={toggleSearchAttrib}
+                        title="Click to toggle search."
+                    >Search: </label>
+                    <input type="text" 
+                        title={`Search student`}
+                        value={searchVal} 
+                        onChange={e => setSearchVal(capitalEveryWord(e.target.value))} 
+                        placeholder={capitalEveryWord(searchAttrib, '_')}
+                        onKeyUp={e => {
+                            if (e.key === 'Escape') setSearchVal('')
+                        }}
+                    />
+                </form>
+                
+                <div>
+                    <Link to={'/add_student'}><button title="Add student">➕</button></Link>
+                    {isRemoving 
+                        ? <button 
+                            title="Cancel"
+                            onClick={_ => setIsRemoving(false)}
+                        >❌</button> 
+                        : <button
+                            title="Remove student" 
+                            onClick={_ => setIsRemoving(true)}
+                        >🗑️</button>
+                    }
+                </div>
+            </div>
+            
+            {/* Search Result */}
             {(searchedStudent) && <ul>{
                     searchedStudent.map(student => <li key={student.id}>
                         <Link to={`/student-profile/${student.id}`}>
@@ -100,15 +121,8 @@ export default function Students() {
                     </li>)
                 }</ul>
             }
-            <br />
-
-            <Link to={'/add_student'}><button>+</button></Link>
-            {isRemoving 
-                ? <button onClick={_ => setIsRemoving(false)}>Cancel removing</button> 
-                : <button onClick={_ => setIsRemoving(true)}>-</button>
-            }
-            <br />
             
+            {/* List of Students Table */}
             {(students.length >= 1)
                 ? <table>
                     <thead>
@@ -122,7 +136,9 @@ export default function Students() {
                     <tbody>
                         {students.map(student => <tr key={student.id}>
                             <td>
-                                {isRemoving && <button onClick={_ => handlerRemoveStudent(student.id)}>-</button>} 
+                                {isRemoving && <button title={`Remove ${student.last_name}, ${student.first_name}`}
+                                    onClick={_ => handlerRemoveStudent(student.id)}
+                                >🗑️</button>} 
                                 <Link to={`/student-profile/${student.id}`}>{student.id}</Link>
                             </td>
                             <td><Link to={`/student-profile/${student.id}`}>{student.last_name}</Link></td>

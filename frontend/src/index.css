@@ -127,6 +127,13 @@ table  td {
   color: hsl(155, 100%, 42%);
 }
 
+/* List of Students Page */
+.students-page__search-and-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 /* Create Student Account */
 .student-profile__create-student-account:hover {
   text-decoration: underline;
