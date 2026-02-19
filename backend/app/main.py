@@ -3,9 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes.route import router 
 from app.routes.auth import router as auth_router
+from app.routes.me import me_router
 
 app = FastAPI()
 app.include_router(auth_router)
+app.include_router(me_router)
 app.include_router(router)
 
 # CORS Configs

@@ -171,7 +171,3 @@ def create_admin(payload: CreateAdminRequest, db: db_dependency):
     db.commit()
 
     return {"message": "Successfully created a new admin."}
-
-
-# @router.post('/user')
-# def create_teacher_account(payload: )
