@@ -65,15 +65,11 @@ export default function Students() {
         if (!confirm) return
         removeStudentsMutation.mutate(student_id)
     }
-    
-    function test() {
-        console.log(typeof searchedStudent, searchedStudent)
-    }
 
     if (isLoading) return <p>Loading students' data...</p>
     if (error) {
         console.log(error)
-        return <h2>{error}</h2>
+        return <Navigate to={'/not-found'} replace />
     }
 
     return (
@@ -149,7 +145,6 @@ export default function Students() {
                 </table>
                 : <p>No student record to show.</p>
             }
-            <button onClick={test}>test</button>
         </div>
     )
 }
