@@ -111,7 +111,7 @@ export default function UsersTable() {
                                             value={editTo}
                                             onChange={e => setEditTo(e.target.value)}
                                         /> </td>
-                                        : <td onDoubleClick={_ => handleSetCoord(user.id, 'email')}>{user.username}</td>
+                                        : <td onDoubleClick={_ => handleSetCoord(user.id, 'email')}>{user.email}</td>
                                     }
 
                                     {/* User Role */}
