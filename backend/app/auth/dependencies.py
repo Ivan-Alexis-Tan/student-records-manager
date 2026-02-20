@@ -16,6 +16,11 @@ credential_exception = HTTPException(
     detail="Failed to validate credentials."
 )
 
+permission_exception = HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN,
+    detail="Not enough permission."
+)
+
 def get_user_by_username(db: Session, email: str) -> Optional[models.User]:
     return db.query(models.User).filter(models.User.email == email).first()
 
