@@ -33,7 +33,10 @@ def register(payload: RegisterRequest, db: db_dependency):
     existing = get_user_by_username(db, payload.username)
 
     if existing:
-        raise HTTPException(status_code=409, detail="Username already taken.")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, 
+            detail="Username already taken."
+        )
     
     user = User(
         username=payload.username,
@@ -67,13 +70,9 @@ async def login(
     sent as form-data (not JSON)
     """
     user = authenticate_user(db, form_data.username, form_data.password)
-
     
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password."
-        )
+        raise credential_exception
 
     token = create_access_token(user=user)
     response.set_cookie(
@@ -108,7 +107,7 @@ def me(current_user: user_dependency, db: db_dependency):
         profile_id=user_profile_id
     )
 
-@router.post("/logout")
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 def logout(respose: Response):
     respose.delete_cookie(
         key="access_token",
@@ -118,7 +117,7 @@ def logout(respose: Response):
     return {"message": "Successfully logged out."}
 
 
-@router.post('/user')
+@router.post('/user', status_code=status.HTTP_201_CREATED)
 def create_user(payload: CreateUserRequest, current_user: user_dependency, db: db_dependency):
 
     if not current_user:
@@ -126,7 +125,7 @@ def create_user(payload: CreateUserRequest, current_user: user_dependency, db: d
     
     if db.query(User).filter(User.email == payload.email).first():
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_409_CONFLICT,
             detail="User already exists."
         )
     
@@ -134,7 +133,7 @@ def create_user(payload: CreateUserRequest, current_user: user_dependency, db: d
 
     if not student:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail="Student does not exists."
         )
     
@@ -152,11 +151,11 @@ def create_user(payload: CreateUserRequest, current_user: user_dependency, db: d
     return {"message": "Successfully created new user account."}
 
 
-@router.post("/user/admin")
+@router.post("/user/admin", status_code=status.HTTP_201_CREATED)
 def create_admin(payload: CreateAdminRequest, db: db_dependency):
     if payload.password != payload.confirm_pw:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="Password does not match."
         )
 

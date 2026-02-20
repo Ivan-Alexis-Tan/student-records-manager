@@ -11,7 +11,7 @@ me_router = APIRouter(prefix='/me', tags=["me"])
 def get_student_self_details(db: db_dependency, current_user: user_dependency):
     if current_user.role != "student":
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail='User must be a student.'
         )
     
