@@ -7,7 +7,7 @@ import app.models.models as models
 from app.basemodels import NewStudent, QuizModel, UpdateQuiz
 from app.schemas.auth import CreateTeacherRequest, CreateUserRequest
 from app.auth.auth import hash_password
-from app.auth.dependencies import user_dependency, credential_exception, usual_permissions
+from app.auth.dependencies import user_dependency, credential_exception, permission_exception, usual_permissions
 
 router = APIRouter()
 
@@ -18,7 +18,7 @@ def get_students(current_user: user_dependency, db: db_dependency):
         raise credential_exception
     
     if current_user.role not in {'teacher', 'admin'}:
-        raise credential_exception
+        raise permission_exception
     
     students = db.query(Student).all()
     
@@ -31,7 +31,7 @@ def get_teachers(current_user: user_dependency, db: db_dependency):
         raise credential_exception
     
     if current_user.role not in {'teacher', 'admin'}:
-        raise credential_exception
+        raise permission_exception
 
     return db.query(models.Teacher).all()
 
@@ -42,18 +42,18 @@ def get_users(current_user: user_dependency, db: db_dependency):
         raise credential_exception
     
     if current_user.role != 'admin':
-        raise credential_exception
+        raise permission_exception
 
     return db.query(models.User).all()
 
 
-@router.post('/students')
+@router.post('/students', status_code=status.HTTP_201_CREATED)
 def add_student(student: NewStudent, current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception
     
     if current_user.role not in {'teacher', 'admin'}:
-        raise credential_exception
+        raise permission_exception
     
     new_student = Student(**student.model_dump())
     db.add(new_student)
@@ -61,13 +61,13 @@ def add_student(student: NewStudent, current_user: user_dependency, db: db_depen
     return student
 
 
-@router.delete('/students/{id}')
+@router.delete('/students/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def remove_student(id: str, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
     
     if current_user.role not in {"teacher", "admin"}:
-        raise credential_exception
+        raise permission_exception
     
     student = db.query(Student).get(id)
     if not student:
@@ -80,7 +80,7 @@ def remove_student(id: str, db: db_dependency, current_user: user_dependency):
     db.commit()
 
 
-@router.get('/students/{id:str}')
+@router.get('/students/{id}')
 def get_student_details(id: str, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
@@ -99,7 +99,7 @@ def get_student_quizzes(id: str, db: db_dependency, current_user: user_dependenc
     if current_user.role == "student":
         id = current_user.student_profile.id
     elif current_user.role not in {'teacher', 'admin'}:
-        raise credential_exception
+        raise permission_exception
 
     return {
         "data": db.query(Quiz).filter(Quiz.student_id == id).all(), 
@@ -107,7 +107,7 @@ def get_student_quizzes(id: str, db: db_dependency, current_user: user_dependenc
     }
 
 
-@router.patch('/quizzes/{id}')
+@router.patch('/quizzes/{id}', status_code=status.HTTP_200_OK)
 def update_quiz_score(id: str, payload: UpdateQuiz, db: db_dependency, current_user: user_dependency) -> None:
     if not current_user:
         raise credential_exception
@@ -120,13 +120,16 @@ def update_quiz_score(id: str, payload: UpdateQuiz, db: db_dependency, current_u
 
     if details['score'] > details['total_items']:
         raise HTTPException(
-            status_code=400, 
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, 
             detail="Score must not be greater than highest possible score."
         )
     
     quiz = db.get(Quiz, id)
     if not quiz:
-        raise HTTPException(status_code=404, detail="Quiz not found.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Quiz not found."
+        )
 
     for col, val in details.items():
         if col in allowed:
@@ -137,13 +140,13 @@ def update_quiz_score(id: str, payload: UpdateQuiz, db: db_dependency, current_u
     return quiz
 
 
-@router.post('/quizzes')
+@router.post('/quizzes', status_code=status.HTTP_201_CREATED)
 def add_quiz_record(payload: QuizModel, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
     
     if current_user.role not in {"teacher", "admin"}:
-        raise credential_exception
+        raise permission_exception
     
     new_quiz = Quiz(**payload.model_dump())
     db.add(new_quiz)
@@ -153,7 +156,7 @@ def add_quiz_record(payload: QuizModel, db: db_dependency, current_user: user_de
     return new_quiz
 
 
-@router.delete('/quizzes/{id}')
+@router.delete('/quizzes/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_quiz(id: str, db: db_dependency, current_user: user_dependency) -> None:
     """
     - `id`
@@ -164,12 +167,15 @@ def delete_quiz(id: str, db: db_dependency, current_user: user_dependency) -> No
         raise credential_exception
     
     if current_user.role not in {"teacher", "admin"}:
-        raise credential_exception
+        raise permission_exception
     
     quiz = db.get(Quiz, id)
 
     if not quiz:
-        raise HTTPException(status_code=404, detail="Quiz not found.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="Quiz not found."
+        )
     
     db.delete(quiz)
     db.commit()
@@ -177,13 +183,13 @@ def delete_quiz(id: str, db: db_dependency, current_user: user_dependency) -> No
     return {"message": "Successfully deleted a quiz record."}
 
 
-@router.post("/teachers")
+@router.post("/teachers", status_code=status.HTTP_201_CREATED)
 def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
     
     if current_user.role not in {"teacher", "admin"}:
-        raise credential_exception
+        raise permission_exception
 
     user = db.query(models.User).filter(models.User.email == teacher.email).first()
 
@@ -222,7 +228,7 @@ def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_use
     }
 
 
-@router.delete('/user/{id}')
+@router.delete('/user/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def remove_user(id: str, db: db_dependency, current_user: user_dependency):
     if current_user.role != "admin":
         raise credential_exception
