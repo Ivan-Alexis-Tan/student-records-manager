@@ -1,7 +1,7 @@
 // JS Lib and frameworks
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { RouterProvider, createBrowserRouter} from 'react-router-dom'
+import { Navigate, RouterProvider, createBrowserRouter} from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 // Styles
@@ -41,6 +41,11 @@ import CreateTeacherAccountPage from './pages/CreateTeacherAccount'
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Navigate to={'/login'} replace />
+  },
+
   {
     element: <ProtectedRoute />,
     children: [
@@ -169,7 +174,7 @@ const router = createBrowserRouter([
         ]
       },
 
-      { path: '/not-found', element: <NotFoundPage />}
+      { path: '*', element: <NotFoundPage />}
     ]
   },
 
