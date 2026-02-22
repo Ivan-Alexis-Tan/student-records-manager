@@ -6,12 +6,13 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 import app.models.models as models
+import app.core.config as config
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
 
-SECRET_KEY = "SECRET_KEY"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SECRET_KEY = config.SECRET_KEY
+ALGORITHM = config.ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES = config.ACCESS_TOKEN_EXPIRE_MINUTES
 
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='/auth/token')
 
