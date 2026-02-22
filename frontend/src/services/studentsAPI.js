@@ -45,7 +45,7 @@ export async function logoutUser() {
     })
 
     if (!res.ok) throw new Error("Failed to logout user.");
-    return res.json()
+    return 
 }
 
 export async function createStudent(student_info) {

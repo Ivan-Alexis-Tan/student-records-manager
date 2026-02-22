@@ -114,8 +114,6 @@ def logout(respose: Response):
         **COOKIE_KWARGS,
     )
 
-    return {"message": "Successfully logged out."}
-
 
 @router.post('/user', status_code=status.HTTP_201_CREATED)
 def create_user(payload: CreateUserRequest, current_user: user_dependency, db: db_dependency):
