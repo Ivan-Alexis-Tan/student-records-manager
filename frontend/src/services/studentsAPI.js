@@ -8,7 +8,24 @@ export async function getAPI(url, options = {}) {
         }
     })
 
-    if (!res.ok) throw new Error(await res.text());
+    
+
+    if (!res.ok) {
+        const data = await res.json()
+        const error = new Error(data.detail)
+
+        console.log(`used getAPI`)
+        console.log('status =', res.ok)
+        console.log('detail =', data.detail)
+
+        error.status = res.status
+        error.detail = data.detail
+
+        console.log(`error.status =`, error.status)
+        console.log(`error.detail =`, error.detail)
+
+        throw error
+    };
     return res.json()
 }
 
@@ -18,7 +35,14 @@ export async function fetchCurrentUser() {
         credentials: "include",
     })
 
-    if (!res.ok) throw new Error(await res.text());
+    if (!res.ok) {
+        const data = await res.json()
+        const error = new Error(data.detail)
+        error.status = res.status
+        console.log(`fetched the current user`)
+        console.log(`error details =`, error)
+        throw error
+    };
     return res.json()
 }
 
