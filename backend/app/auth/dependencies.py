@@ -41,17 +41,19 @@ def decode_token(token: str):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         exp = payload.get('exp')
 
-        if datetime.fromtimestamp(exp, tz=timezone.utc) < datetime.now(tz=timezone.utc):
+        is_expired = datetime.fromtimestamp(exp, tz=timezone.utc) < datetime.now(tz=timezone.utc)
+
+        if is_expired:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token expired."
+                detail="TOKEN_EXPIRED"
             )
 
         return payload
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token."
+            detail="INVALID_TOKEN"
         )
 
 
@@ -66,9 +68,10 @@ async def get_current_user(
 
         payload = decode_token(token)
         user_id = payload.get("user_id")
-        
+
         if user_id is None:
             raise credential_exception
+        
     except JWTError:
         raise credential_exception
     
