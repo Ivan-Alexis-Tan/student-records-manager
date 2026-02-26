@@ -8,8 +8,6 @@ export async function getAPI(url, options = {}) {
         }
     })
 
-    
-
     if (!res.ok) {
         const data = await res.json()
         const error = new Error(data.detail)
