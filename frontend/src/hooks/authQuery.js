@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { getAPI } from "../services/studentsAPI"
+import {api} from "../services/axiosAPI"
 
 export function useAuth() {
     return useQuery({
         queryKey: ["auth", "me"],
-        queryFn: () => getAPI('http://localhost:8000/auth/me', {method: "GET"}),
+        queryFn: () => api.get('/auth/me').then(res => res.data),
 
         retry: false,
-        staleTime: 1000 * 60 * 5,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-        refetchOnMount: false,
+        staleTime: 0,
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
+        refetchOnMount: true,
     })
 }
