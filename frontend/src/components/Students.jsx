@@ -2,6 +2,7 @@ import { useState, useMemo } from "react"
 import { Link, Navigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
+import { queryClient } from "../services/queryClient"
 import { 
     removeStudents,
     capitalEveryWord,
@@ -14,9 +15,6 @@ const attribs = ['last_name', 'first_name', 'id']
 const rolesAllowed = ['teacher', 'admin']
 
 export default function Students() {
-    const user = useAuth()
-    const queryClient = useQueryClient()
-
     const {data: students, isLoading, error } = useQuery({
         queryKey: ['students'],
         queryFn: () => getAPI('http://localhost:8000/students', {method: "GET"}),

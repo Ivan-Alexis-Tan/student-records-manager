@@ -7,6 +7,7 @@ import {
     capitalEveryWord, 
     submitLogin,
 } from '../services/studentsAPI'
+import { queryClient } from '../services/queryClient'
 
 export default function LoginPage() {
     const [loginAs, setLoginAs] = useState("teacher")
@@ -17,7 +18,6 @@ export default function LoginPage() {
 
     const {data: user, isLoading, isError} = useAuth()
 
-    const queryClient = useQueryClient() 
     const loginRequestMutation = useMutation({
         mutationFn: (loginRequest) => submitLogin(loginRequest),
         onSuccess: () => {

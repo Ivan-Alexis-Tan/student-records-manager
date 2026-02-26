@@ -15,6 +15,8 @@ import TeacherLayout from './layouts/TeacherLayout'
 import StudentLayout from './layouts/StudentLayout'
 import AdminLayout from './layouts/AdminLayout'
 
+import { queryClient } from './services/queryClient'
+
 // Auth
 import ProtectedRoute from './auth/ProtectedRoute'
 import RoleGuard from './auth/RoleGuard'
@@ -36,9 +38,6 @@ import CookieExpired from './pages/CookieExpired'
 import AdminPage from './pages/AdminPage'
 import CreateStudentAccountPage from './pages/CreateStudentAccount'
 import CreateTeacherAccountPage from './pages/CreateTeacherAccount'
-
-
-const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
   {
@@ -184,7 +183,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/no-permision',
+    path: '/no-permission',
     element: <NoPermision />
   },
 

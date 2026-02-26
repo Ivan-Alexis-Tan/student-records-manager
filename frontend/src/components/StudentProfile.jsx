@@ -7,13 +7,13 @@ import {
 } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
+import { queryClient } from '../services/queryClient'
 import { findStudent, getStudentSelfDetails } from '../services/studentsAPI'
 import { useAuth } from '../hooks/authQuery'
 
 const rolesAllowed = ["teacher", "admin"]
 
 export default function StudentProfile() {
-    const queryClient = useQueryClient()
     const {data: user} = useAuth();
     const { pathname } = useLocation()
 
