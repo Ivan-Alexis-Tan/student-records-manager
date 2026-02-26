@@ -4,17 +4,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { logoutUser } from "../services/studentsAPI"
 import { useAuth } from '../hooks/authQuery'
+import logoutCurrentUser from '../hooks/logoutUser'
 
 export default function TeacherNavLayout() {
-    const queryClient = useQueryClient()
     const { data: user } = useAuth()
 
-    const logoutMutation = useMutation({
-        mutationFn: logoutUser,
-        onSuccess: () => {
-            queryClient.setQueryData(["auth", "me"], null)
-        }
-    })
+    const logoutMutation = logoutCurrentUser()
 
     return (
         <div className='nav-container'>

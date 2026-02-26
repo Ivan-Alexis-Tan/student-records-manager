@@ -3,17 +3,11 @@ import { Navigate, Link } from "react-router-dom"
 
 import { useAuth } from "../hooks/authQuery"
 import { logoutUser } from "../services/studentsAPI"
+import logoutCurrentUser from "../hooks/logoutUser"
 
 export default function StudentNavLayout() {
     const {data: user} = useAuth()
-    const queryClient = useQueryClient()
-    
-    const logoutMutation = useMutation({
-        mutationFn: logoutUser,
-        onSuccess: () => {
-            queryClient.setQueryData(["auth", "me"], null)
-        }
-    })
+    const logoutMutation = logoutCurrentUser()
 
     return (
         <div className='nav-container'>
