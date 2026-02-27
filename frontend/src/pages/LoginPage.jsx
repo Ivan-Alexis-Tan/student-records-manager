@@ -16,7 +16,7 @@ export default function LoginPage() {
     const [loginRequest, setLoginRequest] = useState(loginRequestDefault)
     const [message, setMessage] = useState("")
 
-    const {data: user, isLoading, isError} = useAuth()
+    const {data: user, isLoading} = useAuth()
 
     const loginRequestMutation = useMutation({
         mutationFn: (loginRequest) => submitLogin(loginRequest),
@@ -31,7 +31,7 @@ export default function LoginPage() {
     })
 
     if (isLoading) return <h1>Loading...</h1>
-    if (!isError && user) return <Navigate to={`/${user.role}/${user.id}`} replace/>
+    if (user.id) return <Navigate to={`/${user.role}/${user.id}`} replace/>
 
     // Login Submit Function
     function handleSubmit() {
