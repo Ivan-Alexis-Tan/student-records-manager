@@ -23,9 +23,8 @@ api.interceptors.response.use(
         }
         
         if (status == 401) {
-            queryClient.setQueriesData(['auth', 'me'], null)
-            queryClient.setQueriesData(['auth', 'error'], errorDetail)
-            
+            queryClient.setQueryData(['auth', 'me'], null)
+
             console.error(status, `(${error.response.statusText}) ${errorDetail}`)
         }
         
