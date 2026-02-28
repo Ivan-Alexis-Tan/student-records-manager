@@ -43,11 +43,6 @@ export default function Students() {
         }, [])
     }, [students, searchVal])
 
-    // User Page Authorization
-    if (user.isLoading) return <h1>Loading user data...</h1>
-    if (user.isError) return <Navigate to={"/login"} />
-    if (!hasPermision(user.data?.role, rolesAllowed)) return <Navigate to={"/no-permision"} />
-
     function toggleSearchAttrib() {
         setAttribIdx(prev => prev + 1);
         if (attribIdx == (attribs.length - 1)) setAttribIdx(0);
@@ -64,11 +59,7 @@ export default function Students() {
         removeStudentsMutation.mutate(student_id)
     }
 
-    if (isLoading) return <p>Loading students' data...</p>
-    if (error) {
-        console.log(error)
-        return <Navigate to={'/not-found'} replace />
-    }
+    if (isLoading) return <h1>Loading students' data...</h1>
 
     return (
         <div>

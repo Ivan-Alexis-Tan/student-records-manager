@@ -31,7 +31,7 @@ export default function LoginPage() {
     })
 
     if (isLoading) return <h1>Loading...</h1>
-    if (user.id) return <Navigate to={`/${user.role}/${user.id}`} replace/>
+    if (user?.id) return <Navigate to={`/${user.role}/${user.id}`} replace/>
 
     // Login Submit Function
     function handleSubmit() {
