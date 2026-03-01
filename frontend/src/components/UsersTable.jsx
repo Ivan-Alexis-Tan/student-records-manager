@@ -30,6 +30,13 @@ export default function UsersTable() {
         setIsEditing('edit')
     }
 
+    function handleCancelKey(event) {
+        if (event.key != "Escape") return null
+
+        setIsEditing('')
+        setCoords({rowId: '', col: ''})
+    }
+
     return (
         <div className="users-table__container">
             <div className="users-table__title-save-cancel-button">
@@ -64,7 +71,7 @@ export default function UsersTable() {
                 </div>
             </div>
                 {(users.length >= 1)
-                    ? <table>
+                    ? <table onKeyUp={e => handleCancelKey(e)}>
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -82,7 +89,7 @@ export default function UsersTable() {
                                             onClick={_ => {
                                                 const confirmDel = window.confirm(`Confirm delete ${user.username}`)
                                                 if (!confirmDel) return null
-                                                deleteUserAccMutation.mutate(user.id)
+                                                delUserMutation.mutate(user.id)
                                             }}
                                             >🗑️</button>
                                         } {user.id}
@@ -93,6 +100,7 @@ export default function UsersTable() {
                                         ? <td><input type="text"
                                             value={editTo}
                                             onChange={e => setEditTo(e.target.value)}
+                                            placeholder={user.username}
                                         /> </td>
                                         : <td onDoubleClick={_ => handleSetCoord(user.id, 'username')}>{user.username}</td>
                                     }
@@ -102,6 +110,7 @@ export default function UsersTable() {
                                         ? <td><input type="text"
                                             value={editTo}
                                             onChange={e => setEditTo(e.target.value)}
+                                            placeholder={user.email}
                                         /> </td>
                                         : <td onDoubleClick={_ => handleSetCoord(user.id, 'email')}>{user.email}</td>
                                     }
@@ -111,6 +120,7 @@ export default function UsersTable() {
                                         ? <td><input type="text"
                                             value={editTo}
                                             onChange={e => setEditTo(e.target.value)}
+                                            placeholder={user.role}
                                         /> </td>
                                         : <td onDoubleClick={_ => handleSetCoord(user.id, 'role')}>
                                             {capitalEveryWord(user.role)}
