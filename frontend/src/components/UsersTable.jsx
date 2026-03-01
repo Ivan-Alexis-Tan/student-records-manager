@@ -7,7 +7,7 @@ import { api } from "../services/axiosAPI";
 
 
 export default function UsersTable() {
-    const {data, isLoading, error} = useQuery({
+    const {data, isLoading} = useQuery({
         queryKey: ["users"],
         queryFn: () => api.get('/users').then(res => res.data),
         retry: false
@@ -27,10 +27,6 @@ export default function UsersTable() {
     const [isAddingNew, setIsAddingNew] = useState(false)
 
     if (isLoading) return <h1>Loading...</h1>
-    if (error) {
-        console.error(error);
-        return <h1>Error loading 'Users'.</h1>
-    }
 
     const users = data ?? []
     

@@ -6,7 +6,7 @@ import { capitalEveryWord } from "../services/helperFunctions"
 import { api } from "../services/axiosAPI"
 
 export default function TeachersTable() {
-    const {data, isLoading, error} = useQuery({
+    const {data, isLoading} = useQuery({
         queryKey: ["teachers"],
         queryFn: () => api.get('/teachers').then(res => res.data),
         retry: false
@@ -30,10 +30,6 @@ export default function TeachersTable() {
     })
 
     if (isLoading) return <h1>Loading...</h1>
-    if (error) {
-        console.error(error);
-        return <h1>Error loading 'Teachers'</h1>
-    }
 
     const teachers = data ?? []
 
