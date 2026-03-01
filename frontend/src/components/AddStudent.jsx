@@ -1,16 +1,7 @@
 import { useState } from "react"
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createStudent } from '../services/studentsAPI'
+import { createStudentMutation } from "../hooks/mutateFuncs"
 
 export default function AddStudent() {
-    const queryClient = useQueryClient();
-    const createStudentMutation = useMutation({
-        mutationFn: createStudent,
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['students']})
-        },
-    })
-
     const defaultStudent = {first_name: 'First Name', last_name: 'Last Name', grade_lvl: 12}
     
     const [newStudent, setNewStudent] = useState(
@@ -19,6 +10,14 @@ export default function AddStudent() {
     const [error, setError] = useState('')
     const [message, setMessage] = useState('')
     
+    const createStudent = createStudentMutation({
+        ifSuccess: () => {
+            setError('')
+            setMessage(`Successfully added ${newStudent.last_name}, ${newStudent.first_name}`)
+            setNewStudent(defaultStudent)
+        }
+    })
+
     function addStudent() {
         const isDeafult = [
             newStudent.first_name === defaultStudent.first_name,
@@ -30,11 +29,7 @@ export default function AddStudent() {
             return null;
         }
 
-        setError('')
-        createStudentMutation.mutate(newStudent)
-
-        setMessage(`Successfully added ${newStudent.last_name}, ${newStudent.first_name}`)
-        setNewStudent(defaultStudent)
+        createStudent.mutate(newStudent)
     }
 
     function test() {
