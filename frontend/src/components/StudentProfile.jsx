@@ -18,18 +18,19 @@ export default function StudentProfile() {
     const { pathname } = useLocation()
 
     const params = useParams()
+    
     const isStudent = user.role === "student"
     const id = isStudent ? user.profile_id : params.id 
-
-    const {data: studentData, isLoading, isError} = useQuery({
+    const {data: studentData, isLoading} = useQuery({
         queryKey: ['studentProfile', id],
         queryFn: isStudent 
             ? getStudentSelfDetails
             : () => findStudent(id),
+        enabled: !!id
     })
 
     if (isLoading) return <h1>Loading student's data...</h1>
-    if (isError) return <Navigate to={'/not-found'} replace />
+    if (!studentData) return <Navigate to={'/not-found'} replace />
     
     const profileHeadUrl = isStudent ? 'student' : 'student-profile'
 

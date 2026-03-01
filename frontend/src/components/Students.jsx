@@ -1,16 +1,15 @@
 import { useState, useMemo } from "react"
 import { Link, Navigate } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 
 import { queryClient } from "../services/queryClient"
 import { removeStudents, capitalEveryWord } from '../services/studentsAPI'
 import { api } from "../services/axiosAPI"
 
 const attribs = ['last_name', 'first_name', 'id']
-const rolesAllowed = ['teacher', 'admin']
 
 export default function Students() {
-    const {data: students, isLoading, error } = useQuery({
+    const {data: students, isLoading} = useQuery({
         queryKey: ['students'],
         queryFn: () => api.get('/students').then(res => res.data)
     });
@@ -37,6 +36,9 @@ export default function Students() {
         }, [])
     }, [students, searchVal])
 
+    if (isLoading) return <h1>Loading students' data...</h1>
+    if (!students) return <Navigate to={'/not-found'} replace />
+
     function toggleSearchAttrib() {
         setAttribIdx(prev => prev + 1);
         if (attribIdx == (attribs.length - 1)) setAttribIdx(0);
@@ -52,8 +54,6 @@ export default function Students() {
         if (!confirm) return
         removeStudentsMutation.mutate(student_id)
     }
-
-    if (isLoading) return <h1>Loading students' data...</h1>
 
     return (
         <div>
@@ -102,7 +102,7 @@ export default function Students() {
             }
             
             {/* List of Students Table */}
-            {(students.length >= 1)
+            {(students?.length >= 1)
                 ? <table>
                     <thead>
                         <tr>
