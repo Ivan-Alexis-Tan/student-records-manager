@@ -37,14 +37,12 @@ export default function Students() {
         }, [])
     }, [students, searchVal])
 
+    useEffect(() => {
+        setSearchAttrib(attribs[attribIdx % attribs.length])
+    }, [attribIdx])
+
     if (isLoading) return <h1>Loading students' data...</h1>
     if (!students) return <Navigate to={'/not-found'} replace />
-
-    function toggleSearchAttrib() {
-        setAttribIdx(prev => prev + 1);
-        if (attribIdx == (attribs.length - 1)) setAttribIdx(0);
-        setSearchAttrib(attribs[attribIdx])
-    }
 
     function handlerRemoveStudent(student_id) {
         const student = students.find(student => student.id == student_id)
@@ -53,7 +51,7 @@ export default function Students() {
         )
 
         if (!confirm) return
-        removeStudentsMutation.mutate(student_id)
+        removeStudents.mutate(student_id)
     }
 
     return (
@@ -63,7 +61,7 @@ export default function Students() {
             {/* Student Search Bar and Buttons */}
             <div className="students-page__search-and-buttons">
                 <form>
-                    <label onClick={toggleSearchAttrib}
+                    <label onClick={_ => setAttribIdx(prev => prev + 1)}
                         title="Click to toggle search."
                     >Search: </label>
                     <input type="text" 
