@@ -79,17 +79,3 @@ export async function createTeacherAccount(reqDetails) {
 export async function deleteUserAccount(id) {
     return api.delete(`/user/${id}`)
 }
-
-export function capitalEveryWord(str, sep = ' ') {
-    const strings = `${str}`.split(sep)
-    const altered = strings.map(str => str.charAt(0).toUpperCase() + str.slice(1))
-    return altered.join(' ')
-}
-
-export function userHomeUrl(userObj) {
-    if (`${userObj.role}`.toLowerCase() === "student") {
-        return `${userObj.role}/${userObj.id}`
-    }
-
-    return `${userObj.role}/home`
-}

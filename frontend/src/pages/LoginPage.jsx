@@ -1,13 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Navigate, useParams } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
+import { Navigate } from 'react-router-dom'
 import { useState } from 'react'
 
 import { useAuth } from '../hooks/authQuery'
-import { 
-    capitalEveryWord, 
-    submitLogin,
-} from '../services/studentsAPI'
+import { submitLogin } from '../services/studentsAPI'
 import { queryClient } from '../services/queryClient'
+import { capitalEveryWord } from '../services/helperFunctions'
 
 export default function LoginPage() {
     const [loginAs, setLoginAs] = useState("teacher")

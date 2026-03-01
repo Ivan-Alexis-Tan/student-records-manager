@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { capitalEveryWord, deleteUserAccount } from "../services/studentsAPI"
+import { capitalEveryWord } from "../services/helperFunctions";
 import { api } from "../services/axiosAPI";
 
 

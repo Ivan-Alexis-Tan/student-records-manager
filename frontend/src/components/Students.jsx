@@ -3,7 +3,8 @@ import { Link, Navigate } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 
 import { queryClient } from "../services/queryClient"
-import { removeStudents, capitalEveryWord } from '../services/studentsAPI'
+import { capitalEveryWord } from "../services/helperFunctions"
+import { removeStudents } from '../services/studentsAPI'
 import { api } from "../services/axiosAPI"
 
 const attribs = ['last_name', 'first_name', 'id']
