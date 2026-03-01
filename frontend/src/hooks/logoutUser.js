@@ -1,13 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 
 import { queryClient } from "../services/queryClient";
-import { logoutUser } from "../services/studentsAPI";
+import { api } from "../services/axiosAPI";
 
 export default function logoutCurrentUser() {
     const logoutMutation = useMutation({
-        mutationFn: logoutUser,
+        mutationFn: () => api.post('/auth/logout'),
         onSuccess: () => {
             queryClient.setQueriesData(["auth", "me"], null)
+            queryClient.clear()
         },
         retry: false
     })

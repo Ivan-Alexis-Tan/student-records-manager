@@ -1,8 +1,6 @@
 
-import { Link, Navigate } from 'react-router-dom'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
 
-import { logoutUser } from "../services/studentsAPI"
 import { useAuth } from '../hooks/authQuery'
 import logoutCurrentUser from '../hooks/logoutUser'
 

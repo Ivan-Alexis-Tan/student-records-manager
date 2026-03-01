@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { capitalEveryWord, getAPI } from "../services/studentsAPI"
+import { capitalEveryWord } from "../services/studentsAPI"
 import UsersTable from "../components/UsersTable"
 import TeachersTable from "../components/TeachersTable"
 

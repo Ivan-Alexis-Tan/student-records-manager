@@ -1,48 +1,4 @@
-export async function getAPI(url, options = {}) {
-    const res = await fetch(url, {
-        ...options,
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-            ...options.headers
-        }
-    })
-
-    if (!res.ok) {
-        const data = await res.json()
-        const error = new Error(data.detail)
-
-        console.log(`used getAPI`)
-        console.log('status =', res.ok)
-        console.log('detail =', data.detail)
-
-        error.status = res.status
-        error.detail = data.detail
-
-        console.log(`error.status =`, error.status)
-        console.log(`error.detail =`, error.detail)
-
-        throw error
-    };
-    return res.json()
-}
-
-export async function fetchCurrentUser() {
-    const res = await fetch("http://localhost:8000/auth/me", {
-        method: "GET",
-        credentials: "include",
-    })
-
-    if (!res.ok) {
-        const data = await res.json()
-        const error = new Error(data.detail)
-        error.status = res.status
-        console.log(`fetched the current user`)
-        console.log(`error details =`, error)
-        throw error
-    };
-    return res.json()
-}
+import { api } from "./axiosAPI"
 
 export async function submitLogin(loginDetails) {
     const refined = new URLSearchParams()
@@ -60,28 +16,8 @@ export async function submitLogin(loginDetails) {
     return res.json()
 }
 
-export async function logoutUser() {
-    const res = await fetch('http://localhost:8000/auth/logout', {
-        method: "POST",
-        credentials: "include"
-    })
-
-    if (!res.ok) throw new Error("Failed to logout user.");
-    return 
-}
-
 export async function createStudent(student_info) {
-    const res = await fetch('http://localhost:8000/students', 
-        {
-            method: "POST",
-            credentials: "include",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(student_info)
-        }
-    )
-
-    if (!res.ok) throw new Error('Adding new student failed.');
-    return res.json()
+    return api.post('/students', {...student_info})
 }
 
 export async function removeStudents(student_id) {
@@ -95,22 +31,11 @@ export async function removeStudents(student_id) {
 }
 
 export async function findStudent(id) {
-    const res = await fetch(`http://localhost:8000/students/${id}`, {
-        method: "GET",
-        credentials: "include",
-    })
-    if (!res.ok) throw new Error(`${searchVal} not found.`);
-    return res.json()
+    return api.get(`/students/${id}`).then(res => res.data)
 }
 
 export async function getStudentSelfDetails() {
-    const res = await fetch('http://localhost:8000/me/students', {
-        method: "GET",
-        credentials: "include"
-    })
-
-    if (!res.ok) throw new Error(await res.text());
-    return res.json()
+    return api.get('/me/students').then(res => res.data)
 }
 
 export async function getQuizes(studentId) {

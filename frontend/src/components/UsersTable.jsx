@@ -2,13 +2,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { getAPI, capitalEveryWord, deleteUserAccount } from "../services/studentsAPI"
+import { capitalEveryWord, deleteUserAccount } from "../services/studentsAPI"
+import { api } from "../services/axiosAPI";
 
 
 export default function UsersTable() {
     const {data, isLoading, error} = useQuery({
         queryKey: ["users"],
-        queryFn: () => getAPI(`http://localhost:8000/users`, {method: "GET"}),
+        queryFn: () => api.get('/users').then(res => res.data),
         retry: false
     })
 

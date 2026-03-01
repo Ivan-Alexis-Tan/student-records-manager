@@ -3,13 +3,8 @@ import { Link, Navigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { queryClient } from "../services/queryClient"
-import { 
-    removeStudents,
-    capitalEveryWord,
-    getAPI
-} from '../services/studentsAPI'
-import { hasPermision } from "../services/helperFunctions"
-import { useAuth } from "../hooks/authQuery"
+import { removeStudents, capitalEveryWord } from '../services/studentsAPI'
+import { api } from "../services/axiosAPI"
 
 const attribs = ['last_name', 'first_name', 'id']
 const rolesAllowed = ['teacher', 'admin']
@@ -17,8 +12,7 @@ const rolesAllowed = ['teacher', 'admin']
 export default function Students() {
     const {data: students, isLoading, error } = useQuery({
         queryKey: ['students'],
-        queryFn: () => getAPI('http://localhost:8000/students', {method: "GET"}),
-        retry: false
+        queryFn: () => api.get('/students').then(res => res.data)
     });
     
     const removeStudentsMutation = useMutation({

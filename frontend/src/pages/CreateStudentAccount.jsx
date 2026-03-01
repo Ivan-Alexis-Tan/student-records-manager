@@ -2,7 +2,7 @@ import { Navigate, useParams } from "react-router-dom"
 import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
-import { getAPI, createStudentAccount } from "../services/studentsAPI"
+import { createStudentAccount } from "../services/studentsAPI"
 
 const rolesAllowed = ['teacher', 'admin']
 
