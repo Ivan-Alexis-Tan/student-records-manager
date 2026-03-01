@@ -1,9 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { capitalEveryWord } from "../services/helperFunctions" 
 import { api } from "../services/axiosAPI"
+import { deleteUserAccMutation } from "../hooks/mutateFuncs"
 
 export default function TeachersTable() {
     const {data, isLoading} = useQuery({
@@ -12,13 +13,7 @@ export default function TeachersTable() {
         retry: false
     })
 
-    const queryClient = useQueryClient()
-    const deleteTeacherAccMutation = useMutation({
-        mutationFn: (teacherId) => deleteUserAccount(teacherId),
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['teachers']})
-        }
-    })
+    const deleteTeacherAccMutation = deleteUserAccMutation()
 
     const navigate = useNavigate()
 

@@ -1,9 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { capitalEveryWord } from "../services/helperFunctions";
 import { api } from "../services/axiosAPI";
+import { deleteUserAccMutation } from "../hooks/mutateFuncs";
 
 
 export default function UsersTable() {
@@ -13,13 +14,7 @@ export default function UsersTable() {
         retry: false
     })
 
-    const queryClient = useQueryClient()
-    const deleteUserAccMutation = useMutation({
-        mutationFn: (userId) => deleteUserAccount(userId),
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["users"]})
-        }
-    })
+    const delUserMutation = deleteUserAccMutation()
 
     const [isEditing, setIsEditing] = useState('')
     const [coords, setCoords] = useState({rowId: '', col:''})
