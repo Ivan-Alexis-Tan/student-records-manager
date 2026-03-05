@@ -1,58 +1,87 @@
 import { Navigate, useParams } from "react-router-dom"
-import { useState } from "react"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useEffect, useState } from "react"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 
-import { createStudentAccount } from "../services/studentsAPI"
+import { mutationCreateStudentAcc } from "../hooks/mutateFuncs"
+import { api } from "../services/axiosAPI"
+import { useAuth } from "../hooks/authQuery"
+import SearchStudent from "../components/SearchStudent"
 
 const rolesAllowed = ['teacher', 'admin']
 
 export default function CreateStudentAccountPage() {
     const queryClient = useQueryClient()
+    const {data: user, isLoading} = useAuth()
     const { id } = useParams()
 
-    const createAccMutation = useMutation({
-        mutationFn: (details) => createStudentAccount(details),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['user', {id, role}]});
+    const {data: students, isLoading: loadingStudents} = useQuery({
+        queryKey: ['students'],
+        queryFn: () => api.get('/students').then(res => res.data),
+    });
+
+    const {data: accounts, isLoading: loadingAccounts} = useQuery({
+        queryKey: ["users"],
+        queryFn: () => api.get('/users').then(res => res.data),
+        retry: false
+    })
+
+    const createAccMutation = mutationCreateStudentAcc({
+        ifSuccess: () => {
+            setMessage({detail: `Successfully created ${selected.last_name}, ${selected.first_name}'s account.`, status: 'ok'})
             setNewAccDetails(newAccDefault)
-            setMessage('')
         }
     })
 
-    const selected = queryClient.getQueryData(['studentProfile', id])
+    const [selected, setSelected] = useState(students?.find(student => student.id === id))
 
     const newAccDefault = {
         username: selected ? `${selected.first_name} ${selected.last_name}` : "",
         email: "",
-        role: selected ? `student` : "",
+        role: `student`,
         password: "",
         confirmPassword: "",
         studentId: id ?? "",
     }
     const [newAccDetails, setNewAccDetails] = useState(newAccDefault)
-    const [message, setMessage] = useState("")
+    const [message, setMessage] = useState({status: "", detail: ""})
+
+    useEffect(() => {
+        if (!selected) return
+        setNewAccDetails(prev => ({
+            ...prev, 
+            studentId: selected.id,
+            username: `${selected.first_name} ${selected.last_name}`,
+        }))
+    }, [selected])
+
+    if (isLoading) return <h1>Loading current user..</h1>
+    if (loadingStudents) return <h1>Loading Students...</h1>
+    if (loadingAccounts) return <h1>Loading Accounts...</h1>
+    if (!accounts || !students) return <h1>Failed to load data, please retry.</h1>
 
     function handleCreateAccount() {
-        console.log(`Account creation sent.`)
         const filled = Object.entries(newAccDetails).map(detail => detail[1] !== "")
-        const userRole = queryClient.getQueryData(['auth', 'me'])
 
         if (!filled.every(f => f === true)) {
-            setMessage("ERROR: All fields must be filled.")
+            setMessage({detail: "ERROR: All fields must be filled.", status: 'error'})
             console.error("ERROR: All fields must be filled.")
             return null
         }
         if (newAccDetails.password !== newAccDetails.confirmPassword) {
-            setMessage('ERROR: Password and confirm password does not match')
+            setMessage({detail: 'ERROR: Password and confirm password does not match', status: 'error'})
             console.error("ERROR: Password and confirm password does not match")
             return null
         }
-        if (!rolesAllowed.some(allowed => allowed == userRole.role)) return <Navigate to={'/no-permision'} />
         
-        console.log(`Account creation sent.`)
+        const emailExists = accounts.some(account => account.email === newAccDetails.email)
+        if (emailExists) {
+            setMessage({detail: 'ERROR: Account already exists.', status: 'error'})
+            console.error("ERROR: Account already exists.")
+            return null
+        }
+        if (!rolesAllowed.includes(user.role)) return <Navigate to={'/no-permision'} />
+        
         createAccMutation.mutate(newAccDetails)
-        // setNewAccDetails(newAccDefault)
-        // setMessage('')
     }
 
     function test() {
@@ -65,12 +94,15 @@ export default function CreateStudentAccountPage() {
     return (
         <div>
             <h1>Create Student Account</h1>
-            {message && <p style={{color: "hsl(0, 100%, 60%)"}}><strong>{message}</strong></p>}
+            {message.detail !== "" && <p style={message.status === "ok" ? statusOkStyle : statusErrorStyle}><strong>{message.detail}</strong></p>}
 
             <form onKeyUp={e => {
                 if (e.key !== 'Enter') return null;
                 handleCreateAccount()
             }}>
+                {!id && <SearchStudent setStateFn={setSelected} data={students ?? []} searchLabel="Create for: " />}
+                <br />
+
                 <input type="text"
                     placeholder="username"
                     value={newAccDetails.username}
@@ -82,13 +114,6 @@ export default function CreateStudentAccountPage() {
                     placeholder="email"
                     value={newAccDetails.email}
                     onChange={e => setNewAccDetails(prev => ({...prev, email: e.target.value}))}
-                />
-                <br />
-
-                <input type="text"
-                    placeholder="role"
-                    value={newAccDetails.role}
-                    onChange={e => setNewAccDetails(prev => ({...prev, role: `${e.target.value}`.toLowerCase()}))}
                 />
                 <br />
 
@@ -110,4 +135,12 @@ export default function CreateStudentAccountPage() {
             <button onClick={test}>test</button>
         </div>
     )
+}
+
+const statusOkStyle = {
+    color: "hsl(143, 100%, 60%)"
+}
+
+const statusErrorStyle = {
+    color: "hsl(0, 100%, 60%)"
 }
