@@ -1,13 +1,14 @@
-import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { useState } from "react"
 import { useParams, useLocation, Link, useNavigate } from "react-router-dom"
 
 import { createQuizRecord } from "../services/studentsAPI"
 import { subjects } from "../services/helperFunctions"
+import { useAuth } from "../hooks/authQuery"
+import { mutationCreateQuiz } from "../hooks/mutateFuncs"
+import { queryClient } from "../services/queryClient"
 
 export default function AddQuizRecord() {
-    const queryClient = useQueryClient()
-    const user = queryClient.getQueryData(["auth", "me"]) 
+    const user = useAuth()
     const params = useParams()
     const navigate = useNavigate()
     const { pathname } = useLocation()
@@ -35,19 +36,23 @@ export default function AddQuizRecord() {
         unit: 1,
         topic: '',
     }
-    const [isCreating, setIsCreating] = useState(false)
+
     const [newQuiz, setNewQuiz] = useState(deafultQuizObj)
     
-
-    const createQuizRecordMutation = useMutation({
-        mutationFn: (newQuiz) => createQuizRecord(newQuiz),
-        onSuccess: () => {
+    const createQuizRecordMutation = mutationCreateQuiz({
+        ifSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['studentQuizzes', studentId]})
-            console.log('successfully added.')
+            setNewQuiz(deafultQuizObj)
+            setNewQuizMessage(`Successfully added "${newQuiz.subject} Q${newQuiz.quarter} Quiz ${newQuiz.quiz_num}".`)
         }
     })
-
+    
     function saveNewQuiz() {
+        if (!userPermissions.can_create) {
+            setNewQuizMessage('ERROR: Not enough permission to create a quiz record.')
+            return null
+        }
+
         const alreadyExists = studentQuizRec.filter(q => 
             q.student_id === newQuiz.student_id
             && q.quarter === newQuiz.quarter
@@ -70,21 +75,7 @@ export default function AddQuizRecord() {
             return null
         }
         
-        createQuizRecordMutation.mutate(newQuiz)
-        console.log(newQuiz)
-        setNewQuiz(deafultQuizObj)
-        setNewQuizMessage(`Successfully added "${newQuiz.subject} Q${newQuiz.quarter} Quiz ${newQuiz.quiz_num}".`)
-    }
-
-    function handleCancelAdding() {
-        const path = pathname.split('/')
-        return path.slice(0, path.length - 1).join('/')
-    }
-    const backPath = handleCancelAdding()
-
-    function test() {
-        console.log(studentQuizRec)
-        console.log(pathname)
+        createQuizRecordMutation.mutate(newQuiz)       
     }
 
     return (

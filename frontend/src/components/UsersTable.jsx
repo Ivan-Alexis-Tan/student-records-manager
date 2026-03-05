@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import { capitalEveryWord } from "../services/helperFunctions";
 import { api } from "../services/axiosAPI";
-import { deleteUserAccMutation } from "../hooks/mutateFuncs";
+import { mutationDeleteUserAcc } from "../hooks/mutateFuncs";
 
 
 export default function UsersTable() {
@@ -14,7 +14,7 @@ export default function UsersTable() {
         retry: false
     })
 
-    const delUserMutation = deleteUserAccMutation()
+    const delUserMutation = mutationDeleteUserAcc()
 
     const [isEditing, setIsEditing] = useState('')
     const [coords, setCoords] = useState({rowId: '', col:''})

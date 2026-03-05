@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query"
 
 import { capitalEveryWord, subjects } from "../services/helperFunctions"
 import { createTeacherAccount } from "../services/studentsAPI"
+import { mutationCreateTeacherAcc } from "../hooks/mutateFuncs"
 
 export default function CreateTeacherAccountPage() {
     const newAccDefault = {
@@ -35,9 +36,8 @@ export default function CreateTeacherAccountPage() {
 
     }, [messageStatus])
 
-    const createTeacherAccMutation = useMutation({
-        mutationFn: (reqDetails) => createTeacherAccount(reqDetails),
-        onSuccess: () => {
+    const createTeacherAccMutation = mutationCreateTeacherAcc({
+        ifSuccess: () => {
             setMessage(`Successfully created ${newAccDetails.username}'s account.`)
             setMessageStatus('success')
             setNewAccDetails({...newAccDefault})

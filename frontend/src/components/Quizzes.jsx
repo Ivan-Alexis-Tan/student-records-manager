@@ -2,13 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Outlet, useParams, Link } from "react-router-dom"
 import { useState } from "react"
 
-import { 
-    getQuizes, 
-    updateQuizScore, 
-    createQuizRecord, 
-    deleteQuiz
-} from "../services/studentsAPI"
+import { getQuizes } from "../services/studentsAPI"
 import { useAuth } from "../hooks/authQuery"
+import { mutationDeleteQuiz, mutationUpdateScore } from "../hooks/mutateFuncs"
 
 export default function QuizzesPage() {
     const params = useParams()
@@ -16,7 +12,7 @@ export default function QuizzesPage() {
     const {data: user} = useAuth()
     const studentId = (user.role === "student") ? user.profile_id : params.id
 
-    // const { data, isLoading, error } = useQuery({
+    // Fetch Student's Quiz Records
     const quizRecord = useQuery({
         queryKey: ['studentQuizzes', studentId],
         queryFn: () => getQuizes(studentId),
@@ -28,19 +24,17 @@ export default function QuizzesPage() {
         }
     })
 
-    const studentQuizRec = quizRecord.data?.quizzes
-    const userPermissions = quizRecord.data?.permissions
-
-    const updateQuizScoreMutation = useMutation({
-        mutationFn: updateQuizScore,
-        onSuccess: () => {
+    const updateQuizScoreMutation = mutationUpdateScore({
+        ifSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['studentQuizzes', studentId]})
+            console.log(`Successfully sent a PATCH request.`)
+            setEditId(null);
+            setEditTo(defaultEdit)
         }
     })
 
-    const deleteQuizMutation = useMutation({
-        mutationFn: (quizId) => deleteQuiz(quizId),
-        onSuccess: () => {
+    const deleteQuizMutation = mutationDeleteQuiz({
+        ifSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['studentQuizzes', studentId]})
         }
     })
@@ -50,6 +44,13 @@ export default function QuizzesPage() {
     const [isEditing, setIsEditing] = useState(null);
     const [editTo, setEditTo] = useState(defaultEdit);
     const [editId, setEditId] = useState(null);
+
+    // Web Page View IF loading or error
+    if (quizRecord.isLoading) return <h2>Loading...</h2>
+    if (quizRecord.error) return <h2>{quizRecord.error.message}</h2>
+
+    const studentQuizRec = quizRecord.data?.quizzes
+    const userPermissions = quizRecord.data?.permissions
 
     function handleKeyUp(e, quizId) {
         if (e.key === "Escape") {
@@ -103,14 +104,7 @@ export default function QuizzesPage() {
         }
         console.log(staged)
         updateQuizScoreMutation.mutate(staged)
-        console.log(`Successfully sent a PATCH request.`)
-        setEditId(null);
-        setEditTo(defaultEdit)
     }
-
-    // Web Page View IF loading or error
-    if (quizRecord.isLoading) return <h2>Loading...</h2>
-    if (quizRecord.error) return <h2>{quizRecord.error.message}</h2>
 
     const quizData = studentQuizRec.filter( quiz => 
         quiz.quarter === Number(params.quarter) 

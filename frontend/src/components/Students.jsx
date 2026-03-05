@@ -1,26 +1,20 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Link, Navigate } from 'react-router-dom'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
-import { queryClient } from "../services/queryClient"
 import { capitalEveryWord } from "../services/helperFunctions"
-import { removeStudents } from '../services/studentsAPI'
 import { api } from "../services/axiosAPI"
+import { mutationRemoveStudents } from "../hooks/mutateFuncs"
 
 const attribs = ['last_name', 'first_name', 'id']
 
 export default function Students() {
     const {data: students, isLoading} = useQuery({
         queryKey: ['students'],
-        queryFn: () => api.get('/students').then(res => res.data)
+        queryFn: () => api.get('/students').then(res => res.data),
     });
     
-    const removeStudentsMutation = useMutation({
-        mutationFn: removeStudents,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['students'] })
-        }
-    })
+    const removeStudents = mutationRemoveStudents()
 
     const [isRemoving, setIsRemoving] = useState(false)
     const [attribIdx, setAttribIdx] = useState(0)
@@ -47,7 +41,7 @@ export default function Students() {
     function handlerRemoveStudent(student_id) {
         const student = students.find(student => student.id == student_id)
         const confirm = window.confirm(
-            `Remove ${student.last_name}, ${student.first_name} (G-${student.grade_lvl}) from database?`
+            `Removing ${student.last_name}, ${student.first_name} (G-${student.grade_lvl}) also removes all records including his/her quizzes. Confirm delete?`
         )
 
         if (!confirm) return

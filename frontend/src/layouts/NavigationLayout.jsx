@@ -1,19 +1,11 @@
 import { Link, Navigate } from 'react-router-dom'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { logoutUser, userHomeUrl } from "../services/studentsAPI"
 import { useAuth } from '../hooks/authQuery'
+import logoutCurrentUser from '../hooks/logoutUser'
 
 export default function NavigationLayout() {
-    const queryClient = useQueryClient()
     const { data: user, isLoading } = useAuth()
-
-    const logoutMutation = useMutation({
-        mutationFn: logoutUser,
-        onSuccess: () => {
-            queryClient.setQueryData(["auth", "me"], null)
-        }
-    })
+    const logoutMutation = logoutCurrentUser()
 
     if (isLoading) return <p>Loading...</p>
     if (!user) return <Navigate to={'/login'} />
@@ -36,48 +28,3 @@ export default function NavigationLayout() {
         </div>
     )
 }
-
-// const router = [
-//     {
-//         element: <AuthGuard />,
-//         children: [
-//             {
-//                 element: <RoleGuard allowed={["teacher", "admin"]} />,
-//                 children: [
-//                     {
-//                         element: <TeacherLayout />,
-//                         children: [
-//                             { path: "/", element: <HomePage /> },
-//                             { path: "/add_student", element: <AddStudent /> },
-//                             { path: "teacher/:id", element: <Students /> },
-//                         ]
-//                     }
-//                 ]
-//             },
-
-//             {
-//                 element: <RoleGuard allowed={["student"]} />,
-//                 children: [
-//                     {
-//                         element: <StudentLayout />,
-//                         children: [
-//                             {
-//                                 path: "student/:id",
-//                                 element: <StudentProfile />,
-//                                 children: [
-//                                     { path: "quizzes/:quarter/:subject", element: <QuizzesPage /> },
-//                                     { path: "records/:id", element: <RecordsLayout /> },
-//                                     { path: "projects/:id", element: <ProjectsViewLayout /> },
-//                                 ]
-//                             }
-//                         ]
-//                     }
-//                 ]
-//             }
-//         ]
-//     },
-
-//     { path: "/login", element: <LoginPage /> },
-//     { path: "/cookie-expired", element: <CookieExpired /> },
-//     { path: "*", element: <NotFoundPage /> },
-// ]

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 
 import { capitalEveryWord } from "../services/helperFunctions" 
 import { api } from "../services/axiosAPI"
-import { deleteUserAccMutation } from "../hooks/mutateFuncs"
+import { mutationDeleteUserAcc } from "../hooks/mutateFuncs"
 
 export default function TeachersTable() {
     const {data, isLoading} = useQuery({
@@ -13,7 +13,7 @@ export default function TeachersTable() {
         retry: false
     })
 
-    const deleteTeacherAccMutation = deleteUserAccMutation()
+    const deleteTeacherAccMutation = mutationDeleteUserAcc()
 
     const navigate = useNavigate()
 
@@ -38,7 +38,7 @@ export default function TeachersTable() {
         setEditDetails({value, colName, teacherId})
     }
 
-    function handleEscKey(event) {
+    function handleKeyUp(event) {
         if (event.key === "Escape") {
             setCoords(nullCoords)
             setIsEditing('')
@@ -93,7 +93,7 @@ export default function TeachersTable() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {teachers.map(teacher => <tr key={teacher.id} onKeyUp={e => handleEscKey(e)}>
+                                {teachers.map(teacher => <tr key={teacher.id} onKeyUp={e => handleKeyUp(e)}>
                                     <td>{(isEditing === 'delete') && <button 
                                                 title={`Delete ${teacher.first_name} ${teacher.last_name}`}
                                                 onClick={_ => {

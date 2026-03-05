@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { createStudentMutation } from "../hooks/mutateFuncs"
+import { mutationCreateStudent } from "../hooks/mutateFuncs"
 
 export default function AddStudent() {
     const defaultStudent = {first_name: 'First Name', last_name: 'Last Name', grade_lvl: 12}
@@ -10,7 +10,7 @@ export default function AddStudent() {
     const [error, setError] = useState('')
     const [message, setMessage] = useState('')
     
-    const createStudent = createStudentMutation({
+    const createStudent = mutationCreateStudent({
         ifSuccess: () => {
             setError('')
             setMessage(`Successfully added ${newStudent.last_name}, ${newStudent.first_name}`)

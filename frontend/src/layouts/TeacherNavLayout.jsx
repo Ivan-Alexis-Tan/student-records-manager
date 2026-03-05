@@ -6,7 +6,6 @@ import logoutCurrentUser from '../hooks/logoutUser'
 
 export default function TeacherNavLayout() {
     const { data: user } = useAuth()
-
     const logoutMutation = logoutCurrentUser()
 
     return (
