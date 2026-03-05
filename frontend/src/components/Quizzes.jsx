@@ -132,7 +132,7 @@ export default function QuizzesPage() {
             {/* New Quiz Record Creation */}
             {userPermissions.can_create && <div>
                 <Link to="add-new-quiz-record" title="Add new quiz record"><h3>+ New Quiz Record</h3></Link>
-                <Outlet />
+                <Outlet context={{ studentQuizRec, userPermissions }} />
             </div>}
             <br />
 

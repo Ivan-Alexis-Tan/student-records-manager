@@ -1,7 +1,6 @@
 import { useState } from "react"
-import { useParams, useLocation, Link, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, useOutletContext } from "react-router-dom"
 
-import { createQuizRecord } from "../services/studentsAPI"
 import { subjects } from "../services/helperFunctions"
 import { useAuth } from "../hooks/authQuery"
 import { mutationCreateQuiz } from "../hooks/mutateFuncs"
@@ -11,14 +10,9 @@ export default function AddQuizRecord() {
     const user = useAuth()
     const params = useParams()
     const navigate = useNavigate()
-    const { pathname } = useLocation()
+    const {studentQuizRec, userPermissions} = useOutletContext()
 
     const studentId = (user.role === "student") ? user.profile_id : params.id
-    
-    const quizRecord = queryClient.getQueryData(['studentQuizzes', studentId])
-    const studentQuizRec = quizRecord.data
-    const userPermissions = quizRecord.permissions
-
     const subjectSelection = subjects.sort()
 
     const [newQuizMessage, setNewQuizMessage] = useState('')
