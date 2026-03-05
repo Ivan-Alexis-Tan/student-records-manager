@@ -17,10 +17,7 @@ class User(BaseModel):
     hashed_password: Mapped[str] = mapped_column(String(255))
     role: Mapped[str] = mapped_column(String(50), default='user')
 
-    student_profile: Mapped["Student"] = relationship(
-        back_populates='user',
-        cascade="all, delete-orphan"
-    )
+    student_profile: Mapped["Student"] = relationship(back_populates='user')
     teacher_profile: Mapped["Teacher"] = relationship(
         back_populates='user',
         cascade="all, delete-orphan"
@@ -36,9 +33,11 @@ class Student(BaseModel):
     user_id: Mapped[str] = mapped_column(ForeignKey('users.id'), nullable=True)
     
     user: Mapped['User'] = relationship(back_populates='student_profile')
-    quizzes: Mapped[list['Quiz']] = relationship(back_populates='student')
+    quizzes: Mapped[list['Quiz']] = relationship(
+        back_populates='student',
+        cascade="all, delete-orphan"
+    )
     
-
 
 class Quiz(BaseModel):
     __tablename__ = 'quizzes'
@@ -51,8 +50,8 @@ class Quiz(BaseModel):
     quarter: Mapped[int]
     unit: Mapped[int] = mapped_column(nullable=True)
     topic: Mapped[str] = mapped_column(nullable=True)
-    
     student_id: Mapped[str] = mapped_column(ForeignKey('students.id'))
+    
     student: Mapped['Student'] = relationship(back_populates='quizzes')
 
 
