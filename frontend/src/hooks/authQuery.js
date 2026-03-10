@@ -8,7 +8,7 @@ export function useAuth() {
         queryFn: () => api.get('/auth/me').then(res => res.data),
 
         retry: false,
-        staleTime: 0,
+        staleTime: 1000 * 30,
         refetchOnWindowFocus: true,
         refetchOnReconnect: true,
         refetchOnMount: true,
