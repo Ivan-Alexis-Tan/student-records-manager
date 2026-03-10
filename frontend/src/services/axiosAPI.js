@@ -1,17 +1,29 @@
 import axios from "axios"
 
-import { queryClient } from "./queryClient";
-
-const baseUrl = "http://localhost:8000"
+let isLoggedIn = false
 
 export const api = axios.create({
-    baseURL: baseUrl,
+    baseURL: "http://localhost:8000",
     withCredentials: true,
 });
 
 api.interceptors.response.use(
-    (response) => response,
-    (error) => {
+    (response) => {
+        const checked = {
+            status: response.status === 200,
+            loggedIn: isLoggedIn === false,
+            method: response.config.method === 'get',
+            url: response.config.url === '/auth/me'
+        }
+
+        if (Object.values(checked).every(req => req === true)) {
+            isLoggedIn = true;
+            console.log(`User logged in`)
+        }
+
+        return response
+    },
+    async (error) => {
         const status = error.response?.status
         const errorDetail = error.response?.data.detail ?? null
         const configs = error.response.config
