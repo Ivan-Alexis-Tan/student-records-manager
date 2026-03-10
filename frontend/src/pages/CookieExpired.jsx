@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import { queryClient } from "../services/queryClient"
 
 export default function CookieExpired() {
     return (
@@ -7,7 +8,8 @@ export default function CookieExpired() {
             <p>Login again to access.</p>
 
             <Link className="session-cookie-expired__login-again" 
-                to={'/login'}
+                    to={'/login'}
+                    onClick={_ => queryClient.clear()}
                 >
                 <h2>Login</h2>
             </Link>
