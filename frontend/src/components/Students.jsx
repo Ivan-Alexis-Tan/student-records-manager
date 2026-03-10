@@ -9,7 +9,7 @@ import { mutationRemoveStudents } from "../hooks/mutateFuncs"
 const attribs = ['last_name', 'first_name', 'id']
 
 export default function Students() {
-    const {data: students, isLoading} = useQuery({
+    const {data: students, isLoading, error} = useQuery({
         queryKey: ['students'],
         queryFn: () => api.get('/students').then(res => res.data),
     });
@@ -36,7 +36,7 @@ export default function Students() {
     }, [attribIdx])
 
     if (isLoading) return <h1>Loading students' data...</h1>
-    if (!students) return <Navigate to={'/not-found'} replace />
+    if (!students || error) return <Navigate to={'/not-found'} replace />
 
     function handlerRemoveStudent(student_id) {
         const student = students.find(student => student.id == student_id)
