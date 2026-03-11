@@ -61,7 +61,6 @@ export default function CreateTeacherAccountPage() {
             return null
         }
 
-        console.log(newAccDetails)
         createTeacherAccMutation.mutate(newAccDetails)
     }
 

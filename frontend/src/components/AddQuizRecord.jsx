@@ -53,8 +53,6 @@ export default function AddQuizRecord() {
             && q.subject === newQuiz.subject
             && q.quiz_num === newQuiz.quiz_num
         )
-        console.log(`newQuiz =`, newQuiz)
-        console.log(`alreadyExists =`, alreadyExists.length >= 1, alreadyExists)
         
         if (newQuiz.quiz_num <= 0) {
             setNewQuizMessage('ERROR: Quiz number must be greater or equal to 1.')
@@ -145,10 +143,7 @@ export default function AddQuizRecord() {
             </form>
 
             <button title="Save"
-                    onClick={_ => {
-                        saveNewQuiz()
-                        console.log('saving...')
-                    }}
+                    onClick={_ => saveNewQuiz()}
                     >💾</button>
                 <button title="Cancel" onClick={_ => {
                     navigate(-1)

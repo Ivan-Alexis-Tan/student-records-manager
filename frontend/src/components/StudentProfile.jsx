@@ -7,7 +7,6 @@ import {
 } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
-import { queryClient } from '../services/queryClient'
 import { findStudent, getStudentSelfDetails } from '../services/studentsAPI'
 import { useAuth } from '../hooks/authQuery'
 
@@ -33,15 +32,6 @@ export default function StudentProfile() {
     if (!studentData) return <Navigate to={'/not-found'} replace />
     
     const profileHeadUrl = isStudent ? 'student' : 'student-profile'
-
-    function test() {
-        const test = queryClient.getQueryData(["auth", "me"])
-        console.log(`test =`, test)
-        console.log(`useId=${user.id} | ${id}`)
-        console.log(`pathname =`, pathname)
-        console.log(`prevUrl =`, `/${profileHeadUrl}/${id}`)
-        console.log("==================")
-    }
 
     return (
         <div className='student-profile'>

@@ -2,11 +2,6 @@ import UsersTable from "../components/UsersTable"
 import TeachersTable from "../components/TeachersTable"
 
 export default function AdminPage() {
-    
-    function test() {
-        console.log(teachers)
-    }
-    
     return (
         <div>
             <h1>Admin</h1>

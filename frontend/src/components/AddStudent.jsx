@@ -32,18 +32,6 @@ export default function AddStudent() {
         createStudent.mutate(newStudent)
     }
 
-    function test() {
-        console.log({...newStudent, id: crypto.randomUUID()})
-        const checked = [
-            newStudent.first_name === defaultStudent.first_name,
-            newStudent.last_name === defaultStudent.last_name,
-            newStudent.grade_lvl === defaultStudent.grade_lvl
-        ]
-        console.log(checked)
-        console.log(`checking =`, checked.every(check => check === true))
-        console.log(capitalizeStr('all things'))
-    }
-
     return (
         <div>
             <h1>Add Student</h1>

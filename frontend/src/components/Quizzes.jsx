@@ -27,7 +27,6 @@ export default function QuizzesPage() {
     const updateQuizScoreMutation = mutationUpdateScore({
         ifSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['studentQuizzes', studentId]})
-            console.log(`Successfully sent a PATCH request.`)
             setEditId(null);
             setEditTo(defaultEdit)
         }
@@ -64,12 +63,10 @@ export default function QuizzesPage() {
 
     function handleDelete(quizId) {
         const quizDelObj = quizData.find(q => q.id === quizId)
-        console.log(`quizDelObj =`, quizDelObj)
         const confirm = window.confirm(`Confirm delete quiz "${quizDelObj.subject} Quarter ${quizDelObj.quarter} Quiz ${quizDelObj.quiz_num}"?`)
         if (!confirm) return null;
 
         deleteQuizMutation.mutate(quizDelObj.id)
-        console.log(`confirm delete =`, confirm)
     }
 
     function handleSaveEdit(qzId) {
@@ -102,7 +99,6 @@ export default function QuizzesPage() {
             setEditTo(defaultEdit)
             return null
         }
-        console.log(staged)
         updateQuizScoreMutation.mutate(staged)
     }
 
@@ -110,22 +106,6 @@ export default function QuizzesPage() {
         quiz.quarter === Number(params.quarter) 
             && quiz.subject === params.subject
     ) ?? []
-
-    const quizNumbs = quizData.reduce((acc, quiz) => {
-        acc.push([quiz.quiz_num, quiz.id])
-        return acc
-    }, [])
-
-    function test() {
-        console.log(`params =`, params)
-        // console.log(`data =`, data)
-        console.log(`quizzes =`, quizData)
-        console.log(user)
-        console.log(studentQuizRec)
-        console.log(quizData)
-        console.log(userPermissions)
-        console.log('=================')
-    }
 
     return (
         <div>

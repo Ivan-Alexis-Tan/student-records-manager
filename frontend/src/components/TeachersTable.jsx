@@ -43,10 +43,6 @@ export default function TeachersTable() {
             setCoords(nullCoords)
             setIsEditing('')
         }
-        
-        if (event.key === "Enter") {
-            console.log(event.key)
-        }
     }
 
     return (

@@ -84,13 +84,6 @@ export default function CreateStudentAccountPage() {
         createAccMutation.mutate(newAccDetails)
     }
 
-    function test() {
-        const curr_user = queryClient.getQueryData(["auth", "me"])
-        console.log(id)
-        console.log(curr_user)
-        console.log(rolesAllowed.some(allowed => allowed == curr_user.role))
-    }
-
     return (
         <div>
             <h1>Create Student Account</h1>
@@ -132,7 +125,6 @@ export default function CreateStudentAccountPage() {
                 <br />
             </form>
             <button onClick={handleCreateAccount}>Create Account</button>
-            <button onClick={test}>test</button>
         </div>
     )
 }
