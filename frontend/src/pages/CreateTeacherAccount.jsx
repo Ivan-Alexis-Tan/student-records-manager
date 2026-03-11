@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react"
-import { useMutation } from "@tanstack/react-query"
 
 import { capitalEveryWord, subjects } from "../services/helperFunctions"
-import { createTeacherAccount } from "../services/studentsAPI"
 import { mutationCreateTeacherAcc } from "../hooks/mutateFuncs"
 
 export default function CreateTeacherAccountPage() {

@@ -5,7 +5,7 @@ import {
     Navigate,
     useLocation,
 } from 'react-router-dom'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
 import { queryClient } from '../services/queryClient'
 import { findStudent, getStudentSelfDetails } from '../services/studentsAPI'

@@ -1,9 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
 
 import { useAuth } from '../hooks/authQuery'
-import { hasPermision } from '../services/helperFunctions'
 
 export default function HomePage() {
     const rolesAllowed = ['teacher', 'admin']

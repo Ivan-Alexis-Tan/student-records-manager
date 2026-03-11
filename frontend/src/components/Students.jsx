@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query'
 
 import SearchData from "./SearchData"
 
-import { capitalEveryWord } from "../services/helperFunctions"
 import { api } from "../services/axiosAPI"
 import { mutationRemoveStudents } from "../hooks/mutateFuncs"
 
