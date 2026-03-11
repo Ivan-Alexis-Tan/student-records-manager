@@ -1,6 +1,8 @@
-import { useState, useMemo, useEffect } from "react"
-import { Link, Navigate } from 'react-router-dom'
+import { useState, useEffect } from "react"
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+
+import SearchData from "./SearchData"
 
 import { capitalEveryWord } from "../services/helperFunctions"
 import { api } from "../services/axiosAPI"
@@ -13,27 +15,17 @@ export default function Students() {
         queryKey: ['students'],
         queryFn: () => api.get('/students').then(res => res.data),
     });
-    
+    const navigate = useNavigate()
     const removeStudents = mutationRemoveStudents()
 
     const [isRemoving, setIsRemoving] = useState(false)
-    const [attribIdx, setAttribIdx] = useState(0)
-    const [searchAttrib, setSearchAttrib] = useState(attribs[attribIdx])
-    const [searchVal, setSearchVal] = useState('')
-
-    const searchedStudent = useMemo( _ => {
-        if (!students) return null;
-        if (!searchVal) return null;
-        
-        return students.reduce((acc, student) => {
-            if (`${student[searchAttrib]}`.startsWith(searchVal)) acc.push(student);
-            return acc;
-        }, [])
-    }, [students, searchVal])
+    const [searchedStudent, setSearchedStudent] = useState({})
 
     useEffect(() => {
-        setSearchAttrib(attribs[attribIdx % attribs.length])
-    }, [attribIdx])
+        if (!searchedStudent.id) return;
+
+        navigate(`/student-profile/${searchedStudent.id}`, {replace: true})
+    }, [searchedStudent])
 
     if (isLoading) return <h1>Loading students' data...</h1>
     if (!students || error) return <Navigate to={'/not-found'} replace />
@@ -54,20 +46,7 @@ export default function Students() {
             
             {/* Student Search Bar and Buttons */}
             <div className="students-page__search-and-buttons">
-                <form>
-                    <label onClick={_ => setAttribIdx(prev => prev + 1)}
-                        title="Click to toggle search."
-                    >Search: </label>
-                    <input type="text" 
-                        title={`Search student`}
-                        value={searchVal} 
-                        onChange={e => setSearchVal(capitalEveryWord(e.target.value))} 
-                        placeholder={capitalEveryWord(searchAttrib, '_')}
-                        onKeyUp={e => {
-                            if (e.key === 'Escape') setSearchVal('')
-                        }}
-                    />
-                </form>
+                <SearchData setStateFn={setSearchedStudent} data={students} />
                 
                 <div>
                     <Link to={'/add_student'}><button title="Add student">➕</button></Link>
@@ -83,16 +62,6 @@ export default function Students() {
                     }
                 </div>
             </div>
-            
-            {/* Search Result */}
-            {(searchedStudent) && <ul>{
-                    searchedStudent.map(student => <li key={student.id}>
-                        <Link to={`/student-profile/${student.id}`}>
-                            (G{student.grade_lvl}) {student.last_name} {student.first_name}
-                        </Link>
-                    </li>)
-                }</ul>
-            }
             
             {/* List of Students Table */}
             {(students?.length >= 1)
