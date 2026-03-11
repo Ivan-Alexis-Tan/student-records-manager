@@ -3,7 +3,7 @@ import { capitalEveryWord } from "../services/helperFunctions"
 
 const attribs = ["last_name", "first_name", "id"]
 
-export default function SearchStudent({ 
+export default function SearchData({ 
     setStateFn = () => {}, 
     data = [],
     searchLabel = 'Search: ',

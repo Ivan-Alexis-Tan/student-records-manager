@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { mutationCreateStudentAcc } from "../hooks/mutateFuncs"
 import { api } from "../services/axiosAPI"
 import { useAuth } from "../hooks/authQuery"
-import SearchStudent from "../components/SearchStudent"
+import SearchData from "../components/SearchData"
 
 const rolesAllowed = ['teacher', 'admin']
 
@@ -100,7 +100,7 @@ export default function CreateStudentAccountPage() {
                 if (e.key !== 'Enter') return null;
                 handleCreateAccount()
             }}>
-                {!id && <SearchStudent setStateFn={setSelected} data={students ?? []} searchLabel="Create for: " />}
+                {!id && <SearchData setStateFn={setSelected} data={students ?? []} searchLabel="Create for: " />}
                 <br />
 
                 <input type="text"
