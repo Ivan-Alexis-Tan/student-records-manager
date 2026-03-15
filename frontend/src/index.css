@@ -105,13 +105,47 @@ table  td {
   align-items: center;
 }
 
+/* Login and Sign Layout */
+.login-signup-page {
+  display: flex;
+}
+
+.login-signup-page a {
+  padding: 0px .5em;
+}
+
+.login-signup-page a.active {
+  color: hsl(0, 0%, 100%);
+  background-color: hsl(140, 100%, 32%);
+  border-radius: 30px;
+}
+
+/* Sign Up Page */
+.signup-request-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid hsl(0, 0%, 100%);
+  border-radius: 20px;
+  margin: 3em;
+}
+
+.signup-request-page button {
+  margin: 1em;
+}
+
+.signup-request-page__role:hover {
+  color: hsl(108, 100%, 50%);
+}
+
 /* Login Page */
 .login__login-request-form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid white;
+  border: 1px solid hsl(0, 0%, 100%);
   border-radius: 20px;
   margin: 3em;
 }
@@ -121,10 +155,16 @@ table  td {
   flex-direction: column;
 }
 
+.regis-form.center {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
 /* Logout */
 .nav__logout:hover {
   text-decoration: underline;
-  color: hsl(155, 100%, 42%);
+  color: hsl(108, 100%, 50%);
 }
 
 /* List of Students Page */

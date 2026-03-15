@@ -42,36 +42,33 @@ export default function LoginPage() {
     }
 
     return (
-        <div>
-            <h2>Login</h2>
-                <div className='login__login-request-form'>
-                    <h2 
-                        onClick={_ => setLoginAs(prev => (prev === 'teacher') ? "student" : "teacher")}
-                        >{capitalEveryWord(loginAs)}
-                    </h2>
-                    {message && <p style={{color: 'hsl(0, 100%, 69%)'}}><strong>{message}</strong></p>}
-                    
-                    <form onSubmit={e => {
-                        e.preventDefault();
-                        handleSubmit()
-                    }}>
-                        <input type="text"
-                            placeholder={`Email`}
-                            value={loginRequest.email}
-                            onChange={e => setLoginRequest(prev => ({...prev, email: e.target.value}))}
-                        />
-                        <br />
+        <div className='login__login-request-form'>
+            <h2 
+                onClick={_ => setLoginAs(prev => (prev === 'teacher') ? "student" : "teacher")}
+                >{capitalEveryWord(loginAs)}
+            </h2>
+            {message && <p style={{color: 'hsl(0, 100%, 69%)'}}><strong>{message}</strong></p>}
+            
+            <form onSubmit={e => {
+                e.preventDefault();
+                handleSubmit()
+            }}>
+                <input type="text"
+                    placeholder={`Email`}
+                    value={loginRequest.email}
+                    onChange={e => setLoginRequest(prev => ({...prev, email: e.target.value}))}
+                />
+                <br />
 
-                        <input type="password"
-                            placeholder={`Password`}
-                            value={loginRequest.password}
-                            onChange={e => setLoginRequest(prev => ({...prev, password: e.target.value}))}
-                        />
-                        <button type='submit'>Submit</button>
-                    </form>
-                    
-                    <p>Forgot password?</p>
-                </div>
+                <input type="password"
+                    placeholder={`Password`}
+                    value={loginRequest.password}
+                    onChange={e => setLoginRequest(prev => ({...prev, password: e.target.value}))}
+                />
+                <button type='submit'>Submit</button>
+            </form>
+            
+            <p>Forgot password?</p>
         </div>
     )
 }

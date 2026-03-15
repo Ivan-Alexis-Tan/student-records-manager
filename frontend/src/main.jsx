@@ -7,6 +7,9 @@ import { QueryClientProvider } from '@tanstack/react-query'
 // Styles
 import './index.css'
 
+// Query Client
+import { queryClient } from './services/queryClient'
+
 // Layouts
 import QuizzesViewLayout from './layouts/QuizzesViewLayout'
 import RecordsLayout from './layouts/RecordsLayout'
@@ -14,15 +17,11 @@ import ProjectsViewLayout from './layouts/ProjectsViewLayout'
 import TeacherLayout from './layouts/TeacherLayout'
 import StudentLayout from './layouts/StudentLayout'
 import AdminLayout from './layouts/AdminLayout'
-
-import { queryClient } from './services/queryClient'
+import SignUpLoginLayout from './layouts/SignUpLoginLayout'
 
 // Auth
 import ProtectedRoute from './auth/ProtectedRoute'
 import RoleGuard from './auth/RoleGuard'
-
-// Pages
-import NotFoundPage from './pages/NotFound'
 
 // Components
 import Students from './components/Students'
@@ -38,6 +37,8 @@ import CookieExpired from './pages/CookieExpired'
 import AdminPage from './pages/AdminPage'
 import CreateStudentAccountPage from './pages/CreateStudentAccount'
 import CreateTeacherAccountPage from './pages/CreateTeacherAccount'
+import NotFoundPage from './pages/NotFound'
+import SignUpPage from './pages/SignUp'
 
 const router = createBrowserRouter([
   {
@@ -178,8 +179,17 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/login",
-    element: <LoginPage />
+    element: <SignUpLoginLayout />,
+    children: [
+      {
+        path: "/login",
+        element: <LoginPage />
+      },
+      {
+        path: "/signup",
+        element: <SignUpPage />
+      },
+    ]
   },
 
   {
