@@ -33,6 +33,11 @@ export async function getStudentSelfDetails() {
     return api.get('/me/students').then(res => res.data)
 }
 
+// Signup
+export async function getSignupCheck() {
+    return api.get(`/signup`)
+}
+
 // Students
 export async function createStudent(student_info) {
     return api.post('/students', {...student_info})

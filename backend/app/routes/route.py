@@ -242,3 +242,14 @@ def remove_user(id: str, db: db_dependency, current_user: user_dependency):
 
     db.delete(user)
     db.commit()
+
+
+@router.get('/signup')
+def get_signup_check(db: db_dependency):
+    students = db.query(models.Student).all()
+    users = db.query(models.User).all()
+
+    return {
+        'student_ids': [student.id for student in students],
+        "user_emails": [user.email for user in users]
+    }
