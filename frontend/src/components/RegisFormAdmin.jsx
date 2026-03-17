@@ -1,47 +1,91 @@
 import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod";
 
-export default function RegisFormAdmin({ setFn = () => {}, centerForm = false}) {
-    const signUpDefault = {
-        username: '',
-        email: "",
-        password: '',
-        confirmPass: "",
+import { schemaUserForm } from "../schemas/schemas"
+import { capitalEveryWord } from "../services/helperFunctions";
+
+const configsParams = {
+    setFn: () => {}, 
+    centerForm: false,
+    emailsData: [''],
+}
+
+export default function RegisFormAdmin({ configs = configsParams }) {
+    const { 
+        register, 
+        handleSubmit,
+        formState: { errors }, 
+    } = useForm({
+        resolver: zodResolver(schemaUserForm)
+    });
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
+    const breakAttrib = configs.centerForm ? null : <br/>
+
+    function onSubmit(data) {
+        if (!configs.emailsData) {
+            console.error("Required to pass an array of emails data on 'configs.emailsData'.")
+            return
+        }
+
+        if (data.password !== confirmPassword) {
+            setErrorMessage('Confirmed password does not match.')
+            return
+        }
+
+        if (configs.emailsData.includes(data.email)) {
+            setErrorMessage('Email already taken.')
+            return
+        }
+
+        configs.setFn(data)
+        setErrorMessage('')
     }
 
-    const [regisDetails, setRegisDetails] = useState(signUpDefault)
-    const centerAttrib = centerForm ? null : <br/>
+    const errorFields = Object.keys(errors)
+    const showErrorMessage = (errorFields.length == 0) && errorMessage
 
     return (
-        <div className={centerForm ? 'regis-form center' : "regis-form"}>
-            <input placeholder="Username"
-                type="text" 
-                value={regisDetails.username}
-                onChange={e => setRegisDetails(prev => ({...prev, username: e.target.value}))}
-            />
-            {centerAttrib}
+        <div>
+            {/* Zod Error Message */}
+            {(errorFields.length !== 0) && (
+                <div style={errorMsgStyle}>
+                    <p><strong>Invalid {capitalEveryWord(errorFields[0], '_')}</strong></p>
+                    <p>{errors[errorFields[0]]?.message}</p>
+                </div>
+            )}
 
-            <input placeholder="Email"
-                type="text" 
-                value={regisDetails.email}
-                onChange={e => setRegisDetails(prev => ({...prev, email: e.target.value}))}
-            />
-            {centerAttrib}
+            {/* Registration Form */}
+            <form className={configs.centerForm ? 'regis-form center' : "regis-form"}
+                onSubmit={ handleSubmit(onSubmit) }
+            >
+                {showErrorMessage && <p style={errorMsgStyle}>{errorMessage}</p>}
 
-            <input placeholder="Password"
-                type="password" 
-                value={regisDetails.password}
-                onChange={e => setRegisDetails(prev => ({...prev, password: e.target.value}))}
-            />
-            {centerAttrib}
+                <input placeholder="Username" type="text" {...register('username')} />
+                {breakAttrib}
 
-            <input placeholder="Confirm Password"
-                type="password" 
-                value={regisDetails.confirmPass}
-                onChange={e => setRegisDetails(prev => ({...prev, confirmPass: e.target.value}))}
-            />
-            {centerAttrib}
+                <input placeholder="Email" type="email" {...register('email')} />
+                {breakAttrib}
 
-            <button onClick={_ => setFn(regisDetails)}>Submit</button>    
+                <input placeholder="Password" type="password" {...register('password')} />
+                {breakAttrib}
+
+                <input placeholder="Confirm Password"
+                    type="password" 
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                />
+                {breakAttrib}
+
+                <button type="submit">Submit</button>
+            </form>    
         </div>
     )
+}
+
+const errorMsgStyle = {
+    textAlign: "center",
+    color: 'hsl(9, 100%, 69%)',
 }

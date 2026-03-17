@@ -1,56 +1,126 @@
 import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 
-const configsDefaults = {
+import { schemaTeacherForm } from "../schemas/schemas"
+import { capitalEveryWord } from "../services/helperFunctions";
+import { subjects } from "../services/helperFunctions";
+
+const configsDefault = {
+    setFn: () => {},
     centerForm: false,
-    centerSubmit: false,
+    emailsData: [''],
 }
 
-export default function RegisFormTeacher({ setFn = () => {}, configs = configsDefaults}) {
-    const signUpDefault = {
-        username: '',
-        email: "",
-        password: '',
-        confirmPass: "",
-    }
+export default function RegisFormTeacher({ configs = configsDefault }) {
+    const { 
+        register, 
+        handleSubmit, 
+        formState: { errors },
+        getValues,
+        setValue,
+    } = useForm({
+        resolver: zodResolver(schemaTeacherForm),
+        defaultValues: { role: 'teacher' },
+    });
 
-    const [regisDetails, setRegisDetails] = useState(signUpDefault)
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
     const breakAttrib = configs.centerForm ? null : <br/>
 
+    function handleAutoFill() {
+        const { first_name, last_name } = getValues()
+
+        if (first_name && last_name) {
+            const generated = `${capitalEveryWord(first_name)} ${capitalEveryWord(last_name)}`
+            setValue('username', generated)
+        }
+    }
+
+    function handleOnSubmit(data) {
+        if (!configs.emailsData) {
+            console.error("Required to pass an array of emails data on 'configs.emailsData'.")
+            return
+        }
+
+        if (data.password !== confirmPassword) {
+            setErrorMessage('Confirm password does not match.')
+            return
+        }
+
+        if (configs.emailsData.includes(data.email)) {
+            setErrorMessage('Email already taken.')
+            return
+        }
+        
+        configs.setFn({
+            ...data, 
+            first_name: capitalEveryWord(data.first_name),
+            last_name: capitalEveryWord(data.last_name),
+        })
+        setErrorMessage('')
+    }
+
+    const errorField = Object.keys(errors)
+    const showConfirmPwError = (errorField.length == 0) && errorMessage 
+
     return (
-        <div className={configs.centerForm ? 'regis-form center' : "regis-form"}>
-            <input placeholder="Username"
-                type="text" 
-                value={regisDetails.username}
-                onChange={e => setRegisDetails(prev => ({...prev, username: e.target.value}))}
-            />
-            {breakAttrib}
+        <div>
+            {/* Zod Error Message */}
+            {(errorField.length !== 0) && (
+                <div style={errorMsgStyle}>
+                    <p><strong>Invalid {capitalEveryWord(errorField[0], '_')}</strong></p>
+                    <p>{errors[errorField[0]]?.message}</p>
+                </div>
+            )}
+            
+            {/* Registration Form */}
+            <form className={configs.centerForm ? 'regis-form center' : "regis-form"}
+                onSubmit={ handleSubmit(handleOnSubmit) }
+            >   
+                {showConfirmPwError && <p style={errorMsgStyle}>{errorMessage}</p>}
 
-            <input placeholder="Email"
-                type="text" 
-                value={regisDetails.email}
-                onChange={e => setRegisDetails(prev => ({...prev, email: e.target.value}))}
-            />
-            {breakAttrib}
+                <input placeholder="First Name" type="text" {...register('first_name')} />
+                {breakAttrib}
 
-            <input placeholder="Password"
-                type="password" 
-                value={regisDetails.password}
-                onChange={e => setRegisDetails(prev => ({...prev, password: e.target.value}))}
-            />
-            {breakAttrib}
+                <input placeholder="Last Name" type="text" {...register('last_name')} />
+                {breakAttrib}
 
-            <input placeholder="Confirm Password"
-                type="password" 
-                value={regisDetails.confirmPass}
-                onChange={e => setRegisDetails(prev => ({...prev, confirmPass: e.target.value}))}
-            />
-            {breakAttrib}
+                <div>
+                    <label>Field Specialty: </label>
+                    <select {...register("field_specialty")} >
+                        <option value={''}>Select Subject</option>
+                        {subjects.map(subj => <option key={subj} value={subj}>{subj}</option>)}
+                    </select>
+                </div>
+                {breakAttrib}
 
-            <button onClick={_ => setFn(regisDetails)}>Submit</button>    
+                <div>
+                    <input placeholder="Username" type="text" {...register('username')} />
+                    <button onClick={handleAutoFill} type="button">Auto-fill</button>
+                </div>
+                {breakAttrib}
+
+                <input placeholder="Email" type="email" {...register('email',)} />
+                {breakAttrib}
+
+                <input placeholder="Password" type="password" {...register('password')} />
+                {breakAttrib}
+
+                <input placeholder="Confirm Password" 
+                    type="password"
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)} 
+                />
+                {breakAttrib}
+
+                <button type="submit">Submit</button>    
+            </form>
         </div>
     )
 }
 
-const centerStyle = {
-    color: 'hsl(0, 100%, 50%)',
+const errorMsgStyle = {
+    textAlign: "center",
+    color: 'hsl(9, 100%, 69%)',
 }

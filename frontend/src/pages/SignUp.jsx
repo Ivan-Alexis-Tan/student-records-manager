@@ -1,7 +1,12 @@
+// Dependency imports
 import { useEffect, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 
+// Services and Helpers
 import { capitalEveryWord } from "../services/helperFunctions"
+import { getSignupCheck } from "../services/studentsAPI"
 
+// Components
 import RegisFormStudent from "../components/RegisFormStudent"
 import RegisFormTeacher from "../components/RegisFormTeacher"
 import RegisFormAdmin from "../components/RegisFormAdmin"
@@ -9,31 +14,58 @@ import RegisFormAdmin from "../components/RegisFormAdmin"
 const roles = ['student', 'teacher', 'admin']
 
 export default function SignUpPage() {
+    const {data: signupCheck, isLoading} = useQuery({
+        queryKey: ['signupCheck'],
+        queryFn: getSignupCheck,
+        select: (res) => res.data
+    })
+
     const [regisDetails, setRegisDetails] = useState(null)
     const [roleIdx, setRoleIdx] = useState(0)
     const [currentRole, setCurrentRole] = useState(roles[roleIdx])
 
+    // Role Indexer
     useEffect(() => {
         setCurrentRole(roles[roleIdx])
     }, [roleIdx])
 
+    // Signup Return
     useEffect(() => {
         if (regisDetails === null) return
 
         console.log(regisDetails)
     }, [regisDetails])
 
+    if (isLoading) return <h1>Loading...</h1>
+
+    const studentIds = signupCheck.student_ids
+    const userEmails = signupCheck.user_emails
+
+    // Form Components Rendering
     let form;
 
     switch (currentRole) {
         case 'student':
-            form = <RegisFormStudent setFn={setRegisDetails} centerForm={true} />
+            form = <RegisFormStudent configs={{ 
+                setFn: setRegisDetails, 
+                centerForm: true,
+                studentIds: studentIds,
+                emailsData: userEmails,
+            }} />
             break;
         case 'teacher':
-            form = <RegisFormTeacher setFn={setRegisDetails} configs={{ centerForm: true}} />
+            form = <RegisFormTeacher configs={{ 
+                setFn: setRegisDetails, 
+                centerForm: true,
+                emailsData: userEmails,
+            }} />
             break;
         case 'admin':
-            form = <RegisFormAdmin setFn={setRegisDetails} centerForm={true} />
+            form = <RegisFormAdmin configs={{
+                setFn: setRegisDetails,
+                centerForm: true,
+                emailsData: userEmails,
+            }} />
             break;
         default:
             break;
