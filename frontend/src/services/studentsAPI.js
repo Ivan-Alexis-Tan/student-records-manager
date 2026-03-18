@@ -46,6 +46,10 @@ export async function removeRegisRequest(requestId) {
     return api.delete(`/signup/request/${requestId}`)
 }
 
+export async function grantRegisRequest(requestId) {
+    return api.post(`/signup/request/${requestId}`)
+}
+
 // Students
 export async function createStudent(student_info) {
     return api.post('/students', {...student_info})

@@ -8,6 +8,7 @@ import {
     createTeacherAccount,
     deleteQuiz,
     deleteUserAccount,
+    grantRegisRequest,
     removeRegisRequest,
     removeStudents,
     updateQuizScore,
@@ -95,6 +96,15 @@ export function mutationCreateTeacherAcc({ ifSuccess = () => {} } = {}) {
 export function mutationRemoveRegisRequest({ ifSuccess = () => {} } = {}) {
     return useMutation({
         mutationFn: (requestId) => removeRegisRequest(requestId),
+        onSuccess: () => {
+            ifSuccess()
+        }
+    })
+}
+
+export function mutationGrantRegisRequest({ ifSuccess = () => {} } = {}) {
+    return useMutation({
+        mutationFn: (requestId) => grantRegisRequest(requestId),
         onSuccess: () => {
             ifSuccess()
         }
