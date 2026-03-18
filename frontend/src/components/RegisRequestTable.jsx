@@ -3,7 +3,8 @@ import { useState } from "react"
 
 import { queryClient } from "../services/queryClient"; 
 import { getRegisRequests } from "../services/studentsAPI"
-import { mutationRemoveRegisRequest } from "../hooks/mutateFuncs";
+import { mutationGrantRegisRequest, mutationRemoveRegisRequest } from "../hooks/mutateFuncs";
+import { capitalEveryWord } from "../services/helperFunctions";
 
 export default function RegistrationRequestTable() {
     const { data, isLoading } = useQuery({
@@ -18,19 +19,31 @@ export default function RegistrationRequestTable() {
     const [isGranting, setIsGranting] = useState(false)
     const [isRejecting, setIsRejecting] = useState(false)
 
+    const grantRegisRequestMutation = mutationGrantRegisRequest({
+        ifSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['regisRequests'] })
+        }
+    })
+
     const removeRegisRequestMutation = mutationRemoveRegisRequest({
         ifSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['regisRequests']})
+            queryClient.invalidateQueries({ queryKey: ['regisRequests'] })
         }
     })
 
     if (isLoading) return <h1>Loading requests...</h1>
 
     function handleGrant(requestObj) {
-        const grant = window.confirm(`Grant ${requestObj.username}'s requst?`)
-
+        let grant
+        if (requestObj.role === 'admin') {
+            grant = window.confirm(`Grant ${requestObj.username}'s request? He/she also has an authority to delete your account.`)
+        }
+        else {
+            grant = window.confirm(`Grant ${requestObj.username}'s request?`)
+        }
+        
         if (!grant) return null;
-        console.log(grant)
+        grantRegisRequestMutation.mutate(requestObj.id)
     }
 
     function handleReject(requestObj) {
@@ -76,7 +89,7 @@ export default function RegistrationRequestTable() {
                                         onClick={_ => handleReject(req)} 
                                         title="Reject request"
                                         >🗑️</button>
-                                    } {req.role}
+                                    } {capitalEveryWord(req.role)}
                                 </td>
 
                                 <td>{req.email}</td>
