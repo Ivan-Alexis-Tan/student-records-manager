@@ -19,6 +19,7 @@ export default function RegisFormStudent({ configs = configsDefault}) {
         formState: { errors },
     } = useForm({
         resolver: zodResolver(schemaStudentForm),
+        defaultValues: {role: 'student'},
     });
     const [confirmPassword, setConfirmPassword] = useState('')
     const [errorMessage, setErrorMessage] = useState('')

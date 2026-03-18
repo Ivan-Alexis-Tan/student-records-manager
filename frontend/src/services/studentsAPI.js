@@ -38,6 +38,10 @@ export async function getSignupCheck() {
     return api.get(`/signup`)
 }
 
+export async function createSignupRequest(payload) {
+    return api.post(`/signup/request`, payload)
+}
+
 // Students
 export async function createStudent(student_info) {
     return api.post('/students', {...student_info})

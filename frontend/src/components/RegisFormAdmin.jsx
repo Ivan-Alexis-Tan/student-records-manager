@@ -17,7 +17,8 @@ export default function RegisFormAdmin({ configs = configsParams }) {
         handleSubmit,
         formState: { errors }, 
     } = useForm({
-        resolver: zodResolver(schemaUserForm)
+        resolver: zodResolver(schemaUserForm),
+        defaultValues: {role: 'admin'},
     });
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
