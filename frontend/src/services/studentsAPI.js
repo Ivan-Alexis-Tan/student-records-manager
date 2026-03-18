@@ -42,6 +42,10 @@ export async function createSignupRequest(payload) {
     return api.post(`/signup/request`, payload)
 }
 
+export async function getRegisRequests() {
+    return api.get(`signup/request`)
+}
+
 // Students
 export async function createStudent(student_info) {
     return api.post('/students', {...student_info})

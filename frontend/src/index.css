@@ -208,3 +208,10 @@ table  td {
   align-items: center;
   gap: 1em;
 }
+
+/* Admin */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

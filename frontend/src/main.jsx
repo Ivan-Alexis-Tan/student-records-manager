@@ -29,6 +29,7 @@ import AddStudent from './components/AddStudent'
 import StudentProfile from './components/StudentProfile'
 import QuizzesPage from './components/Quizzes'
 import AddQuizRecord from './components/AddQuizRecord'
+import RegistrationRequestTable from './components/RegisRequestTable'
 
 // Pages
 import LoginPage from './pages/LoginPage'
@@ -168,6 +169,11 @@ const router = createBrowserRouter([
               {
                 path: 'create-teacher-account',
                 element: <CreateTeacherAccountPage />
+              },
+
+              {
+                path: 'registration-requests',
+                element: <RegistrationRequestTable />
               },
             ]
           },
