@@ -26,6 +26,7 @@ export default function SignUpPage() {
     // Role Indexer
     useEffect(() => {
         setCurrentRole(roles[roleIdx])
+        setMessage(messageDefault)
     }, [roleIdx])
 
     // Signup Return

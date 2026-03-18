@@ -59,3 +59,18 @@ def create_signup_request(payload: CreateSignupRequest, db: db_dependency):
     request = models.RegistrationRequest(**refined)
     db.add(request)
     db.commit()
+
+
+@signup_router.delete('/signup/request/{id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_signup_request(id: str, current_user: user_dependency, db: db_dependency):
+    if not current_user:
+        raise credential_exception
+    
+    if current_user.role != 'admin':
+        raise permission_exception
+    
+    request = db.get(models.RegistrationRequest, id)
+    db.delete(request)
+    db.commit()
+    
+    

@@ -8,6 +8,7 @@ import {
     createTeacherAccount,
     deleteQuiz,
     deleteUserAccount,
+    removeRegisRequest,
     removeStudents,
     updateQuizScore,
 } from "../services/studentsAPI";
@@ -84,6 +85,16 @@ export function mutationDeleteQuiz({ ifSuccess = () => {} } = {}) {
 export function mutationCreateTeacherAcc({ ifSuccess = () => {} } = {}) {
     return useMutation({
         mutationFn: (reqDetails) => createTeacherAccount(reqDetails),
+        onSuccess: () => {
+            ifSuccess()
+        }
+    })
+}
+
+// Signup Registration Requests
+export function mutationRemoveRegisRequest({ ifSuccess = () => {} } = {}) {
+    return useMutation({
+        mutationFn: (requestId) => removeRegisRequest(requestId),
         onSuccess: () => {
             ifSuccess()
         }
