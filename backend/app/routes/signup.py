@@ -57,6 +57,12 @@ def create_signup_request(payload: CreateSignupRequest, db: db_dependency):
             refined[key] = val
 
     request = models.RegistrationRequest(**refined)
+
+    if request.role == 'student':
+        student = db.get(models.Student, request.student_id)
+        request.first_name = student.first_name
+        request.last_name = student.last_name
+        
     db.add(request)
     db.commit()
 
