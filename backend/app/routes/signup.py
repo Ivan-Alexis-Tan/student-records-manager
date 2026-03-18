@@ -79,4 +79,70 @@ def delete_signup_request(id: str, current_user: user_dependency, db: db_depende
     db.delete(request)
     db.commit()
     
+
+@signup_router.post('/signup/request/{id}', status_code=status.HTTP_201_CREATED)
+def grant_signup_request(id: str, current_user: user_dependency, db: db_dependency):
+    if not current_user:
+        raise credential_exception
+    
+    if current_user.role != 'admin':
+        raise permission_exception
+    
+    request = db.get(models.RegistrationRequest, id)
+
+    if not request:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Request not found.'
+        )
+
+    new_user = models.User(
+        username=request.username,
+        email=request.email,
+        hashed_password=request.hashed_password,
+        role=request.role,
+    )
+    db.add(new_user)
+    db.flush()
+    
+    match request.role:
+        case "student":
+            student = db.get(models.Student, request.student_id)
+
+            if not student:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail='Student ID not found.'
+                )
+            
+            student.user_id = new_user.id
+            db.add(student)
+            db.delete(request)
+            db.commit()
+                
+        case "teacher":
+            teacher = models.Teacher(
+                first_name=request.first_name,
+                last_name=request.last_name,
+                field_specialty=request.field_specialty,
+                user_id=new_user.id,
+            )
+            db.add(teacher)
+            db.flush()
+
+            if teacher.user_id:
+                db.delete(request)
+                db.commit()
+
+        case "admin":
+            db.delete(request)
+            db.commit()
+        case _:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail='Unsupported role request.'
+            )
+        
+    
+
     
