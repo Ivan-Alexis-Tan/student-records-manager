@@ -9,7 +9,6 @@ import { subjects } from "../services/helperFunctions";
 const configsDefault = {
     setFn: () => {},
     centerForm: false,
-    emailsData: [''],
 }
 
 export default function RegisFormTeacher({ configs = configsDefault }) {
@@ -38,18 +37,8 @@ export default function RegisFormTeacher({ configs = configsDefault }) {
     }
 
     function handleOnSubmit(data) {
-        if (!configs.emailsData) {
-            console.error("Required to pass an array of emails data on 'configs.emailsData'.")
-            return
-        }
-
         if (data.password !== confirmPassword) {
             setErrorMessage('Confirm password does not match.')
-            return
-        }
-
-        if (configs.emailsData.includes(data.email)) {
-            setErrorMessage('Email already taken.')
             return
         }
         

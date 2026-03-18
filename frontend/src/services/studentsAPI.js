@@ -34,16 +34,16 @@ export async function getStudentSelfDetails() {
 }
 
 // Signup
-export async function getSignupCheck() {
-    return api.get(`/signup`)
-}
-
 export async function createSignupRequest(payload) {
     return api.post(`/signup/request`, payload)
 }
 
 export async function getRegisRequests() {
     return api.get(`signup/request`)
+}
+
+export async function removeRegisRequest(requestId) {
+    return api.delete(`/signup/request/${requestId}`)
 }
 
 // Students

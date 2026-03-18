@@ -11,17 +11,6 @@ import app.models.models as models
 
 signup_router = APIRouter(tags=['signup'])
 
-@signup_router.get('/signup')
-def get_signup_check(db: db_dependency):
-    students = db.query(models.Student).all()
-    users = db.query(models.User).all()
-
-    return {
-        'student_ids': [student.id for student in students],
-        "user_emails": [user.email for user in users]
-    }
-
-
 @signup_router.get('/signup/request', response_model=List[RegistrationRequestsResponse])
 def get_signup_requests(current_user: user_dependency, db: db_dependency):
     if not current_user:
@@ -41,6 +30,21 @@ def create_signup_request(payload: CreateSignupRequest, db: db_dependency):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Already sent a request."
+        )
+    
+    students_id = [student.id for student in db.query(models.Student.id).all()]
+    user_emails = [user.email for user in db.query(models.User.email).all()]
+
+    if (payload.role == "student") & (payload.student_id not in students_id):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="ID not found."
+        )
+    
+    if payload.email in user_emails:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Account already exists."
         )
     
     refined = {}

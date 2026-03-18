@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 
 // Services and Helpers
 import { capitalEveryWord } from "../services/helperFunctions"
-import { createSignupRequest, getSignupCheck } from "../services/studentsAPI"
+import { createSignupRequest } from "../services/studentsAPI"
 
 // Components
 import RegisFormStudent from "../components/RegisFormStudent"
@@ -18,12 +18,6 @@ const messageDefault = {
 }
 
 export default function SignUpPage() {
-    const {data: signupCheck, isLoading} = useQuery({
-        queryKey: ['signupCheck'],
-        queryFn: getSignupCheck,
-        select: (res) => res.data
-    })
-
     const [regisDetails, setRegisDetails] = useState(null)
     const [roleIdx, setRoleIdx] = useState(0)
     const [currentRole, setCurrentRole] = useState(roles[roleIdx])
@@ -40,7 +34,7 @@ export default function SignUpPage() {
 
         const sendSignupRequest = async () => {
             try {
-                const res = await createSignupRequest(regisDetails)
+                await createSignupRequest(regisDetails)
                 setMessage({text: 'Registration request sent.', ok: true})
             }
             catch(error) {
@@ -53,11 +47,6 @@ export default function SignUpPage() {
         sendSignupRequest()
     }, [regisDetails])
 
-    if (isLoading) return <h1>Loading...</h1>
-
-    const studentIds = signupCheck?.student_ids ?? []
-    const userEmails = signupCheck?.user_emails ?? []
-
     // Form Components Rendering
     let form;
 
@@ -66,22 +55,18 @@ export default function SignUpPage() {
             form = <RegisFormStudent configs={{ 
                 setFn: setRegisDetails, 
                 centerForm: true,
-                studentIds: studentIds,
-                emailsData: userEmails,
             }} />
             break;
         case 'teacher':
             form = <RegisFormTeacher configs={{ 
                 setFn: setRegisDetails, 
                 centerForm: true,
-                emailsData: userEmails,
             }} />
             break;
         case 'admin':
             form = <RegisFormAdmin configs={{
                 setFn: setRegisDetails,
                 centerForm: true,
-                emailsData: userEmails,
             }} />
             break;
         default:

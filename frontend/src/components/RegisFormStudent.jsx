@@ -7,8 +7,6 @@ import { capitalEveryWord } from "../services/helperFunctions"
 
 const configsDefault = {
     setFn: () => {}, 
-    studentIds: [''],
-    emailsData: [''], 
     centerForm: false,
 }
 
@@ -26,28 +24,8 @@ export default function RegisFormStudent({ configs = configsDefault}) {
     const breakAttrib = configs.centerForm ? null : <br/>
 
     function onSubmit(data) {
-        if (!configs.studentIds) {
-            console.error("Required to pass an array of student ID data on 'configs.studentIds'.")
-            return
-        }
-
-        if (!configs.emailsData) {
-            console.error("Required to pass an array of emails data on 'configs.emailsData'.")
-            return
-        }
-
         if (data.password !== confirmPassword) {
             setErrorMessage('Confirmed password does not match.')
-            return
-        }
-
-        if (!configs.studentIds.includes(data.student_id)) {
-            setErrorMessage('Student ID does not exists.')
-            return
-        }
-
-        if (configs.emailsData.includes(data.email)) {
-            setErrorMessage('Email already taken.')
             return
         }
 
