@@ -65,3 +65,16 @@ class Teacher(BaseModel):
 
     user: Mapped["User"] = relationship(back_populates='teacher_profile')
 
+
+class RegistrationRequest(BaseModel):
+    __tablename__ = "registration_requests"
+
+    role: Mapped[str]
+    username: Mapped[str]
+    email: Mapped[str]
+    hashed_password: Mapped[str]
+    student_id: Mapped[str] = mapped_column(nullable=True)
+    first_name: Mapped[str] = mapped_column(nullable=True)
+    last_name: Mapped[str] = mapped_column(nullable=True)
+    field_specialty: Mapped[str] = mapped_column(nullable=True)
+    
