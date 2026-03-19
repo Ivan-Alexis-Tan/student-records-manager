@@ -83,6 +83,8 @@ export function mutationDeleteQuiz({ ifSuccess = () => {} } = {}) {
     })
 }
 
+
+// Teacher
 export function mutationCreateTeacherAcc({ ifSuccess = () => {} } = {}) {
     return useMutation({
         mutationFn: (reqDetails) => createTeacherAccount(reqDetails),
@@ -91,6 +93,17 @@ export function mutationCreateTeacherAcc({ ifSuccess = () => {} } = {}) {
         }
     })
 }
+
+
+export function mutationDeleteTeacher({ ifSuccess = () => {} } = {}) {
+    return useMutation({
+        mutationFn: (teacherId) => removeTeacher(teacherId),
+        onSuccess: () => {
+            ifSuccess()
+        }
+    })
+}
+
 
 // Signup Registration Requests
 export function mutationRemoveRegisRequest({ ifSuccess = () => {} } = {}) {

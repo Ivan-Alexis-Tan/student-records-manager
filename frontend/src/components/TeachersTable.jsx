@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom"
 
 import { capitalEveryWord } from "../services/helperFunctions" 
 import { api } from "../services/axiosAPI"
-import { mutationDeleteUserAcc } from "../hooks/mutateFuncs"
+import { mutationDeleteTeacher } from "../hooks/mutateFuncs"
+import { queryClient } from "../services/queryClient"
 
 export default function TeachersTable() {
     const {data, isLoading} = useQuery({
@@ -13,7 +14,12 @@ export default function TeachersTable() {
         retry: false
     })
 
-    const deleteTeacherAccMutation = mutationDeleteUserAcc()
+    const deleteTeacherAccMutation = mutationDeleteTeacher({
+        ifSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['teachers'] })
+            queryClient.invalidateQueries({ queryKey: ['users'] })
+        }
+    })
 
     const navigate = useNavigate()
 

@@ -92,6 +92,10 @@ export async function createTeacherAccount(reqDetails) {
     return api.post(`/teachers`, reqDetails)
 }
 
+export async function removeTeacher(teacherId) {
+    return api.delete(`/teachers/${teacherId}`)
+}
+
 // Users
 export async function deleteUserAccount(id) {
     return api.delete(`/user/${id}`)

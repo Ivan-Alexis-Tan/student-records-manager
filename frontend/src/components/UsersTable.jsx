@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { capitalEveryWord } from "../services/helperFunctions";
 import { api } from "../services/axiosAPI";
 import { mutationDeleteUserAcc } from "../hooks/mutateFuncs";
+import { queryClient } from "../services/queryClient";
 
 
 export default function UsersTable() {
@@ -14,7 +15,15 @@ export default function UsersTable() {
         retry: false
     })
 
-    const delUserMutation = mutationDeleteUserAcc()
+    const delUserMutation = mutationDeleteUserAcc({
+        ifSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['users'] });
+            
+            if (queryClient.getQueryData(['teachers'])) {
+                queryClient.invalidateQueries(['teachers'])
+            };
+        },
+    })
 
     const [isEditing, setIsEditing] = useState('')
     const [coords, setCoords] = useState({rowId: '', col:''})
