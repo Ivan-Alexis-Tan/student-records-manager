@@ -11,6 +11,18 @@ import app.models.models as models
 
 signup_router = APIRouter(prefix="/signup", tags=['signup'])
 
+@signup_router.get('/admin', )
+def has_admin(db: db_dependency) -> bool:
+    users = db.query(models.User).all()
+
+    admins = []
+    for user in users:
+        if user.role == 'admin':
+            admins.append(user.id)
+
+    return True if len(admins) >= 1 else False
+
+
 @signup_router.get('/request', response_model=List[RegistrationRequestsResponse])
 def get_signup_requests(current_user: user_dependency, db: db_dependency):
     if not current_user:
