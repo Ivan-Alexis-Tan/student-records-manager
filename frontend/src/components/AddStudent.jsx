@@ -12,6 +12,7 @@ export default function AddStudent() {
     
     const createStudent = mutationCreateStudent({
         ifSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['students']});
             setError('')
             setMessage(`Successfully added ${newStudent.last_name}, ${newStudent.first_name}`)
             setNewStudent(defaultStudent)

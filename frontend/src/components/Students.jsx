@@ -15,7 +15,11 @@ export default function Students() {
         queryFn: () => api.get('/students').then(res => res.data),
     });
     const navigate = useNavigate()
-    const removeStudents = mutationRemoveStudents()
+    const removeStudents = mutationRemoveStudents({
+        ifSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['students']});
+        }
+    })
 
     const [isRemoving, setIsRemoving] = useState(false)
     const [searchedStudent, setSearchedStudent] = useState({})

@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
 
-import { queryClient } from "../services/queryClient";
 import { 
     createQuizRecord,
     createStudent,
@@ -11,6 +10,7 @@ import {
     grantRegisRequest,
     removeRegisRequest,
     removeStudents,
+    removeTeacher,
     updateQuizScore,
 } from "../services/studentsAPI";
 
@@ -19,7 +19,6 @@ export function mutationDeleteUserAcc({ ifSuccess = () => {} } = {}) {
     return useMutation({
         mutationFn: (userId) => deleteUserAccount(userId),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['users'] });
             ifSuccess()
         }
     })
@@ -30,7 +29,6 @@ export function mutationCreateStudent({ ifSuccess = () => {} } = {}) {
     return useMutation({
         mutationFn: createStudent,
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['students']});
             ifSuccess()
         },
     })
@@ -49,7 +47,6 @@ export function mutationRemoveStudents({ ifSuccess = () => {} } = {}) {
     return useMutation({
         mutationFn: removeStudents,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['students'] });
             ifSuccess()
         }
     })
