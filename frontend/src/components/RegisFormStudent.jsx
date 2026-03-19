@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -8,6 +8,8 @@ import { capitalEveryWord } from "../services/helperFunctions"
 const configsDefault = {
     setFn: () => {}, 
     centerForm: false,
+    centerErrMsg: false,
+    errrorStateFn: () => null,
 }
 
 export default function RegisFormStudent({ configs = configsDefault}) {
@@ -21,7 +23,9 @@ export default function RegisFormStudent({ configs = configsDefault}) {
     });
     const [confirmPassword, setConfirmPassword] = useState('')
     const [errorMessage, setErrorMessage] = useState('')
+
     const breakAttrib = configs.centerForm ? null : <br/>
+    const errorMsgStyle = configs.centerErrMsg ? centerErrMsgStyle : defaultErrMgsStyle
 
     function onSubmit(data) {
         if (data.password !== confirmPassword) {
@@ -35,6 +39,14 @@ export default function RegisFormStudent({ configs = configsDefault}) {
 
     const errorFields = Object.keys(errors)
     const showErrorMessage = (errorFields.length == 0) && errorMessage;
+
+    // Error message updater
+    useEffect(() => {
+        if (!configs.errrorStateFn) return
+
+        if (errorFields.length >= 1) configs.errrorStateFn(errors);
+        if (errorMessage) configs.errrorStateFn(errorMessage);
+    }, [errors, errorMessage, errorFields])
 
     return (
         <div>
@@ -77,7 +89,9 @@ export default function RegisFormStudent({ configs = configsDefault}) {
     )
 }
 
-const errorMsgStyle = {
+const centerErrMsgStyle = {
     textAlign: "center",
     color: 'hsl(9, 100%, 69%)',
 }
+
+const defaultErrMgsStyle = {color: 'hsl(9, 100%, 69%)'}
