@@ -10,10 +10,10 @@ from app.auth.dependencies import (
 )
 from app.db import db_dependency
 
-router = APIRouter()
+users_router = APIRouter()
 
 # API Endpoints
-@router.get("/users")
+@users_router.get("/users")
 def get_users(current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception
@@ -24,7 +24,7 @@ def get_users(current_user: user_dependency, db: db_dependency):
     return db.query(models.User).all()
 
 
-@router.delete('/user/{id}', status_code=status.HTTP_204_NO_CONTENT)
+@users_router.delete('/user/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def remove_user(id: str, db: db_dependency, current_user: user_dependency):
     if current_user.role != "admin":
         raise credential_exception
