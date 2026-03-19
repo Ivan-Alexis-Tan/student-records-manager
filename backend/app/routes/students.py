@@ -26,6 +26,33 @@ def get_students(current_user: user_dependency, db: db_dependency):
     return students
 
 
+@student_router.get('/{id}')
+def get_student_details(id: str, db: db_dependency, current_user: user_dependency):
+    if not current_user:
+        raise credential_exception
+    
+    if current_user.role not in {'teacher', 'admin'}:
+        raise credential_exception
+
+    return db.get(Student, id)
+
+
+@student_router.get("/{id}/quizzes")
+def get_student_quizzes(id: str, db: db_dependency, current_user: user_dependency):
+    if not current_user:
+        raise credential_exception
+
+    if current_user.role == "student":
+        id = current_user.student_profile.id
+    elif current_user.role not in {'teacher', 'admin'}:
+        raise permission_exception
+
+    return {
+        "data": db.query(Quiz).filter(Quiz.student_id == id).all(), 
+        "permissions": usual_permissions(current_user.role)
+    }
+
+
 @student_router.post('', status_code=status.HTTP_201_CREATED)
 def add_student(student: NewStudent, current_user: user_dependency, db: db_dependency):
     if not current_user:
@@ -57,30 +84,3 @@ def remove_student(id: str, db: db_dependency, current_user: user_dependency):
 
     db.delete(student)
     db.commit()
-
-
-@student_router.get('/{id}')
-def get_student_details(id: str, db: db_dependency, current_user: user_dependency):
-    if not current_user:
-        raise credential_exception
-    
-    if current_user.role not in {'teacher', 'admin'}:
-        raise credential_exception
-
-    return db.get(Student, id)
-
-
-@student_router.get("/{id}/quizzes")
-def get_student_quizzes(id: str, db: db_dependency, current_user: user_dependency):
-    if not current_user:
-        raise credential_exception
-
-    if current_user.role == "student":
-        id = current_user.student_profile.id
-    elif current_user.role not in {'teacher', 'admin'}:
-        raise permission_exception
-
-    return {
-        "data": db.query(Quiz).filter(Quiz.student_id == id).all(), 
-        "permissions": usual_permissions(current_user.role)
-    }

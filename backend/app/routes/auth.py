@@ -28,6 +28,30 @@ credential_exception = HTTPException(
     detail="Failed to authorize user."
 )
 
+@router.get("/me", response_model=UserResponse)
+def me(current_user: user_dependency, db: db_dependency):
+    if not current_user:
+        raise credential_exception
+    
+    is_student = db.query(Student).filter(Student.user_id == current_user.id).first()
+    is_teacher = db.query(Teacher).filter(Teacher.user_id == current_user.id).first()
+
+    for role in [is_student, is_teacher]:
+        if role:
+            user_profile_id = role.id
+            break
+        else:
+            user_profile_id = None
+    
+    return UserResponse(
+        id=current_user.id,
+        username=current_user.username,
+        email=current_user.email,
+        role=current_user.role,
+        profile_id=user_profile_id
+    )
+
+
 @router.post("/register", response_model=UserResponse, status_code=201)
 def register(payload: RegisterRequest, db: db_dependency):
     existing = get_user_by_username(db, payload.username)
@@ -83,29 +107,6 @@ async def login(
 
     return {"message": "Successfully logged-in."}
 
-
-@router.get("/me", response_model=UserResponse)
-def me(current_user: user_dependency, db: db_dependency):
-    if not current_user:
-        raise credential_exception
-    
-    is_student = db.query(Student).filter(Student.user_id == current_user.id).first()
-    is_teacher = db.query(Teacher).filter(Teacher.user_id == current_user.id).first()
-
-    for role in [is_student, is_teacher]:
-        if role:
-            user_profile_id = role.id
-            break
-        else:
-            user_profile_id = None
-    
-    return UserResponse(
-        id=current_user.id,
-        username=current_user.username,
-        email=current_user.email,
-        role=current_user.role,
-        profile_id=user_profile_id
-    )
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 def logout(respose: Response):

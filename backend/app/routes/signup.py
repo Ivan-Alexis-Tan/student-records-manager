@@ -65,19 +65,6 @@ def create_signup_request(payload: CreateSignupRequest, db: db_dependency):
         
     db.add(request)
     db.commit()
-
-
-@signup_router.delete('/request/{id}', status_code=status.HTTP_204_NO_CONTENT)
-def delete_signup_request(id: str, current_user: user_dependency, db: db_dependency):
-    if not current_user:
-        raise credential_exception
-    
-    if current_user.role != 'admin':
-        raise permission_exception
-    
-    request = db.get(models.RegistrationRequest, id)
-    db.delete(request)
-    db.commit()
     
 
 @signup_router.post('/request/{id}', status_code=status.HTTP_201_CREATED)
@@ -142,7 +129,16 @@ def grant_signup_request(id: str, current_user: user_dependency, db: db_dependen
                 status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail='Unsupported role request.'
             )
-        
-    
 
+
+@signup_router.delete('/request/{id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_signup_request(id: str, current_user: user_dependency, db: db_dependency):
+    if not current_user:
+        raise credential_exception
     
+    if current_user.role != 'admin':
+        raise permission_exception
+    
+    request = db.get(models.RegistrationRequest, id)
+    db.delete(request)
+    db.commit()
