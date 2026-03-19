@@ -11,9 +11,9 @@ from app.auth.dependencies import (
 from app.models.models import Student, Quiz
 from app.basemodels import NewStudent
 
-student_router = APIRouter(tags=['students'])
+student_router = APIRouter(prefix="/students", tags=['students'])
 
-@student_router.get('/students')
+@student_router.get('')
 def get_students(current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception
@@ -26,7 +26,7 @@ def get_students(current_user: user_dependency, db: db_dependency):
     return students
 
 
-@student_router.post('/students', status_code=status.HTTP_201_CREATED)
+@student_router.post('', status_code=status.HTTP_201_CREATED)
 def add_student(student: NewStudent, current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception
@@ -40,7 +40,7 @@ def add_student(student: NewStudent, current_user: user_dependency, db: db_depen
     return student
 
 
-@student_router.delete('/students/{id}', status_code=status.HTTP_204_NO_CONTENT)
+@student_router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def remove_student(id: str, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
@@ -59,7 +59,7 @@ def remove_student(id: str, db: db_dependency, current_user: user_dependency):
     db.commit()
 
 
-@student_router.get('/students/{id}')
+@student_router.get('/{id}')
 def get_student_details(id: str, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
@@ -70,7 +70,7 @@ def get_student_details(id: str, db: db_dependency, current_user: user_dependenc
     return db.get(Student, id)
 
 
-@student_router.get("/students/{id}/quizzes")
+@student_router.get("/{id}/quizzes")
 def get_student_quizzes(id: str, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception

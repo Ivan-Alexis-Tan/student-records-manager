@@ -11,9 +11,9 @@ from app.auth.auth import hash_password
 from app.models.models import Teacher, User
 from app.schemas.auth import CreateTeacherRequest
 
-teachers_router = APIRouter(tags=['teachers'])
+teachers_router = APIRouter(prefix='/teachers', tags=['teachers'])
 
-@teachers_router.get("/teachers")
+@teachers_router.get("")
 def get_teachers(current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception
@@ -24,7 +24,7 @@ def get_teachers(current_user: user_dependency, db: db_dependency):
     return db.query(Teacher).all()
 
 
-@teachers_router.post("/teachers", status_code=status.HTTP_201_CREATED)
+@teachers_router.post("", status_code=status.HTTP_201_CREATED)
 def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
@@ -69,7 +69,7 @@ def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_use
     }
 
 
-@teachers_router.delete('/teachers/{id}')
+@teachers_router.delete('/{id}')
 def remove_teacher(id: str, current_user: user_dependency, db: db_dependency):
     if current_user.role != "admin":
         raise credential_exception

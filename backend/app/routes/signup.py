@@ -9,9 +9,9 @@ from app.schemas.reponse import RegistrationRequestsResponse
 
 import app.models.models as models 
 
-signup_router = APIRouter(tags=['signup'])
+signup_router = APIRouter(prefix="/signup", tags=['signup'])
 
-@signup_router.get('/signup/request', response_model=List[RegistrationRequestsResponse])
+@signup_router.get('/request', response_model=List[RegistrationRequestsResponse])
 def get_signup_requests(current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception
@@ -22,7 +22,7 @@ def get_signup_requests(current_user: user_dependency, db: db_dependency):
     return db.query(models.RegistrationRequest).all()
 
 
-@signup_router.post("/signup/request", status_code=status.HTTP_201_CREATED)
+@signup_router.post("/request", status_code=status.HTTP_201_CREATED)
 def create_signup_request(payload: CreateSignupRequest, db: db_dependency):
     already_exists = db.query(models.RegistrationRequest).filter_by(email=payload.email).first()
 
@@ -67,7 +67,7 @@ def create_signup_request(payload: CreateSignupRequest, db: db_dependency):
     db.commit()
 
 
-@signup_router.delete('/signup/request/{id}', status_code=status.HTTP_204_NO_CONTENT)
+@signup_router.delete('/request/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_signup_request(id: str, current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception
@@ -80,7 +80,7 @@ def delete_signup_request(id: str, current_user: user_dependency, db: db_depende
     db.commit()
     
 
-@signup_router.post('/signup/request/{id}', status_code=status.HTTP_201_CREATED)
+@signup_router.post('/request/{id}', status_code=status.HTTP_201_CREATED)
 def grant_signup_request(id: str, current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception

@@ -10,9 +10,9 @@ from app.auth.dependencies import (
 )
 from app.basemodels import UpdateQuiz, QuizModel
 
-quizzes_router = APIRouter(tags=['quizzes'])
+quizzes_router = APIRouter(prefix="/quizzes", tags=['quizzes'])
 
-@quizzes_router.patch('/quizzes/{id}', status_code=status.HTTP_200_OK)
+@quizzes_router.patch('/{id}', status_code=status.HTTP_200_OK)
 def update_quiz_score(id: str, payload: UpdateQuiz, db: db_dependency, current_user: user_dependency) -> None:
     if not current_user:
         raise credential_exception
@@ -45,7 +45,7 @@ def update_quiz_score(id: str, payload: UpdateQuiz, db: db_dependency, current_u
     return quiz
 
 
-@quizzes_router.post('/quizzes', status_code=status.HTTP_201_CREATED)
+@quizzes_router.post('', status_code=status.HTTP_201_CREATED)
 def add_quiz_record(payload: QuizModel, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
@@ -61,7 +61,7 @@ def add_quiz_record(payload: QuizModel, db: db_dependency, current_user: user_de
     return new_quiz
 
 
-@quizzes_router.delete('/quizzes/{id}', status_code=status.HTTP_204_NO_CONTENT)
+@quizzes_router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_quiz(id: str, db: db_dependency, current_user: user_dependency) -> None:
     """
     - `id`
