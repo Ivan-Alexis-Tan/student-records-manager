@@ -32,8 +32,8 @@ def create_signup_request(payload: CreateSignupRequest, db: db_dependency):
             detail="Already sent a request."
         )
     
-    students_id = [student.id for student in db.query(models.Student.id).all()]
-    user_emails = [user.email for user in db.query(models.User.email).all()]
+    students_id = set([student.id for student in db.query(models.Student.id).all()])
+    user_emails = set([user.email for user in db.query(models.User.email).all()])
 
     if (payload.role == "student") & (payload.student_id not in students_id):
         raise HTTPException(
