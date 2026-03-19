@@ -1,10 +1,10 @@
 // Dependency imports
 import { useEffect, useState } from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useNavigate } from "react-router-dom"
 
 // Services and Helpers
 import { capitalEveryWord } from "../services/helperFunctions"
-import { createSignupRequest } from "../services/studentsAPI"
+import { createFirstAdmin, createSignupRequest, hasAdminFetch } from "../services/studentsAPI"
 
 // Components
 import RegisFormStudent from "../components/RegisFormStudent"
@@ -18,6 +18,8 @@ const messageDefault = {
 }
 
 export default function SignUpPage() {
+    const navigate = useNavigate()
+
     const [regisDetails, setRegisDetails] = useState(null)
     const [roleIdx, setRoleIdx] = useState(0)
     const [currentRole, setCurrentRole] = useState(roles[roleIdx])
@@ -35,8 +37,16 @@ export default function SignUpPage() {
 
         const sendSignupRequest = async () => {
             try {
-                await createSignupRequest(regisDetails)
-                setMessage({text: 'Registration request sent.', ok: true})
+                const hasAdmin = await hasAdminFetch().then(res => res.data)
+
+                if (!hasAdmin) {
+                    await createFirstAdmin(regisDetails)
+                    navigate('/login')
+                }
+                else {
+                    await createSignupRequest(regisDetails)
+                    setMessage({text: 'Registration request sent.', ok: true})
+                }
             }
             catch(error) {
                 const resErroMessage = error.response.data?.detail ?? error.response.statusText

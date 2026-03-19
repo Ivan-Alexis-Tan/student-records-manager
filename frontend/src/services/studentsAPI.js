@@ -50,6 +50,10 @@ export async function grantRegisRequest(requestId) {
     return api.post(`/signup/request/${requestId}`)
 }
 
+export async function hasAdminFetch() {
+    return api.get(`/signup/admin`)
+}
+
 // Students
 export async function createStudent(student_info) {
     return api.post('/students', {...student_info})
@@ -98,5 +102,9 @@ export async function removeTeacher(teacherId) {
 
 // Users
 export async function deleteUserAccount(id) {
-    return api.delete(`/user/${id}`)
+    return api.delete(`/users/${id}`)
+}
+
+export async function createFirstAdmin(payload) {
+    return api.post(`/users/admin`, payload)
 }
