@@ -1,4 +1,4 @@
-from fastapi import HTTPException, APIRouter
+from fastapi import HTTPException, APIRouter, Response
 from starlette import status
 
 import app.models.models as models
@@ -8,8 +8,10 @@ from app.auth.dependencies import (
     db_dependency,
     credential_exception, 
     permission_exception,
+    authenticate_user,
 )
-from app.auth.auth import hash_password
+from app.auth.auth import hash_password, create_access_token
+from app.routes.auth import COOKIE_KWARGS
 from app.schemas.auth import CreateUserRequest, CreateAdminRequest
 
 users_router = APIRouter(prefix='/users', tags=['users'])
@@ -61,11 +63,13 @@ def create_user(payload: CreateUserRequest, current_user: user_dependency, db: d
 
 
 @users_router.post("/admin", status_code=status.HTTP_201_CREATED)
-def create_admin(payload: CreateAdminRequest, db: db_dependency):
-    if payload.password != payload.confirm_pw:
+def create_first_admin(payload: CreateAdminRequest, response: Response, db: db_dependency):
+    hasAdmin = db.query(models.User).filter(models.User.role == 'admin').first()
+
+    if hasAdmin:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-            detail="Password does not match."
+            status_code=status.HTTP_409_CONFLICT,
+            detail='Already has an admin.'
         )
 
     user = models.User(
@@ -74,9 +78,15 @@ def create_admin(payload: CreateAdminRequest, db: db_dependency):
         hashed_password = hash_password(payload.password),
         role = payload.role
     )
-
     db.add(user)
     db.commit()
+
+    token = create_access_token(user=user)
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        **COOKIE_KWARGS,
+    )
 
     return {"message": "Successfully created a new admin."}
 

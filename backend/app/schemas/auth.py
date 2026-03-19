@@ -44,7 +44,6 @@ class CreateAdminRequest(BaseModel):
     email: str
     role: str
     password: str
-    confirm_pw: str
 
 
 class CreateSignupRequest(BaseModel):

@@ -1,15 +1,14 @@
 # `/register`, `/login`
 # /routes/users.py  -> `/me`
 
-from fastapi import Depends, HTTPException, APIRouter, Request, Response
+from fastapi import Depends, HTTPException, APIRouter, Response
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
 from starlette import status
 from typing import Annotated
 
 from app.db import db_dependency
 from app.models.models import User, Student, Teacher
-from app.schemas.auth import UserResponse, RegisterRequest, CreateUserRequest, CreateAdminRequest
+from app.schemas.auth import UserResponse, RegisterRequest
 from app.auth.dependencies import get_user_by_username, authenticate_user, user_dependency
 from app.auth.auth import hash_password, create_access_token
 
