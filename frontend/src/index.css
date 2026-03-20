@@ -196,7 +196,6 @@ table  td {
   justify-content: space-between;
 }
 
-
 /* Users Table (Admin) */
 .users-table__add-and-delete-btn {
   display: flex;
