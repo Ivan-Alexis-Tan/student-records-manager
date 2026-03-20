@@ -37,7 +37,18 @@ def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_use
     if user:
         raise HTTPException(
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
-            detail=f"User already exists."
+            detail="Email already taken."
+        )
+    
+    teacher_exists = db.query(Teacher).filter(
+        Teacher.first_name == teacher.first_name.capitalize(), 
+        Teacher.last_name == teacher.last_name.capitalize()
+    ).first()
+
+    if teacher_exists:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Teacher already exists."
         )
 
     new_user = User(

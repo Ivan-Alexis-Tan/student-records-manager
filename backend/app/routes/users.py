@@ -30,14 +30,13 @@ def get_users(current_user: user_dependency, db: db_dependency):
 
 @users_router.post('', status_code=status.HTTP_201_CREATED)
 def create_user(payload: CreateUserRequest, current_user: user_dependency, db: db_dependency):
-
     if not current_user:
         raise credential_exception
     
     if db.query(models.User).filter(models.User.email == payload.email).first():
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="User already exists."
+            detail="Email already taken."
         )
     
     student = db.query(models.Student).filter(models.Student.id == payload.student_id).first()
@@ -46,6 +45,12 @@ def create_user(payload: CreateUserRequest, current_user: user_dependency, db: d
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Student does not exists."
+        )
+
+    if student.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Student already have an account."
         )
     
     student.user = models.User(
