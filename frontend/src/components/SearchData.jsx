@@ -36,10 +36,12 @@ export default function SearchData({
         <div>
             {/* Search Student Form */}
             <div>
-                <label onClick={_ => {
-                    setAttribIdx(prev => prev + 1)
-                    setSearchVal('')
-                }}>{searchLabel}</label>
+                <label title="Click to change searching key"
+                    onClick={_ => {
+                        setAttribIdx(prev => prev + 1)
+                        setSearchVal('')
+                    }}
+                >{searchLabel}</label>
                 <input type="text"
                     title="Search student"
                     placeholder={capitalEveryWord(attribKey, '_')}
@@ -56,7 +58,7 @@ export default function SearchData({
                             setStateFn(student)
                             setSearchVal(`${student.first_name} ${student.last_name}`)
                         }}
-                        > {student.first_name} {student.last_name}
+                        >(G{student.grade_lvl}) {student.first_name} {student.last_name}
                     </li>
                 )}</ul>}
             </div>
