@@ -23,9 +23,9 @@ export async function createStudentAccount(reqDetails) {
         email: reqDetails.email,
         role: reqDetails.role,
         password: reqDetails.password,
-        student_id: reqDetails.studentId
+        student_id: reqDetails.student_id,
     }
-    return api.post(`/auth/user`, new_user)
+    return api.post(`/users`, new_user)
 }
 
 // Me
