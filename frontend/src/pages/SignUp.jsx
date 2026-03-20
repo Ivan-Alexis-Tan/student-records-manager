@@ -24,6 +24,7 @@ export default function SignUpPage() {
     const [roleIdx, setRoleIdx] = useState(0)
     const [currentRole, setCurrentRole] = useState(roles[roleIdx])
     const [message, setMessage] = useState(messageDefault)
+    const [errorsState, setErrorsState] = useState()
 
     // Role Indexer
     useEffect(() => {
@@ -58,27 +59,29 @@ export default function SignUpPage() {
         sendSignupRequest()
     }, [regisDetails])
 
+    // Error message updater
+    useEffect(() => {
+        if (errorsState) setMessage(messageDefault);
+    }, [errorsState])
+
     // Form Components Rendering
     let form;
+    const componentConfigs = { 
+        setFn: setRegisDetails, 
+        centerForm: true,
+        centerErrMsg: true,
+        errorsStateFn: setErrorsState,
+    }
 
     switch (currentRole) {
         case 'student':
-            form = <RegisFormStudent configs={{ 
-                setFn: setRegisDetails, 
-                centerForm: true,
-            }} />
+            form = <RegisFormStudent configs={componentConfigs} />
             break;
         case 'teacher':
-            form = <RegisFormTeacher configs={{ 
-                setFn: setRegisDetails, 
-                centerForm: true,
-            }} />
+            form = <RegisFormTeacher configs={componentConfigs} />
             break;
         case 'admin':
-            form = <RegisFormAdmin configs={{
-                setFn: setRegisDetails,
-                centerForm: true,
-            }} />
+            form = <RegisFormAdmin configs={componentConfigs} />
             break;
         default:
             break;
