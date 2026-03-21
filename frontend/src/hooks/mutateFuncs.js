@@ -18,7 +18,7 @@ import {
 export function mutationDeleteUserAcc({ ifSuccess = () => {}, ifError = () => null } = {}) {
     return useMutation({
         mutationFn: (userId) => deleteUserAccount(userId),
-        onSuccess: () => ifSuccess(),
+        onSuccess: (response) => ifSuccess(response),
         onError: (error) => ifError(error.response),
     })
 }
@@ -27,7 +27,7 @@ export function mutationDeleteUserAcc({ ifSuccess = () => {}, ifError = () => nu
 export function mutationCreateStudent({ ifSuccess = () => {}, ifError = () => null } = {}) {
     return useMutation({
         mutationFn: createStudent,
-        onSuccess: () => ifSuccess(),
+        onSuccess: (response) => ifSuccess(response),
         onError: (error) => ifError(error.response),
     })
 }
@@ -35,7 +35,7 @@ export function mutationCreateStudent({ ifSuccess = () => {}, ifError = () => nu
 export function mutationCreateStudentAcc({ ifSuccess = () => null, ifError = () => null, }) {
     return useMutation({
         mutationFn: (details) => createStudentAccount(details),
-        onSuccess: () => ifSuccess(),
+        onSuccess: (response) => ifSuccess(response),
         onError: (error) => ifError(error.response),
     })
 }
@@ -43,7 +43,7 @@ export function mutationCreateStudentAcc({ ifSuccess = () => null, ifError = () 
 export function mutationRemoveStudents({ ifSuccess = () => {}, ifError = () => null } = {}) {
     return useMutation({
         mutationFn: removeStudents,
-        onSuccess: () => ifSuccess(),
+        onSuccess: (response) => ifSuccess(response),
         onError: (error) => ifError(error.response),
     })
 }
@@ -52,7 +52,7 @@ export function mutationRemoveStudents({ ifSuccess = () => {}, ifError = () => n
 export function mutationCreateQuiz({ ifSuccess = () => {}, ifError = () => null } = {}) {
     return useMutation({
         mutationFn: (newQuiz) => createQuizRecord(newQuiz),
-        onSuccess: () => ifSuccess(),
+        onSuccess: (response) => ifSuccess(response),
         onError: (error) => ifError(error.response),
     })
 }
@@ -60,7 +60,7 @@ export function mutationCreateQuiz({ ifSuccess = () => {}, ifError = () => null 
 export function mutationUpdateScore({ ifSuccess = () => {}, ifError = () => null } = {}) {
     return useMutation({
         mutationFn: updateQuizScore,
-        onSuccess: () => ifSuccess(),
+        onSuccess: (response) => ifSuccess(response),
         onError: (error) => ifError(error.response),
     })
 }
@@ -68,7 +68,7 @@ export function mutationUpdateScore({ ifSuccess = () => {}, ifError = () => null
 export function mutationDeleteQuiz({ ifSuccess = () => {}, ifError = () => null } = {}) {
     return useMutation({
         mutationFn: (quizId) => deleteQuiz(quizId),
-        onSuccess: () => ifSuccess(),
+        onSuccess: (response) => ifSuccess(response),
         onError: (error) => ifError(error.response),
     })
 }
@@ -78,7 +78,7 @@ export function mutationDeleteQuiz({ ifSuccess = () => {}, ifError = () => null 
 export function mutationCreateTeacherAcc({ ifSuccess = () => null, ifError = () => null } = {}) {
     return useMutation({
         mutationFn: (reqDetails) => createTeacherAccount(reqDetails),
-        onSuccess: () => ifSuccess(),
+        onSuccess: (response) => ifSuccess(response),
         onError: (error) => ifError(error.response),
     })
 }
@@ -87,7 +87,7 @@ export function mutationCreateTeacherAcc({ ifSuccess = () => null, ifError = () 
 export function mutationDeleteTeacher({ ifSuccess = () => {}, ifError = () => null } = {}) {
     return useMutation({
         mutationFn: (teacherId) => removeTeacher(teacherId),
-        onSuccess: () => ifSuccess(),
+        onSuccess: (response) => ifSuccess(response),
         onError: (error) => ifError(error.response),
     })
 }
@@ -97,7 +97,7 @@ export function mutationDeleteTeacher({ ifSuccess = () => {}, ifError = () => nu
 export function mutationRemoveRegisRequest({ ifSuccess = () => {}, ifError = () => null } = {}) {
     return useMutation({
         mutationFn: (requestId) => removeRegisRequest(requestId),
-        onSuccess: () => ifSuccess(),
+        onSuccess: (response) => ifSuccess(response),
         onError: (error) => ifError(error.response),
     })
 }
@@ -105,7 +105,7 @@ export function mutationRemoveRegisRequest({ ifSuccess = () => {}, ifError = () 
 export function mutationGrantRegisRequest({ ifSuccess = () => {}, ifError = () => null } = {}) {
     return useMutation({
         mutationFn: (requestId) => grantRegisRequest(requestId),
-        onSuccess: () => ifSuccess(),
+        onSuccess: (response) => ifSuccess(response),
         onError: (error) => ifError(error.response),
     })
 }
