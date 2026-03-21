@@ -26,3 +26,15 @@ export const schemaTeacherForm = z.object({
     password: z.string().min(8),
     role: z.enum(roles),
 })
+
+export const schemaQuizForm = z.object({
+    student_id: z.string().trim().min(1),
+    date: z.string(),
+    subject: z.string().trim().min(1),
+    quiz_num: z.coerce.number().min(1),
+    score: z.coerce.number(),
+    total_items: z.coerce.number().min(5),
+    quarter: z.coerce.number().min(1).max(4),
+    unit: z.coerce.number().min(1).nullable(),
+    topic: z.string().nullable(),
+})
