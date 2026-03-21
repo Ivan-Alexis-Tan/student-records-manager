@@ -1,154 +1,149 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useParams, useNavigate, useOutletContext } from "react-router-dom"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 
-import { subjects } from "../services/helperFunctions"
+import { schemaQuizForm } from "../schemas/schemas"
 import { useAuth } from "../hooks/authQuery"
 import { mutationCreateQuiz } from "../hooks/mutateFuncs"
+import { capitalEveryWord, subjects } from "../services/helperFunctions"
 import { queryClient } from "../services/queryClient"
+
+const messageDefault = {text: '', ok: false}
+const subjectSelection = subjects.sort()
+
+const today = new Date()
+const monthToday = `${today.getMonth() + 1}`.padStart(2, 0)
+const dayToday = `${today.getDate()}`.padStart(2, 0)
+const defaultQuizObj = {
+    date: `${today.getFullYear()}-${monthToday}-${dayToday}`,
+    quiz_num: 1,
+    score: 0,
+    total_items: 15,
+    unit: 1,
+    topic: '',
+}
 
 export default function AddQuizRecord() {
     const user = useAuth()
     const params = useParams()
     const navigate = useNavigate()
-    const {studentQuizRec, userPermissions} = useOutletContext()
+    const { userPermissions } = useOutletContext()
 
     const studentId = (user.role === "student") ? user.profile_id : params.id
-    const subjectSelection = subjects.sort()
+    const [message, setMessage] = useState(messageDefault)
 
-    const [newQuizMessage, setNewQuizMessage] = useState('')
-    const today = new Date()
-    const monthToday = `${today.getMonth() + 1}`.padStart(2, 0)
-    const dayToday = `${today.getDate()}`.padStart(2, 0)
-    const deafultQuizObj = {
-        student_id: studentId,
-        date: `${today.getFullYear()}-${monthToday}-${dayToday}`,
-        subject: params.subject,
-        quiz_num: 1,
-        score: 0,
-        total_items: 15,
-        quarter: Number(params.quarter),
-        unit: 1,
-        topic: '',
-    }
-
-    const [newQuiz, setNewQuiz] = useState(deafultQuizObj)
+    const { register, handleSubmit, formState: { errors }} = useForm({
+        resolver: zodResolver(schemaQuizForm),
+        defaultValues: {
+            ...defaultQuizObj,
+            student_id: studentId,
+            subject: params.subject,
+            quarter: Number(params.quarter),
+        },
+    })
     
     const createQuizRecordMutation = mutationCreateQuiz({
-        ifSuccess: () => {
+        ifSuccess: (res) => {
+            const newQuiz = res.data ?? {}
             queryClient.invalidateQueries({ queryKey: ['studentQuizzes', studentId]})
-            setNewQuiz(deafultQuizObj)
-            setNewQuizMessage(`Successfully added "${newQuiz.subject} Q${newQuiz.quarter} Quiz ${newQuiz.quiz_num}".`)
+            
+            setMessage({
+                ok: true,
+                text: `Successfully added "${newQuiz.subject} Q${newQuiz.quarter} Quiz ${newQuiz.quiz_num}".`,
+            })
+        },
+        ifError: (error) => {
+            const errMsg = error.data?.detail
+            const contingency = error.data?.detail ?? "Something went wrong."
+
+            setMessage({
+                ok: false,
+                text: errMsg[0].msg ?? contingency
+            })
         }
     })
     
-    function saveNewQuiz() {
+    function saveNewQuiz(data) {
         if (!userPermissions.can_create) {
-            setNewQuizMessage('ERROR: Not enough permission to create a quiz record.')
+            setMessage({
+                ok: false,
+                text: 'ERROR: Not enough permission to create a quiz record.',
+            })
             return null
         }
 
-        const alreadyExists = studentQuizRec.filter(q => 
-            q.student_id === newQuiz.student_id
-            && q.quarter === newQuiz.quarter
-            && q.subject === newQuiz.subject
-            && q.quiz_num === newQuiz.quiz_num
-        )
-        
-        if (newQuiz.quiz_num <= 0) {
-            setNewQuizMessage('ERROR: Quiz number must be greater or equal to 1.')
-            return null
-        }
-        if (newQuiz.score > newQuiz.total_items) {
-            setNewQuizMessage('ERROR: Score must not be greater than to highest possible score.')
-            return null
-        }
-        if (alreadyExists.length >= 1) {
-            setNewQuizMessage(`ERROR: "Q${newQuiz.quarter} ${newQuiz.subject} Quiz ${newQuiz.quiz_num}" already exists.`)
-            return null
-        }
-        
-        createQuizRecordMutation.mutate(newQuiz)       
+        createQuizRecordMutation.mutate(data)       
     }
+
+    const errorFields = Object.keys(errors)
+    const messageStyle = (message.ok 
+        ? {color: 'hsl(113, 100%, 50%)', textAlign: 'center'}
+        : {color: 'hsl(9, 100%, 69%)', textAlign: 'center'}
+    )
+
+    // Error message organizer
+    useEffect(() => {
+        if (errorFields.length == 0) return
+        setMessage(messageDefault)
+    }, [errors, errorFields])
 
     return (
         <div className="add-new-quiz-record">
-            {newQuizMessage && <p className="add-new-quiz-record__message">{newQuizMessage}</p>}
-            <form className="add-new-quiz-record__form">
+            {message && <p className="add-new-quiz-record__message" style={messageStyle}>{message.text}</p>}
+
+            {/* Zod Error Message */}
+            {(errorFields.length !== 0) && (
+                <div style={{color: "hsl(9, 100%, 69%)", textAlign: 'center'}}>
+                    <p><strong>Invalid {capitalEveryWord(errorFields[0], '_')}</strong></p>
+                    <p>{errors[errorFields[0]]?.message}</p>
+                </div>
+            )}
+
+            <form onSubmit={ handleSubmit(saveNewQuiz) }>
                 <label>Date: </label>
-                <input type="date" 
-                    value={newQuiz.date} 
-                    onChange={e => setNewQuiz(prev => ({...prev, date: e.target.value}))}
-                    placeholder="date created"
-                />
+                <input type="date" {...register('date')}  />
                 <br />
 
                 <label>Quarter: </label>
-                <input type="number" min='1' max='4'
-                    value={newQuiz.quarter}
-                    onChange={e => setNewQuiz(prev => ({...prev, quarter: Number(e.target.value)}))}
-                    placeholder="1"
-                    required
-                />
+                <input type="number" min={1} max={4} {...register('quarter')} />
                 <br />
-
+                
                 <label>Subject: </label>
-                <select name="quiz-subjects" value={newQuiz.subject} onChange={e => setNewQuiz(prev => ({...prev, subject: e.target.value}))}>
+                <select {...register('subject')}>
                     {subjectSelection.map(subj => <option key={subj} value={subj}>
                         {subj}
-                    </option>)}
+                    </option>)} 
                 </select>
                 <br />
 
                 <label>Quiz Number: </label>
-                <input type="number" min='1'
-                    value={newQuiz.quiz_num} 
-                    onChange={e => setNewQuiz(prev => ({...prev, quiz_num: Number(e.target.value)}))}
-                    placeholder={newQuiz.quiz_num}
-                    required
-                />
+                <input type="number" min={1} {...register('quiz_num')} />
                 <br />
-                
+
                 <label>Score: </label>
-                <input type="number" 
-                    value={newQuiz.score}
-                    onChange={e => setNewQuiz(prev => ({...prev, score: Number(e.target.value)}))}
-                    placeholder="15"
-                    required
-                />
+                <input type="number" {...register('score')} />
                 <br />
 
                 <label>Highest Possible Score: </label>
-                <input type="number"
-                    value={newQuiz.total_items}
-                    onChange={e => setNewQuiz(prev => ({...prev, total_items: Number(e.target.value)}))}
-                    placeholder="15"
-                    required
-                />
+                <input type="number" min={5} {...register('total_items')} />
                 <br />
 
                 <label>Unit: </label>
-                <input type="number" min={'1'}
-                    value={newQuiz.unit}
-                    onChange={e => setNewQuiz(prev => ({...prev, unit: Number(e.target.value)}))}
-                    placeholder="1"
-                />
+                <input type="number" min={1} {...register('unit')} />
                 <br />
 
                 <label>Topic: </label>
-                <input type="text" 
-                    value={newQuiz.topic}
-                    onChange={e => setNewQuiz(prev => ({...prev, topic: e.target.value}))}
-                    placeholder="Topic"
-                />
-            </form>
+                <input type="text" placeholder="Topic" {...register('topic')} />
+                <br />
 
-            <button title="Save"
-                    onClick={_ => saveNewQuiz()}
-                    >💾</button>
-                <button title="Cancel" onClick={_ => {
+                <button type="submit" title="Save">💾</button>
+                <button type="button" title="Cancel" onClick={_ => {
                     navigate(-1)
-                    setNewQuizMessage('')
+                    setMessage('')
                 }}>❌</button>
+            </form>
+            <hr />
         </div>
     )
 }
