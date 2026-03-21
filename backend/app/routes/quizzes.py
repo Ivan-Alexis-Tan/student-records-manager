@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from starlette import status
 
-from app.models.models import Quiz
+from app.models.models import Quiz, Student
 from app.auth.dependencies import (
     db_dependency,
     user_dependency,
@@ -19,6 +19,25 @@ def add_quiz_record(payload: QuizModel, db: db_dependency, current_user: user_de
     
     if current_user.role not in {"teacher", "admin"}:
         raise permission_exception
+    
+    student = db.get(Student, payload.student_id)
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student ID does not exists."
+        )
+    
+    # Check: If quiz already exists
+    for quiz in student.quizzes:
+        subject_exists = quiz.subject == payload.subject
+        quarter_exists = quiz.quarter == payload.quarter
+        quiz_num_exists = quiz.quiz_num == payload.quiz_num
+        
+        if subject_exists & quarter_exists & quiz_num_exists:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Quiz already exists."
+            )
     
     new_quiz = Quiz(**payload.model_dump())
     db.add(new_quiz)
