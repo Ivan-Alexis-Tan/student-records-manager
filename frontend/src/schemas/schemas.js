@@ -38,3 +38,9 @@ export const schemaQuizForm = z.object({
     unit: z.coerce.number().min(1).nullable(),
     topic: z.string().nullable(),
 })
+
+export const schemaNewStudentForm = z.object({
+    first_name: z.string().trim().min(1),
+    last_name: z.string().trim().min(1),
+    grade_lvl: z.coerce.number().min(7).max(12),
+})
