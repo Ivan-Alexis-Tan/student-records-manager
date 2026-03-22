@@ -61,10 +61,22 @@ def add_student(student: NewStudent, current_user: user_dependency, db: db_depen
     if current_user.role not in {'teacher', 'admin'}:
         raise permission_exception
     
+    already_exists = db.query(Student).filter(
+        Student.first_name == student.first_name, 
+        Student.last_name == student.last_name,
+        Student.grade_lvl == student.grade_lvl,
+    ).first()
+
+    if already_exists:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Student already exists."
+        )
+    
     new_student = Student(**student.model_dump())
     db.add(new_student)
     db.commit()
-    return student
+    return new_student
 
 
 @student_router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
