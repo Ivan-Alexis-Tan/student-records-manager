@@ -9,6 +9,13 @@ class NewStudent(BaseModel):
     last_name: str
     grade_lvl: int
 
+    @field_validator('grade_lvl')
+    @classmethod
+    def validate_grade_lvl(cls, val):
+        if not 7 <= val <= 12:
+            raise ValueError('Grade level must be 7 through 12.')
+        return val
+
 
 class QuizModel(BaseModel):
     date: datetime.date
