@@ -3,29 +3,27 @@ import {
     Link, 
     Outlet,
     Navigate,
-    useLocation,
 } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
 import { findStudent, getStudentSelfDetails } from '../services/studentsAPI'
 import { useAuth } from '../hooks/authQuery'
+import { queryKeys } from '../services/queryKeys'
 
 const rolesAllowed = ["teacher", "admin"]
 
 export default function StudentProfile() {
     const {data: user} = useAuth();
-    const { pathname } = useLocation()
-
     const params = useParams()
     
     const isStudent = user.role === "student"
     const id = isStudent ? user.profile_id : params.id 
     const {data: studentData, isLoading} = useQuery({
-        queryKey: ['studentProfile', id],
+        queryKey: queryKeys.student(id),
         queryFn: isStudent 
             ? getStudentSelfDetails
             : () => findStudent(id),
-        enabled: !!id
+        enabled: !!id,
     })
 
     if (isLoading) return <h1>Loading student's data...</h1>
@@ -55,8 +53,7 @@ export default function StudentProfile() {
                 <p><strong>Create student account</strong></p>
             </Link>
             }
-            
-            {/* <button onClick={test}>test</button> */}
+
             <Outlet />
         </div>
     )

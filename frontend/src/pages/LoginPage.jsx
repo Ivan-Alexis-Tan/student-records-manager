@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/authQuery'
 import { submitLogin } from '../services/studentsAPI'
 import { queryClient } from '../services/queryClient'
 import { capitalEveryWord } from '../services/helperFunctions'
+import { queryKeys } from '../services/queryKeys'
 
 export default function LoginPage() {
     const [loginAs, setLoginAs] = useState("teacher")
@@ -19,7 +20,7 @@ export default function LoginPage() {
     const loginRequestMutation = useMutation({
         mutationFn: (loginRequest) => submitLogin(loginRequest),
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['auth', "me"]})
+            queryClient.invalidateQueries({queryKey: queryKeys.me})
             setLoginRequest(loginRequestDefault)
             setMessage('')
         },

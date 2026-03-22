@@ -6,18 +6,19 @@ import SearchData from "./SearchData"
 
 import { api } from "../services/axiosAPI"
 import { mutationRemoveStudents } from "../hooks/mutateFuncs"
+import { queryKeys } from "../services/queryKeys"
 
 const attribs = ['last_name', 'first_name', 'id']
 
 export default function Students() {
     const {data: students, isLoading, error} = useQuery({
-        queryKey: ['students'],
+        queryKey: queryKeys.students,
         queryFn: () => api.get('/students').then(res => res.data),
     });
     const navigate = useNavigate()
     const removeStudents = mutationRemoveStudents({
         ifSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['students']});
+            queryClient.invalidateQueries({queryKey: queryKeys.students});
         }
     })
 

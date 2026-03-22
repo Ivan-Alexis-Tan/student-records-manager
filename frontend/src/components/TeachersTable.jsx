@@ -6,18 +6,19 @@ import { capitalEveryWord } from "../services/helperFunctions"
 import { api } from "../services/axiosAPI"
 import { mutationDeleteTeacher } from "../hooks/mutateFuncs"
 import { queryClient } from "../services/queryClient"
+import { queryKeys } from "../services/queryKeys"
 
 export default function TeachersTable() {
     const {data, isLoading} = useQuery({
-        queryKey: ["teachers"],
+        queryKey: queryKeys.teachers,
         queryFn: () => api.get('/teachers').then(res => res.data),
         retry: false
     })
 
     const deleteTeacherAccMutation = mutationDeleteTeacher({
         ifSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['teachers'] })
-            queryClient.invalidateQueries({ queryKey: ['users'] })
+            queryClient.invalidateQueries({ queryKey: queryKeys.teachers })
+            queryClient.invalidateQueries({ queryKey: queryKeys.users })
         }
     })
 

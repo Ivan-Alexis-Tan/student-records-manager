@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { schemaNewStudentForm } from "../schemas/schemas"
 import { capitalEveryWord } from "../services/helperFunctions"
 import { queryClient } from "../services/queryClient"
+import { queryKeys } from "../services/queryKeys"
 
 const messageDefault = {text: "", ok: false}
 
@@ -20,7 +21,7 @@ export default function AddStudent() {
     const createStudent = mutationCreateStudent({
         ifSuccess: (response) => {
             const newStudent = response.data
-            queryClient.invalidateQueries({queryKey: ['students']});
+            queryClient.invalidateQueries({queryKey: queryKeys.students });
             setMessage({
                 ok: true,
                 text: `Successfully added ${newStudent.last_name}, ${newStudent.first_name}`,

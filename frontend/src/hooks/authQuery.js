@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 
 import {api} from "../services/axiosAPI"
+import { queryKeys } from "../services/queryKeys"
 
 export function useAuth() {
     return useQuery({
-        queryKey: ["auth", "me"],
+        queryKey: queryKeys.me,
         queryFn: () => api.get('/auth/me').then(res => res.data),
 
         retry: false,

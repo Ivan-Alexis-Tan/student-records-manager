@@ -10,6 +10,7 @@ import { mutationCreateStudentAcc } from "../hooks/mutateFuncs"
 import { schemaStudentForm } from "../schemas/schemas"
 import { api } from "../services/axiosAPI"
 import { capitalEveryWord } from "../services/helperFunctions"
+import { queryKeys } from "../services/queryKeys"
 
 export default function CreateStudentAccountPage() {
     const { register, handleSubmit, setValue, formState: { errors } } = useForm({
@@ -19,7 +20,7 @@ export default function CreateStudentAccountPage() {
     const { id } = useParams()
 
     const {data: students, isLoading: loadingStudents} = useQuery({
-        queryKey: ['students'],
+        queryKey: queryKeys.students,
         queryFn: () => api.get('/students').then(res => res.data),
     });
 

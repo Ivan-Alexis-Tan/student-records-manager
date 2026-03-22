@@ -8,6 +8,7 @@ import { useAuth } from "../hooks/authQuery"
 import { mutationCreateQuiz } from "../hooks/mutateFuncs"
 import { capitalEveryWord, subjects } from "../services/helperFunctions"
 import { queryClient } from "../services/queryClient"
+import { queryKeys } from "../services/queryKeys"
 
 const messageDefault = {text: '', ok: false}
 const subjectSelection = subjects.sort()
@@ -46,7 +47,7 @@ export default function AddQuizRecord() {
     const createQuizRecordMutation = mutationCreateQuiz({
         ifSuccess: (res) => {
             const newQuiz = res.data ?? {}
-            queryClient.invalidateQueries({ queryKey: ['studentQuizzes', studentId]})
+            queryClient.invalidateQueries({ queryKey: queryKeys.studentQuizzes(studentId) })
             
             setMessage({
                 ok: true,

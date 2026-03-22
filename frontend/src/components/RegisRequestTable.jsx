@@ -5,10 +5,11 @@ import { queryClient } from "../services/queryClient";
 import { getRegisRequests } from "../services/studentsAPI"
 import { mutationGrantRegisRequest, mutationRemoveRegisRequest } from "../hooks/mutateFuncs";
 import { capitalEveryWord } from "../services/helperFunctions";
+import { queryKeys } from "../services/queryKeys";
 
 export default function RegistrationRequestTable() {
     const { data, isLoading } = useQuery({
-        queryKey: ['regisRequests'],
+        queryKey: queryKeys.regisRequests,
         queryFn: getRegisRequests,
         select: (res) => {
             return res.data
@@ -21,13 +22,13 @@ export default function RegistrationRequestTable() {
 
     const grantRegisRequestMutation = mutationGrantRegisRequest({
         ifSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['regisRequests'] })
+            queryClient.invalidateQueries({ queryKey: queryKeys.regisRequests })
         }
     })
 
     const removeRegisRequestMutation = mutationRemoveRegisRequest({
         ifSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['regisRequests'] })
+            queryClient.invalidateQueries({ queryKey: queryKeys.regisRequests })
         }
     })
 

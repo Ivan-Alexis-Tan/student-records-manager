@@ -5,6 +5,7 @@ import { useState } from "react"
 import { getQuizes } from "../services/studentsAPI"
 import { useAuth } from "../hooks/authQuery"
 import { mutationDeleteQuiz, mutationUpdateScore } from "../hooks/mutateFuncs"
+import { queryKeys } from "../services/queryKeys"
 
 export default function QuizzesPage() {
     const params = useParams()
@@ -14,7 +15,7 @@ export default function QuizzesPage() {
 
     // Fetch Student's Quiz Records
     const quizRecord = useQuery({
-        queryKey: ['studentQuizzes', studentId],
+        queryKey: queryKeys.studentQuizzes(studentId),
         queryFn: () => getQuizes(studentId),
         select: (response) => {
             return {
@@ -26,7 +27,7 @@ export default function QuizzesPage() {
 
     const updateQuizScoreMutation = mutationUpdateScore({
         ifSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['studentQuizzes', studentId]})
+            queryClient.invalidateQueries({queryKey: queryKeys.studentQuizzes(studentId)})
             setEditId(null);
             setEditTo(defaultEdit)
         }
@@ -34,7 +35,7 @@ export default function QuizzesPage() {
 
     const deleteQuizMutation = mutationDeleteQuiz({
         ifSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['studentQuizzes', studentId]})
+            queryClient.invalidateQueries({queryKey: queryKeys.studentQuizzes(studentId)})
         }
     })
 
@@ -48,8 +49,8 @@ export default function QuizzesPage() {
     if (quizRecord.isLoading) return <h2>Loading...</h2>
     if (quizRecord.error) return <h2>{quizRecord.error.message}</h2>
 
-    const studentQuizRec = quizRecord.data?.quizzes
-    const userPermissions = quizRecord.data?.permissions
+    const studentQuizRec = quizRecord.data?.quizzes ?? []
+    const userPermissions = quizRecord.data?.permissions ?? []
 
     function handleKeyUp(e, quizId) {
         if (e.key === "Escape") {

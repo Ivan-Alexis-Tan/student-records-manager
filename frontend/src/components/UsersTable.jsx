@@ -6,21 +6,22 @@ import { capitalEveryWord } from "../services/helperFunctions";
 import { api } from "../services/axiosAPI";
 import { mutationDeleteUserAcc } from "../hooks/mutateFuncs";
 import { queryClient } from "../services/queryClient";
+import { queryKeys } from "../services/queryKeys";
 
 
 export default function UsersTable() {
     const {data, isLoading} = useQuery({
-        queryKey: ["users"],
+        queryKey: queryKeys.teachers,
         queryFn: () => api.get('/users').then(res => res.data),
         retry: false
     })
 
     const delUserMutation = mutationDeleteUserAcc({
         ifSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['users'] });
-            
-            if (queryClient.getQueryData(['teachers'])) {
-                queryClient.invalidateQueries(['teachers'])
+            queryClient.invalidateQueries({ queryKey: queryKeys.users });
+
+            if (queryClient.getQueryData(queryKeys.teachers)) {
+                queryClient.invalidateQueries(queryKeys.teachers)
             };
         },
     })
