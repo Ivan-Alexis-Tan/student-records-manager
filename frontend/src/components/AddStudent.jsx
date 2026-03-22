@@ -1,84 +1,83 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { mutationCreateStudent } from "../hooks/mutateFuncs"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod" 
+
+import { schemaNewStudentForm } from "../schemas/schemas"
+import { capitalEveryWord } from "../services/helperFunctions"
+import { queryClient } from "../services/queryClient"
+
+const messageDefault = {text: "", ok: false}
 
 export default function AddStudent() {
-    const defaultStudent = {first_name: 'First Name', last_name: 'Last Name', grade_lvl: 12}
-    
-    const [newStudent, setNewStudent] = useState(
-        {id: crypto.randomUUID(), ...defaultStudent}
-    )
-    const [error, setError] = useState('')
-    const [message, setMessage] = useState('')
-    
-    const createStudent = mutationCreateStudent({
-        ifSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['students']});
-            setError('')
-            setMessage(`Successfully added ${newStudent.last_name}, ${newStudent.first_name}`)
-            setNewStudent(defaultStudent)
-        }
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: zodResolver(schemaNewStudentForm),
+        defaultValues: { grade_lvl: 12 },
     })
 
-    function addStudent() {
-        const isDeafult = [
-            newStudent.first_name === defaultStudent.first_name,
-            newStudent.last_name === defaultStudent.last_name,
-        ].some(check => check === true)
+    const [message, setMessage] = useState(messageDefault)
+    
+    const createStudent = mutationCreateStudent({
+        ifSuccess: (response) => {
+            const newStudent = response.data
+            queryClient.invalidateQueries({queryKey: ['students']});
+            setMessage({
+                ok: true,
+                text: `Successfully added ${newStudent.last_name}, ${newStudent.first_name}`,
+            });
+        },
+        ifError: (error) => {
+            const errMsg = error.data?.detail ?? null
+            const contingency = error.data?.detail ?? "Something went wrong."
 
-        if (isDeafult) {
-            setError('ERROR: Student details must not be the default values.')
-            return null;
-        }
+            setMessage({
+                ok: false,
+                text: errMsg[0]?.msg ?? contingency
+            })
+        },
+    })
 
-        createStudent.mutate(newStudent)
-    }
+    const errorFields = Object.keys(errors)
+    const messageStyle = (message.ok 
+        ? {color: 'hsl(113, 100%, 50%)', textAlign: 'center'}
+        : {color: 'hsl(9, 100%, 69%)', textAlign: 'center'}
+    )
+
+    // Error message organizer
+    useEffect(() => {
+        if (errorFields.length == 0) return
+
+        setMessage(messageDefault)
+    }, [errors, errorFields])
 
     return (
         <div>
             <h1>Add Student</h1>
-            {error && <h2>{error}</h2>}
-            {message && <p><strong>{message}</strong></p>}
-            <form>
-                <input 
-                    type="text" 
-                    value={newStudent.first_name} 
-                    onChange={e => setNewStudent(prev => ({
-                        ...prev, 
-                        first_name: capitalizeStr(e.target.value),
-                        id: crypto.randomUUID()
-                    }))}
-                    placeholder="First Name"
-                />
+            {message.text && <p style={messageStyle}><strong>{message.text}</strong></p>}
+            
+            {/* Zod Error Message */}
+            {(errorFields.length !== 0) && (
+                <div style={{color: "hsl(9, 100%, 69%)", textAlign: 'center'}}>
+                    <p><strong>Invalid {capitalEveryWord(errorFields[0], '_')}</strong></p>
+                    <p>{errors[errorFields[0]]?.message}</p>
+                </div>
+            )}
+
+            <form onSubmit={ handleSubmit(
+                (data) => createStudent.mutate(data)
+                )}>
+                <input type="text" placeholder="First Name" {...register('first_name')} />
+                <br />
+
+                <input type="text" placeholder="Last Name" {...register('last_name')} />
                 <br />
                 
-                <input 
-                    type="text" 
-                    value={newStudent.last_name} 
-                    onChange={e => setNewStudent(prev => ({
-                        ...prev, 
-                        last_name: capitalizeStr(e.target.value),
-                        id: crypto.randomUUID()
-                    }))} 
-                    placeholder="Last Name"
-                />
-                <br />
-
                 <label>Grade: </label>
-                <input 
-                    type="number" 
-                    value={newStudent.grade_lvl} 
-                    onChange={e => setNewStudent(prev => ({
-                        ...prev, 
-                        grade_lvl: Number(e.target.value)
-                    }))} 
-                    min={7} max={12}
-                    placeholder="12"
-                />
+                <input type="number" {...register('grade_lvl')} />
                 <br />
-            </form>
-            <br />
 
-            <button onClick={addStudent}>Add new student</button>
+                <button type="submit" title="Add new student">Add New Student</button>
+            </form>
         </div>
     )
 }

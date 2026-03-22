@@ -26,7 +26,7 @@ export function mutationDeleteUserAcc({ ifSuccess = () => {}, ifError = () => nu
 // Students Mutations
 export function mutationCreateStudent({ ifSuccess = () => {}, ifError = () => null } = {}) {
     return useMutation({
-        mutationFn: createStudent,
+        mutationFn: (student_info) => createStudent(student_info),
         onSuccess: (response) => ifSuccess(response),
         onError: (error) => ifError(error.response),
     })
