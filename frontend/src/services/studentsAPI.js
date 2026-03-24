@@ -80,7 +80,7 @@ export async function updateQuizScore(payload) {
         unit: payload.unit,
         topic: payload.topic,
     }
-    return api.patch(`/quizzes/${payload.id}`, {...payload.id, ...submitted})
+    return api.patch(`/quizzes/${payload.id}`, submitted)
 }
 
 export async function createQuizRecord(payload) {

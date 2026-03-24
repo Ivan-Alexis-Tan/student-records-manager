@@ -87,7 +87,7 @@ def update_quiz_score(id: str, payload: UpdateQuiz, db: db_dependency, current_u
 
     if details['score'] > details['total_items']:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, 
+            status_code=status.HTTP_400_BAD_REQUEST, 
             detail="Score must not be greater than highest possible score."
         )
     
