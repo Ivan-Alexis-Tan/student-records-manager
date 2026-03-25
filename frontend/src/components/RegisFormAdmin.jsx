@@ -1,81 +1,58 @@
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 
-import { schemaUserForm } from "../schemas/schemas"
-import { capitalEveryWord } from "../services/helperFunctions";
+import { useRegistration } from "../hooks/useRegistration";
 
 const configsParams = {
     setFn: () => {}, 
     centerForm: false,
     centerErrMsg: false,
-    errrorStateFn: () => null,
+    errorsStateFn: () => null,
 }
 
 export default function RegisFormAdmin({ configs = configsParams }) {
     const { 
-        register, 
-        handleSubmit,
-        formState: { errors }, 
-    } = useForm({
-        resolver: zodResolver(schemaUserForm),
-        defaultValues: {role: 'admin'},
-    });
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+        regisForm, 
+        handleSubmitRegis, 
+        messageState: { message, messageStyles},
+        setConfirmPassword, 
+    } = useRegistration({ regisType: 'admin', submitFn: configs.setFn })
 
     const breakAttrib = configs.centerForm ? null : <br/>
-    const errorMsgStyle = configs.centerErrMsg ? centerErrMsgStyle : defaultErrMgsStyle
-
-    function onSubmit(data) {
-        if (data.password !== confirmPassword) {
-            setErrorMessage('Confirmed password does not match.')
-            return
-        }
-
-        configs.setFn(data)
-        setErrorMessage('')
-    }
-
-    const errorFields = Object.keys(errors)
-    const showErrorMessage = (errorFields.length == 0) && errorMessage
-
-    // Error message updater
+    
+    // Message state relayer
     useEffect(() => {
-        if(!configs.errrorStateFn) return
+        if (!configs.errorsStateFn) return;
 
-        if (errorFields.length >= 1) configs.errrorStateFn(errors);
-        if (errorMessage) configs.errrorStateFn(errorMessage);
-    }, [errors, errorFields, errorMessage])
+        if (!message.ok) {
+            configs.errorsStateFn(message)
+        }
+    }, [message.text])
 
     return (
         <div>
-            {/* Zod Error Message */}
-            {(errorFields.length !== 0) && (
-                <div style={errorMsgStyle}>
-                    <p><strong>Invalid {capitalEveryWord(errorFields[0], '_')}</strong></p>
-                    <p>{errors[errorFields[0]]?.message}</p>
+            {/* Registration Message */}
+            {message.text && (!message.ok) && (
+                <div style={messageStyles}>
+                    {message.header && (<p><strong>{message.header}</strong></p>)}
+                    <p>{message.text}</p>
                 </div>
             )}
 
             {/* Registration Form */}
             <form className={configs.centerForm ? 'regis-form center' : "regis-form"}
-                onSubmit={ handleSubmit(onSubmit) }
+                onSubmit={ handleSubmitRegis }
             >
-                {showErrorMessage && <p style={errorMsgStyle}>{errorMessage}</p>}
-
-                <input placeholder="Username" type="text" {...register('username')} />
+                <input placeholder="Username" type="text" {...regisForm.register('username')} />
                 {breakAttrib}
 
-                <input placeholder="Email" type="email" {...register('email')} />
+                <input placeholder="Email" type="email" {...regisForm.register('email')} />
                 {breakAttrib}
 
-                <input placeholder="Password" type="password" {...register('password')} />
+                <input placeholder="Password" type="password" {...regisForm.register('password')} />
                 {breakAttrib}
 
                 <input placeholder="Confirm Password"
                     type="password" 
-                    value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)}
                 />
                 {breakAttrib}
@@ -85,10 +62,3 @@ export default function RegisFormAdmin({ configs = configsParams }) {
         </div>
     )
 }
-
-const centerErrMsgStyle = {
-    textAlign: "center",
-    color: 'hsl(9, 100%, 69%)',
-}
-
-const defaultErrMgsStyle = {color: 'hsl(9, 100%, 69%)'}

@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect } from "react";
 
-import { schemaTeacherForm } from "../schemas/schemas"
 import { capitalEveryWord } from "../services/helperFunctions";
 import { subjects } from "../services/helperFunctions";
+import { useRegistration } from "../hooks/useRegistration";
 
 const configsDefault = {
     setFn: () => {},
@@ -14,82 +12,56 @@ const configsDefault = {
 }
 
 export default function RegisFormTeacher({ configs = configsDefault }) {
-    const { 
-        register, 
-        handleSubmit, 
-        formState: { errors },
-        getValues,
-        setValue,
-    } = useForm({
-        resolver: zodResolver(schemaTeacherForm),
-        defaultValues: { role: 'teacher' },
-    });
-
-    const [confirmPassword, setConfirmPassword] = useState('')
-    const [errorMessage, setErrorMessage] = useState('')
+    const {
+        regisForm,
+        handleSubmitRegis,
+        setConfirmPassword,
+        messageState: { message, messageStyles },
+    } = useRegistration({ regisType: 'teacher', submitFn: configs.setFn })
 
     const breakAttrib = configs.centerForm ? null : <br/>
-    const errorMsgStyle = configs.centerErrMsg ? centerErrMsgStyle : defaultErrMgsStyle
-
+    
     function handleAutoFill() {
-        const { first_name, last_name } = getValues()
+        const { first_name, last_name } = regisForm.getValues()
 
         if (first_name && last_name) {
             const generated = `${capitalEveryWord(first_name)} ${capitalEveryWord(last_name)}`
-            setValue('username', generated)
+            regisForm.setValue('username', generated)
         }
     }
 
-    function handleOnSubmit(data) {
-        if (data.password !== confirmPassword) {
-            setErrorMessage('Confirm password does not match.')
-            return
-        }
-        
-        configs.setFn({
-            ...data, 
-            first_name: capitalEveryWord(data.first_name),
-            last_name: capitalEveryWord(data.last_name),
-        })
-        setErrorMessage('')
-    }
-
-    const errorField = Object.keys(errors)
-    const showConfirmPwError = (errorField.length == 0) && errorMessage 
-    
-    // Error message updater
+    // Message state relayer
     useEffect(() => {
-        if (!configs.errorsStateFn) return
+        if (!configs.errorsStateFn) return;
 
-        if (errorField.length >= 1) configs.errorsStateFn(errors);
-        if (errorMessage) configs.errorsStateFn(errorMessage);
-    }, [errors, errorMessage, errorField.length])
-
+        if (!message.ok) {
+            configs.errorsStateFn(message)
+        }
+    }, [message.text])
+    
     return (
         <div>
-            {/* Zod Error Message */}
-            {(errorField.length !== 0) && (
-                <div style={errorMsgStyle}>
-                    <p><strong>Invalid {capitalEveryWord(errorField[0], '_')}</strong></p>
-                    <p>{errors[errorField[0]]?.message}</p>
+            {/* Registration Message */}
+            {message.text && (!message.ok) && (
+                <div style={messageStyles}>
+                    {message.header && <p><strong>{message.header}</strong></p>}
+                    <p>{message.text}</p>
                 </div>
             )}
             
             {/* Registration Form */}
             <form className={configs.centerForm ? 'regis-form center' : "regis-form"}
-                onSubmit={ handleSubmit(handleOnSubmit) }
+                onSubmit={ handleSubmitRegis }
             >   
-                {showConfirmPwError && <p style={errorMsgStyle}>{errorMessage}</p>}
-
-                <input placeholder="First Name" type="text" {...register('first_name')} />
+                <input placeholder="First Name" type="text" {...regisForm.register('first_name')} />
                 {breakAttrib}
 
-                <input placeholder="Last Name" type="text" {...register('last_name')} />
+                <input placeholder="Last Name" type="text" {...regisForm.register('last_name')} />
                 {breakAttrib}
 
                 <div>
                     <label>Field Specialty: </label>
-                    <select {...register("field_specialty")} >
+                    <select {...regisForm.register("field_specialty")} >
                         <option value={''}>Select Subject</option>
                         {subjects.map(subj => <option key={subj} value={subj}>{subj}</option>)}
                     </select>
@@ -97,20 +69,19 @@ export default function RegisFormTeacher({ configs = configsDefault }) {
                 {breakAttrib}
 
                 <div>
-                    <input placeholder="Username" type="text" {...register('username')} />
+                    <input placeholder="Username" type="text" {...regisForm.register('username')} />
                     <button onClick={handleAutoFill} type="button">Auto-fill</button>
                 </div>
                 {breakAttrib}
 
-                <input placeholder="Email" type="email" {...register('email',)} />
+                <input placeholder="Email" type="email" {...regisForm.register('email',)} />
                 {breakAttrib}
 
-                <input placeholder="Password" type="password" {...register('password')} />
+                <input placeholder="Password" type="password" {...regisForm.register('password')} />
                 {breakAttrib}
 
                 <input placeholder="Confirm Password" 
                     type="password"
-                    value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)} 
                 />
                 {breakAttrib}
@@ -120,10 +91,3 @@ export default function RegisFormTeacher({ configs = configsDefault }) {
         </div>
     )
 }
-
-const centerErrMsgStyle = {
-    textAlign: "center",
-    color: 'hsl(9, 100%, 69%)',
-}
-
-const defaultErrMgsStyle = {color: 'hsl(9, 100%, 69%)'}
