@@ -53,3 +53,8 @@ export const schemaNewStudentForm = z.object({
     last_name: z.string().trim().min(1),
     grade_lvl: z.coerce.number().min(7).max(12),
 })
+
+export const schemaLoginForm = z.object({
+    email: z.email(),
+    password: z.string(),
+})
