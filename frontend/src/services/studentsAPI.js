@@ -100,6 +100,14 @@ export async function removeTeacher(teacherId) {
     return api.delete(`/teachers/${teacherId}`)
 }
 
+export async function updateTeacherDetails(payload) {
+    const submitted = {
+        column: payload.column,
+        value: payload.value,
+    }
+    return api.patch(`/teachers/${payload.id}`, submitted)
+}
+
 // Users
 export async function deleteUserAccount(id) {
     return api.delete(`/users/${id}`)
@@ -107,4 +115,8 @@ export async function deleteUserAccount(id) {
 
 export async function createFirstAdmin(payload) {
     return api.post(`/users/admin`, payload)
+}
+
+export async function getAdminInitPageData() {
+    return api.get(`/users/admin`)
 }
