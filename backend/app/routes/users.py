@@ -113,3 +113,17 @@ def remove_user(id: str, db: db_dependency, current_user: user_dependency):
 
     db.delete(user)
     db.commit()
+
+
+@users_router.get('/admin', response_model=response_schema.AdminInitPageResponse)
+def admin_init_page(current_user: user_dependency, db: db_dependency):
+    if current_user.role != 'admin':
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Unauthorized access.'
+        ) 
+
+    return response_schema.AdminInitPageResponse(
+        users=db.query(models.User).all(),
+        teachers=db.query(models.Teacher).all()
+    )
