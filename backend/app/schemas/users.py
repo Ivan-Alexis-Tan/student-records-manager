@@ -10,6 +10,11 @@ class CreateUserRequest(BaseModel):
     student_id: str
 
 
+class UpdateUserRequest(BaseModel):
+    column: str
+    value: Union[str, int, bool]
+
+
 # Responses
 class UserResponse(BaseModel):
     id: str

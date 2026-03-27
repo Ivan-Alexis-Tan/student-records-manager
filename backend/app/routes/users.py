@@ -8,7 +8,6 @@ from app.auth.dependencies import (
     db_dependency,
     credential_exception, 
     permission_exception,
-    authenticate_user,
 )
 from app.auth.auth import hash_password, create_access_token
 from app.routes.auth import COOKIE_KWARGS
@@ -29,6 +28,20 @@ def get_users(current_user: user_dependency, db: db_dependency):
         raise permission_exception
 
     return db.query(models.User).all()
+
+
+@users_router.get('/admin', response_model=response_schema.AdminInitPageResponse)
+def admin_init_page(current_user: user_dependency, db: db_dependency):
+    if current_user.role != 'admin':
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Unauthorized access.'
+        ) 
+
+    return response_schema.AdminInitPageResponse(
+        users=db.query(models.User).all(),
+        teachers=db.query(models.Teacher).all()
+    )
 
 
 @users_router.post('', status_code=status.HTTP_201_CREATED)
@@ -115,15 +128,23 @@ def remove_user(id: str, db: db_dependency, current_user: user_dependency):
     db.commit()
 
 
-@users_router.get('/admin', response_model=response_schema.AdminInitPageResponse)
-def admin_init_page(current_user: user_dependency, db: db_dependency):
-    if current_user.role != 'admin':
+@users_router.patch('/{id}')
+def update_user_details(id: str, payload: users_schema.UpdateUserRequest, curren_user: user_dependency, db: db_dependency):
+    if curren_user.role != 'admin':
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Unauthorized access.'
-        ) 
+            detail="Unauthorized."
+        )
+    
+    user = db.get(models.User, id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='User does not exists.'
+        )
+    
+    setattr(user, payload.column, payload.value)
+    db.commit()
+    db.refresh(user)
 
-    return response_schema.AdminInitPageResponse(
-        users=db.query(models.User).all(),
-        teachers=db.query(models.Teacher).all()
-    )
+    return user
