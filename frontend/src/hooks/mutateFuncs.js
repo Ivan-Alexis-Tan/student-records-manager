@@ -13,12 +13,21 @@ import {
     removeTeacher,
     updateQuizScore,
     updateTeacherDetails,
+    updateUserDetails,
 } from "../services/studentsAPI";
 
 // User Mutations
 export function mutationDeleteUserAcc({ ifSuccess = () => {}, ifError = () => null } = {}) {
     return useMutation({
         mutationFn: (userId) => deleteUserAccount(userId),
+        onSuccess: (response) => ifSuccess(response),
+        onError: (error) => ifError(error.response),
+    })
+}
+
+export function mutationUpdateUserDetails({ ifSuccess = () => {}, ifError = () => null } = {}) {
+    return useMutation({
+        mutationFn: (payload) => updateUserDetails(payload),
         onSuccess: (response) => ifSuccess(response),
         onError: (error) => ifError(error.response),
     })
