@@ -31,10 +31,10 @@ export function useCellState() {
     }
 }
 
-/** @type {{id: string, cellData: (string|number|bool)[], column: string, saveEditFn: () => void}*/
+/** @type {{id: string, cellData: string|number|bool, column: string, saveEditFn: () => void}*/
 const setConfigs = {
     id: "",
-    cellData: [],
+    cellData: "",
     column: "",
     saveEditFn: () => null,
 }
