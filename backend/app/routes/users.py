@@ -12,7 +12,10 @@ from app.auth.dependencies import (
 )
 from app.auth.auth import hash_password, create_access_token
 from app.routes.auth import COOKIE_KWARGS
-from app.schemas.auth import CreateUserRequest, CreateAdminRequest
+
+import app.schemas.auth_requests as request_schema
+import app.schemas.auth_reponses as response_schema
+import app.schemas.users as users_schema 
 
 users_router = APIRouter(prefix='/users', tags=['users'])
 
@@ -29,7 +32,7 @@ def get_users(current_user: user_dependency, db: db_dependency):
 
 
 @users_router.post('', status_code=status.HTTP_201_CREATED)
-def create_user(payload: CreateUserRequest, current_user: user_dependency, db: db_dependency):
+def create_user(payload: users_schema.CreateUserRequest, current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception
     
@@ -68,7 +71,7 @@ def create_user(payload: CreateUserRequest, current_user: user_dependency, db: d
 
 
 @users_router.post("/admin", status_code=status.HTTP_201_CREATED)
-def create_first_admin(payload: CreateAdminRequest, response: Response, db: db_dependency):
+def create_first_admin(payload: request_schema.CreateAdminRequest, response: Response, db: db_dependency):
     hasAdmin = db.query(models.User).filter(models.User.role == 'admin').first()
 
     if hasAdmin:

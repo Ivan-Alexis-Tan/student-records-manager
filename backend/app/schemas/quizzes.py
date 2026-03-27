@@ -4,20 +4,7 @@ import datetime
 
 VALID_SUBJECTS = {'Science', 'Math', 'English', 'Aral. Pan.', 'MAPEH', 'Filipino', 'ESP', 'TLE'}
 
-class NewStudent(BaseModel):
-    first_name: str
-    last_name: str
-    grade_lvl: int
-
-    @field_validator('grade_lvl')
-    @classmethod
-    def validate_grade_lvl(cls, val):
-        if not 7 <= val <= 12:
-            raise ValueError('Grade level must be 7 through 12.')
-        return val
-
-
-class QuizModel(BaseModel):
+class CreateQuizRequest(BaseModel):
     date: datetime.date
     subject: str
     quiz_num: int
@@ -54,9 +41,9 @@ class QuizModel(BaseModel):
         if self.score > self.total_items:
             raise ValueError("Score cannot exceed total items.")
         return self
-        
+    
 
-class UpdateQuiz(BaseModel):
+class UpdateQuizRequest(BaseModel):
     date: datetime.date
     score: int
     total_items: Optional[int] = None

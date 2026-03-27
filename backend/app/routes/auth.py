@@ -8,9 +8,12 @@ from typing import Annotated
 
 from app.db import db_dependency
 from app.models.models import User, Student, Teacher
-from app.schemas.auth import UserResponse, RegisterRequest
+
 from app.auth.dependencies import get_user_by_username, authenticate_user, user_dependency
 from app.auth.auth import hash_password, create_access_token
+
+from app.schemas.auth_requests import RegisterRequest
+import app.schemas.users as users_schema
 
 router = APIRouter(
     prefix="/auth",
@@ -27,7 +30,7 @@ credential_exception = HTTPException(
     detail="Failed to authorize user."
 )
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me", response_model=users_schema.UserResponse)
 def me(current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception
@@ -42,7 +45,7 @@ def me(current_user: user_dependency, db: db_dependency):
         else:
             user_profile_id = None
     
-    return UserResponse(
+    return users_schema.UserResponse(
         id=current_user.id,
         username=current_user.username,
         email=current_user.email,
@@ -51,7 +54,7 @@ def me(current_user: user_dependency, db: db_dependency):
     )
 
 
-@router.post("/register", response_model=UserResponse, status_code=201)
+@router.post("/register", response_model=users_schema.UserResponse, status_code=201)
 def register(payload: RegisterRequest, db: db_dependency):
     existing = get_user_by_username(db, payload.username)
 
@@ -71,7 +74,7 @@ def register(payload: RegisterRequest, db: db_dependency):
     db.commit()
     db.refresh(user)
 
-    return UserResponse(
+    return users_schema.UserResponse(
         id=user.id,
         username=user.username,
         email=user.email,

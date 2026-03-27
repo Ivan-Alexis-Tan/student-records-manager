@@ -9,7 +9,7 @@ from app.auth.dependencies import (
     usual_permissions,
 )
 from app.models.models import Student, Quiz
-from app.basemodels import NewStudent
+from app.schemas.students import NewStudentRequest
 
 student_router = APIRouter(prefix="/students", tags=['students'])
 
@@ -54,7 +54,7 @@ def get_student_quizzes(id: str, db: db_dependency, current_user: user_dependenc
 
 
 @student_router.post('', status_code=status.HTTP_201_CREATED)
-def add_student(student: NewStudent, current_user: user_dependency, db: db_dependency):
+def add_student(student: NewStudentRequest, current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception
     

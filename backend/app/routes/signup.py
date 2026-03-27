@@ -4,8 +4,8 @@ from typing import List
 
 from app.auth.dependencies import db_dependency, user_dependency, credential_exception, permission_exception
 from app.auth.auth import hash_password
-from app.schemas.auth import CreateSignupRequest
-from app.schemas.reponse import RegistrationRequestsResponse
+from app.schemas.auth_requests import CreateSignupRequest
+from app.schemas.auth_reponses import RegistrationRequestsResponse
 
 import app.models.models as models 
 

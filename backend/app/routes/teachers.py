@@ -10,7 +10,6 @@ from app.auth.dependencies import (
 from app.auth.auth import hash_password
 from app.models.models import Teacher, User
 
-from app.schemas.auth import CreateTeacherRequest
 import app.schemas.teachers as teachers_schema 
 
 teachers_router = APIRouter(prefix='/teachers', tags=['teachers'])
@@ -27,7 +26,7 @@ def get_teachers(current_user: user_dependency, db: db_dependency):
 
 
 @teachers_router.post("", status_code=status.HTTP_201_CREATED)
-def create_teacher(teacher: CreateTeacherRequest, db: db_dependency, current_user: user_dependency):
+def create_teacher(teacher: teachers_schema.CreateTeacherRequest, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
     

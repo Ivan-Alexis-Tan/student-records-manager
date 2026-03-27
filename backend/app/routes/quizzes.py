@@ -8,12 +8,12 @@ from app.auth.dependencies import (
     credential_exception,
     permission_exception,
 )
-from app.basemodels import UpdateQuiz, QuizModel
+import app.schemas.quizzes as quizzes_schema
 
 quizzes_router = APIRouter(prefix="/quizzes", tags=['quizzes'])
 
 @quizzes_router.post('', status_code=status.HTTP_201_CREATED)
-def add_quiz_record(payload: QuizModel, db: db_dependency, current_user: user_dependency):
+def add_quiz_record(payload: quizzes_schema.CreateQuizRequest, db: db_dependency, current_user: user_dependency):
     if not current_user:
         raise credential_exception
     
@@ -75,7 +75,7 @@ def delete_quiz(id: str, db: db_dependency, current_user: user_dependency) -> No
 
 
 @quizzes_router.patch('/{id}', status_code=status.HTTP_200_OK)
-def update_quiz_score(id: str, payload: UpdateQuiz, db: db_dependency, current_user: user_dependency) -> None:
+def update_quiz_score(id: str, payload: quizzes_schema.UpdateQuizRequest, db: db_dependency, current_user: user_dependency) -> None:
     if not current_user:
         raise credential_exception
     
