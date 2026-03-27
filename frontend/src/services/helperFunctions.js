@@ -16,7 +16,7 @@ export const subjects = [
     "Filipino",
     "ESP",
     "TLE",
-]
+].sort()
 
 export function capitalEveryWord(str, sep = ' ') {
     const strings = `${str}`.split(sep)

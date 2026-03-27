@@ -1,55 +1,47 @@
-import { useQuery } from "@tanstack/react-query"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { capitalEveryWord } from "../services/helperFunctions" 
-import { api } from "../services/axiosAPI"
-import { mutationDeleteTeacher } from "../hooks/mutateFuncs"
+import { mutationDeleteTeacher, mutationUpdateTeacher } from "../hooks/mutateFuncs"
 import { queryClient } from "../services/queryClient"
 import { queryKeys } from "../services/queryKeys"
+import { subjects } from "../services/helperFunctions"
 
-export default function TeachersTable() {
-    const {data, isLoading} = useQuery({
-        queryKey: queryKeys.teachers,
-        queryFn: () => api.get('/teachers').then(res => res.data),
-        retry: false
-    })
+import EditableTableCell, { useCellState } from "./EditableTableCell"
+
+export default function TeachersTable({ teachersData = [], adminId = "" }) {
+    const teachers = teachersData ?? []
+    const navigate = useNavigate()
 
     const deleteTeacherAccMutation = mutationDeleteTeacher({
         ifSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: queryKeys.teachers })
-            queryClient.invalidateQueries({ queryKey: queryKeys.users })
+            if (queryClient.getQueryData(queryKeys.teachers)){
+                queryClient.invalidateQueries({ queryKey: queryKeys.teachers })
+            }
+            queryClient.invalidateQueries({ queryKey: queryKeys.adminInitPageData(adminId) })
+        },
+    })
+
+    const updateTeacherDetails = mutationUpdateTeacher({
+        ifSuccess: () => {
+            if (queryClient.getQueryData(queryKeys.teachers)){
+                queryClient.invalidateQueries({ queryKey: queryKeys.teachers })
+            }
+            queryClient.invalidateQueries({ queryKey: queryKeys.adminInitPageData(adminId) })
         }
     })
 
-    const navigate = useNavigate()
-
-    const nullCoords = {rowId: '', col: ''}
+    const { cellStates, editDetails, coords, resetAll } = useCellState();
     const [isEditing, setIsEditing] = useState('')
-    const [coords, setCoords] = useState(nullCoords)
-    const [editDetails, setEditDetails] = useState({
-        value: '', colName: '', teacherId: ''
-    })
-
-    if (isLoading) return <h1>Loading...</h1>
-
-    const teachers = data ?? []
-
-    function handleSetCoord(rowId, col, initVal) {
-        setCoords({rowId, col});
-        setIsEditing('edit')
-        setEditDetails({value: initVal, colName: col, teacherId: rowId})
-    }
-
-    function handleWriteEdit(value, colName, teacherId) {
-        setEditDetails({value, colName, teacherId})
-    }
 
     function handleKeyUp(event) {
         if (event.key === "Escape") {
-            setCoords(nullCoords)
             setIsEditing('')
         }
+    }
+
+    function saveEdit() {
+        updateTeacherDetails.mutate({... editDetails, id: editDetails.rowId, column: editDetails.col})
     }
 
     return (
@@ -58,32 +50,35 @@ export default function TeachersTable() {
                     <h2>Teachers</h2>
 
                     <div>
-                        {(isEditing)
-                            ? <>
-                                {(isEditing === 'edit') && <button
-                                    title="Save"
-                                >💾</button>
-                                }
-                                <button
-                                    title="Cancel"
-                                    onClick={_ => {
-                                        setCoords(nullCoords);
-                                        setIsEditing('')
-                                    }}
-                                >❌</button>
-                            </>
-                            : <>
-                                <button title="Create new teacher account" 
-                                    onClick={_ => navigate('/create-teacher-account')}
-                                >➕</button>
-                                <button title="Remove teacher account"
-                                    onClick={_ => setIsEditing('delete')}
-                                >🗑️</button>
-                            </>
+                        {(coords.rowId !== "") 
+                            ? <button title="Cancel edit" onClick={_ => resetAll()}>❌</button>
+                            : (isEditing === ""
+                                ? <>
+                                    <button title="Create new teacher account" 
+                                        onClick={_ => navigate('/create-teacher-account')}
+                                    >➕</button>
+                                    <button title="Remove teacher account"
+                                        onClick={_ => setIsEditing('delete')}
+                                    >🗑️</button>
+                                </>
+                                : <>
+                                    {(isEditing === 'edit') && <button
+                                        title="Save"
+                                    >💾</button>
+                                    }
+                                    <button
+                                        title="Cancel"
+                                        onClick={_ => {
+                                            setIsEditing('')
+                                        }}
+                                    >❌</button>
+                                </>
+                            )
                         }
                     </div>
                 </div>
-
+                
+                {/* Teachers Data Table */}
                 {(teachers.length >= 1)
                     ? <table>
                             <thead>
@@ -108,35 +103,40 @@ export default function TeachersTable() {
                                         } {teacher.id}
                                     </td>
 
-                                    {(coords.rowId === teacher.id && coords.col === 'last_name')
-                                        ? <td><input type="text" 
-                                            value={editDetails.value}
-                                            onChange={e => setEditDetails(e.target.value)}
-                                        /></td>
-                                        : <td onDoubleClick={_ => handleSetCoord(teacher.id, 'last_name', teacher.last_name)}>
-                                            {teacher.last_name}
-                                        </td>
-                                    }
-                                    
-                                    {(coords.rowId === teacher.id && coords.col === 'first_name')
-                                        ? <td><input type="text" 
-                                            value={editDetails.value}
-                                            onChange={e => handleWriteEdit(e.target.value, 'first_name', teacher.id)}
-                                        /></td>
-                                        : <td onDoubleClick={_ => handleSetCoord(teacher.id, 'first_name', teacher.first_name)}>
-                                            {teacher.first_name}
-                                        </td>
-                                    }
+                                    {/* Teacher's Last Name */}
+                                    <EditableTableCell configs={{ 
+                                            id: teacher.id,
+                                            cellData: teacher.last_name,
+                                            column: "last_name",
+                                            saveEditFn: saveEdit,
+                                        }}
+                                        cellStates={cellStates} 
+                                    />
 
-                                    {(coords.rowId === teacher.id && coords.col === 'field_specialty')
-                                        ? <td><input type="text" 
-                                            value={editDetails.value}
-                                            onChange={e => setEditDetails(capitalEveryWord(e.target.value))}
-                                        /></td>
-                                        : <td onDoubleClick={_ => handleSetCoord(teacher.id, 'field_specialty', teacher.field_speciality)}>
-                                            {capitalEveryWord(teacher.field_specialty ?? "")}
-                                        </td>
-                                    }
+                                    {/* Teacher's First Name */}
+                                    <EditableTableCell configs={{ 
+                                            id: teacher.id,
+                                            cellData: teacher.first_name,
+                                            column: "first_name",
+                                            saveEditFn: saveEdit,
+                                        }}
+                                        cellStates={cellStates} 
+                                    />
+                                    
+                                    {/* Teacher's Field Specialty */}
+                                    <EditableTableCell type="select"
+                                        configs={{ 
+                                            id: teacher.id,
+                                            cellData: teacher.field_specialty ?? "-",
+                                            column: "field_specialty",
+                                            saveEditFn: saveEdit,
+                                        }} 
+                                        cellStates={cellStates}
+                                        selectType={{
+                                            selectOptions: subjects,
+                                            nullOption: 'Select Subject',
+                                        }}
+                                    />
 
                                     <td>{teacher.user_id}</td>
                                 </tr>)}
