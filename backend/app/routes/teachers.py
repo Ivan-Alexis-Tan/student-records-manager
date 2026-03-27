@@ -9,7 +9,9 @@ from app.auth.dependencies import (
 )
 from app.auth.auth import hash_password
 from app.models.models import Teacher, User
+
 from app.schemas.auth import CreateTeacherRequest
+import app.schemas.teachers as teachers_schema 
 
 teachers_router = APIRouter(prefix='/teachers', tags=['teachers'])
 
@@ -96,3 +98,23 @@ def remove_teacher(id: str, current_user: user_dependency, db: db_dependency):
     teacher_acc = db.get(User, teacher.user_id)
     db.delete(teacher_acc)
     db.commit()
+
+
+@teachers_router.patch('/{id}')
+def update_teacher_data(id: str, payload: teachers_schema.TeacherEditRequest, current_user: user_dependency, db: db_dependency):
+    if current_user.role not in {'admin', 'teacher'}:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized."
+        )
+    
+    teacher = db.get(Teacher, id)
+    if not teacher:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='Teacher not found.'
+        )
+
+    setattr(teacher, payload.column, payload.value)
+    db.commit()
+    db.refresh(teacher)
