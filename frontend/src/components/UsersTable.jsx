@@ -1,21 +1,17 @@
-import { useQuery } from "@tanstack/react-query"
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+import { mutationDeleteUserAcc, mutationUpdateUserDetails } from "../hooks/mutateFuncs";
 import { capitalEveryWord } from "../services/helperFunctions";
-import { api } from "../services/axiosAPI";
-import { mutationDeleteUserAcc } from "../hooks/mutateFuncs";
 import { queryClient } from "../services/queryClient";
 import { queryKeys } from "../services/queryKeys";
 
+import EditableTableCell, { useCellState } from "./EditableTableCell";
 
-export default function UsersTable() {
-    const {data, isLoading} = useQuery({
-        queryKey: queryKeys.teachers,
-        queryFn: () => api.get('/users').then(res => res.data),
-        retry: false
-    })
 
+export default function UsersTable({ userData = [], adminId = "" }) {
+    const users = userData ?? []
+    
     const delUserMutation = mutationDeleteUserAcc({
         ifSuccess: () => {
             queryClient.invalidateQueries({ queryKey: queryKeys.users });
@@ -26,25 +22,29 @@ export default function UsersTable() {
         },
     })
 
+    const updateUserMutation = mutationUpdateUserDetails({
+        ifSuccess: () => {
+            if (queryClient.getQueryData(queryKeys.users)) {
+                queryClient.invalidateQueries({ queryKey: queryKeys.users })
+            }
+            queryClient.invalidateQueries({ queryKey: queryKeys.adminInitPageData(adminId) })
+        }
+    })
+
+    const { cellStates, editDetails, coords, resetAll } = useCellState()
     const [isEditing, setIsEditing] = useState('')
-    const [coords, setCoords] = useState({rowId: '', col:''})
-    const [editTo, setEditTo] = useState('')
     const [isAddingNew, setIsAddingNew] = useState(false)
 
-    if (isLoading) return <h1>Loading...</h1>
-
-    const users = data ?? []
-    
-    function handleSetCoord(rowId, col) {
-        setCoords({rowId: rowId, col: col})
-        setIsEditing('edit')
+    function handleCancelKey(event) {
+        if (event.key === "Escape") setIsEditing('');
     }
 
-    function handleCancelKey(event) {
-        if (event.key != "Escape") return null
-
-        setIsEditing('')
-        setCoords({rowId: '', col: ''})
+    function saveEdit() {
+        updateUserMutation.mutate({
+            id: editDetails.rowId,
+            column: editDetails.col,
+            value: editDetails.value,
+        })
     }
 
     return (
@@ -53,30 +53,31 @@ export default function UsersTable() {
                 <h2>Users</h2>
                 
                 <div className="users-table__btn-options">
-                    {(isEditing)
-                        ? <>
-                            {(isEditing === 'edit') && <button>💾</button>}
-                            <button title="Cancel"
-                                onClick={_ => {
-                                    setIsEditing('')
-                                    setCoords({rowId: '', col: ''})
-                            }}>❌</button>
-                        </>
-                        : <div className="users-table__add-and-delete-btn">
-                            {isAddingNew 
-                                ? <div className="users-table__in-add-btn-options">
-                                    <Link to={'/create-teacher-account'}>Teacher</Link>
-                                    <Link to={'/create-student-account'}>Student</Link>
-                                    <button 
-                                        title="Cancel"
-                                        onClick={_ => setIsAddingNew(false)}
-                                    >❌</button>
-                                </div>
-                                :<button title="Add new account" onClick={_ => setIsAddingNew(true)}>➕</button>
-                            }
-                            
-                            <button onClick={_ => setIsEditing('delete')} title="Delete account">🗑️</button>
-                        </div>
+                    {(coords.rowId === "")
+                        ? ((isEditing)
+                            ? <>
+                                {(isEditing === 'edit') && <button>💾</button>}
+                                <button title="Cancel"
+                                    onClick={_ => {
+                                        setIsEditing('')
+                                }}>❌</button>
+                            </>
+                            : <div className="users-table__add-and-delete-btn">
+                                {isAddingNew 
+                                    ? <div className="users-table__in-add-btn-options">
+                                        <Link to={'/create-teacher-account'}>Teacher</Link>
+                                        <Link to={'/create-student-account'}>Student</Link>
+                                        <button 
+                                            title="Cancel"
+                                            onClick={_ => setIsAddingNew(false)}
+                                        >❌</button>
+                                    </div>
+                                    :<button title="Add new account" onClick={_ => setIsAddingNew(true)}>➕</button>
+                                }
+                                
+                                <button onClick={_ => setIsEditing('delete')} title="Delete account">🗑️</button>
+                            </div>
+                        ) : <button onClick={_ => resetAll()} title="Cancel edit">❌</button>
                     }
                 </div>
             </div>
@@ -106,36 +107,30 @@ export default function UsersTable() {
                                     </td>
                                     
                                     {/* User Username */}
-                                    {(coords.rowId === user.id && coords.col === 'username') 
-                                        ? <td><input type="text"
-                                            value={editTo}
-                                            onChange={e => setEditTo(e.target.value)}
-                                            placeholder={user.username}
-                                        /> </td>
-                                        : <td onDoubleClick={_ => handleSetCoord(user.id, 'username')}>{user.username}</td>
-                                    }
+                                    <EditableTableCell type="input"
+                                        configs={{
+                                            id: user.id,
+                                            cellData: user.username,
+                                            column: 'username',
+                                            saveEditFn: saveEdit,
+                                        }}
+                                        cellStates={cellStates}
+                                    />
 
                                     {/* User Email */}
-                                    {(coords.rowId === user.id && coords.col === 'email') 
-                                        ? <td><input type="text"
-                                            value={editTo}
-                                            onChange={e => setEditTo(e.target.value)}
-                                            placeholder={user.email}
-                                        /> </td>
-                                        : <td onDoubleClick={_ => handleSetCoord(user.id, 'email')}>{user.email}</td>
-                                    }
+                                    <EditableTableCell type="input"
+                                        configs={{
+                                            id: user.id,
+                                            cellData: user.email,
+                                            column: 'email',
+                                            saveEditFn: saveEdit,
+                                        }}
+                                        cellStates={cellStates}
+                                    />
 
                                     {/* User Role */}
-                                    {(coords.rowId === user.id && coords.col === 'role') 
-                                        ? <td><input type="text"
-                                            value={editTo}
-                                            onChange={e => setEditTo(e.target.value)}
-                                            placeholder={user.role}
-                                        /> </td>
-                                        : <td onDoubleClick={_ => handleSetCoord(user.id, 'role')}>
-                                            {capitalEveryWord(user.role)}
-                                        </td>
-                                    }
+                                    <td>{capitalEveryWord(user.role)}</td>
+
                                 </tr>)}
                             </tbody>
                         </table>
