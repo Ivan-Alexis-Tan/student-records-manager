@@ -1,4 +1,8 @@
 export const queryKeys = {
+    //Regis Requests
+    regisRequests: ['regisRequests'],
+
+
     // Users
     me: ['auth', "me"],
     users: ['users'],
@@ -11,6 +15,6 @@ export const queryKeys = {
     // Teachers
     teachers: ["teachers"],
 
-    //Regis Requests
-    regisRequests: ['regisRequests'],
+    // Admin
+    adminInitPageData: (adminId) => ['adminInitPageData', adminId],
 }

@@ -12,6 +12,7 @@ import {
     removeStudents,
     removeTeacher,
     updateQuizScore,
+    updateTeacherDetails,
 } from "../services/studentsAPI";
 
 // User Mutations
@@ -92,6 +93,13 @@ export function mutationDeleteTeacher({ ifSuccess = () => {}, ifError = () => nu
     })
 }
 
+export function mutationUpdateTeacher({ ifSuccess = () => {}, ifError = () => null } = {}) {
+    return useMutation({
+        mutationFn: (payload) => updateTeacherDetails(payload),
+        onSuccess: (response) => ifSuccess(response),
+        onError: (error) => ifError(error.response),
+    })
+}
 
 // Signup Registration Requests
 export function mutationRemoveRegisRequest({ ifSuccess = () => {}, ifError = () => null } = {}) {
