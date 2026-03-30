@@ -10,6 +10,7 @@ dependencies = [
     "fastapi>=0.128.0",
     "passlib[bcrypt]>=1.7.4",
     "pathlib>=1.0.1",
+    "pymysql>=1.1.2",
     "python-dotenv>=1.2.1",
     "python-jose[cryptography]>=3.5.0",
     "python-multipart>=0.0.22",
