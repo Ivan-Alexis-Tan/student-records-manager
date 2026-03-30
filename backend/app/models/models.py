@@ -6,7 +6,11 @@ import uuid
 class BaseModel(DeclarativeBase):
     __abstract__ = True
 
-    id: Mapped[str] = mapped_column(primary_key=True, default=lambda: str(uuid.uuid4()))
+    id: Mapped[str] = mapped_column(
+        String(36), 
+        primary_key=True, 
+        default=lambda: str(uuid.uuid4()),
+    )
 
 
 class User(BaseModel):
@@ -27,10 +31,10 @@ class User(BaseModel):
 class Student(BaseModel):
     __tablename__ = 'students'
 
-    first_name: Mapped[str]
-    last_name: Mapped[str]
+    first_name: Mapped[str] = mapped_column(String(50))
+    last_name: Mapped[str] = mapped_column(String(50))
     grade_lvl: Mapped[int]
-    user_id: Mapped[str] = mapped_column(ForeignKey('users.id'), nullable=True)
+    user_id: Mapped[str] = mapped_column(String(36), ForeignKey('users.id'), nullable=True)
     
     user: Mapped['User'] = relationship(back_populates='student_profile')
     quizzes: Mapped[list['Quiz']] = relationship(
@@ -43,14 +47,14 @@ class Quiz(BaseModel):
     __tablename__ = 'quizzes'
 
     date: Mapped[dt_date] = mapped_column(Date, default=dt_date.today)
-    subject: Mapped[str]
+    subject: Mapped[str] = mapped_column(String(50))
     quiz_num: Mapped[int]
     score: Mapped[int]
     total_items: Mapped[int] = mapped_column(nullable=True)
     quarter: Mapped[int]
     unit: Mapped[int] = mapped_column(nullable=True)
-    topic: Mapped[str] = mapped_column(nullable=True)
-    student_id: Mapped[str] = mapped_column(ForeignKey('students.id'))
+    topic: Mapped[str] = mapped_column(String(255), nullable=True)
+    student_id: Mapped[str] = mapped_column(String(36), ForeignKey('students.id'))
     
     student: Mapped['Student'] = relationship(back_populates='quizzes')
 
@@ -58,10 +62,10 @@ class Quiz(BaseModel):
 class Teacher(BaseModel):
     __tablename__ = "teachers"
 
-    first_name: Mapped[str]
-    last_name: Mapped[str]
-    field_specialty: Mapped[str] = mapped_column(nullable=True)
-    user_id: Mapped[str] = mapped_column(ForeignKey('users.id'), nullable=True)
+    first_name: Mapped[str] = mapped_column(String(50))
+    last_name: Mapped[str] = mapped_column(String(50))
+    field_specialty: Mapped[str] = mapped_column(String(50), nullable=True)
+    user_id: Mapped[str] = mapped_column(String(36), ForeignKey('users.id'), nullable=True)
 
     user: Mapped["User"] = relationship(back_populates='teacher_profile')
 
@@ -69,12 +73,12 @@ class Teacher(BaseModel):
 class RegistrationRequest(BaseModel):
     __tablename__ = "registration_requests"
 
-    role: Mapped[str]
-    username: Mapped[str]
-    email: Mapped[str]
-    hashed_password: Mapped[str]
-    student_id: Mapped[str] = mapped_column(nullable=True)
-    first_name: Mapped[str] = mapped_column(nullable=True)
-    last_name: Mapped[str] = mapped_column(nullable=True)
-    field_specialty: Mapped[str] = mapped_column(nullable=True)
+    role: Mapped[str] = mapped_column(String(50))
+    username: Mapped[str] = mapped_column(String(50))
+    email: Mapped[str] = mapped_column(String(50))
+    hashed_password: Mapped[str] = mapped_column(String(255))
+    student_id: Mapped[str] = mapped_column(String(36), nullable=True)
+    first_name: Mapped[str] = mapped_column(String(50), nullable=True)
+    last_name: Mapped[str] = mapped_column(String(50), nullable=True)
+    field_specialty: Mapped[str] = mapped_column(String(100), nullable=True)
     
