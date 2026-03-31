@@ -11,3 +11,9 @@ class NewStudentRequest(BaseModel):
         if not 7 <= val <= 12:
             raise ValueError('Grade level must be 7 through 12.')
         return val
+    
+
+class NewStudentResponse(BaseModel):
+    first_name: str
+    last_name: str
+    grade_lvl: int
