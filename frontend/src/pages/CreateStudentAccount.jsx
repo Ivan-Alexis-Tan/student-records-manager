@@ -11,13 +11,16 @@ import { schemaStudentForm } from "../schemas/schemas"
 import { api } from "../services/axiosAPI"
 import { capitalEveryWord } from "../services/helperFunctions"
 import { queryKeys } from "../services/queryKeys"
+import { useMessage } from "../hooks/useMessage"
 
 export default function CreateStudentAccountPage() {
     const { register, handleSubmit, setValue, formState: { errors } } = useForm({
         resolver: zodResolver(schemaStudentForm),
         defaultValues: { role: 'student' },
     })
+
     const { id } = useParams()
+    const { message, setMessage, messageStyles } = useMessage()
 
     const {data: students, isLoading: loadingStudents} = useQuery({
         queryKey: queryKeys.students,
@@ -25,22 +28,33 @@ export default function CreateStudentAccountPage() {
     });
 
     const createAccMutation = mutationCreateStudentAcc({
-        ifSuccess: () => setMessage({
-            detail: `Successfully created ${selected.last_name}, ${selected.first_name}'s account.`, 
-            ok: true
-        }),
-        ifError: (error) => setMessage({
-            ok: false,
-            detail: error.data.detail,
-        }),
+        ifSuccess: () => {
+            setMessage({
+                ok: true,
+                header: `Successfully Created`,
+                text: `Successfully created ${selected.last_name}, ${selected.first_name}'s account.`,
+            })
+        },
+        ifError: (error) => {
+            setMessage({
+                ok: false,
+                header: `Failed to Create`,
+                text: error?.data?.detail,
+            })
+        },
     })
 
-    const [selected, setSelected] = useState(students?.find(student => student.id === id))
-    const [message, setMessage] = useState({ok: false, detail: ""})
+    const [selected, setSelected] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
 
     const errorFields = Object.keys(errors);
-    const showConfirmPwError = (errorFields.length == 0) && message.detail
+
+    useEffect(() => {
+        const toSelect = students?.find(student => student.id === id)
+        
+        if (!toSelect) return
+        setSelected(students?.find(student => student.id === id))
+    }, [students])
 
     // Student ID setter
     useEffect(() => {
@@ -50,12 +64,28 @@ export default function CreateStudentAccountPage() {
         setValue('username', `${selected.first_name} ${selected.last_name}`)
     }, [selected])
 
+    // Zod Message organizer
+    useEffect(() => {
+        if (errorFields.length == 0) return
+
+        setMessage({
+            ok: false,
+            header: `Invalid ${capitalEveryWord(errorFields[0], '_')}`,
+            text: errors[errorFields[0]]?.message,
+        })
+    }, [errors, errorFields.length])
+
     if (loadingStudents) return <h1>Loading Students...</h1>
     if (!students) return <h1>Failed to load data, please retry.</h1>
 
-    function handleCreateAccount(data) {
+    function handleCreateAccount(data, e) {
+        e?.preventDefault()
         if (data.password !== confirmPassword) {
-            setMessage({ok: false, detail: 'Confirm password does not match.'})
+            setMessage({
+                ok: false,
+                header: `Failed to Submit`, 
+                text: 'Confirm password does not match.'
+            })
             return
         }
         createAccMutation.mutate(data)
@@ -64,11 +94,10 @@ export default function CreateStudentAccountPage() {
     return (
         <div>
             <h1>Create Student Account</h1>
-            {showConfirmPwError && <p style={message.ok ? statusOkStyle : statusErrorStyle}><strong>{message.detail}</strong></p>}
-            {errorFields.length >= 1 && (
-                <div style={ statusErrorStyle }>
-                    <h4>Invalid {capitalEveryWord(errorFields[0], '_')}</h4>
-                    <p>{errors[errorFields[0]].message}</p>
+            {message.text && (
+                <div style={ messageStyles }>
+                    <h4>{message.header}</h4>
+                    <p>{message.text}</p>
                 </div>
             )}
 
@@ -96,14 +125,4 @@ export default function CreateStudentAccountPage() {
             </form>
         </div>
     )
-}
-
-const statusOkStyle = {
-    color: "hsl(143, 100%, 60%)",
-    textAlign: 'center',
-}
-
-const statusErrorStyle = {
-    color: "hsl(0, 100%, 60%)",
-    textAlign: 'center',
 }

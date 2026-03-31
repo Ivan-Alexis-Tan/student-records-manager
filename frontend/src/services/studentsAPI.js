@@ -135,5 +135,5 @@ export async function createStudentAccount(reqDetails) {
         password: reqDetails.password,
         student_id: reqDetails.student_id,
     }
-    return api.post(`/users`, new_user)
+    return api.post(`/users/students`, new_user)
 }
