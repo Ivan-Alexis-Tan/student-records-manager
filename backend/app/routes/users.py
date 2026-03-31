@@ -14,7 +14,8 @@ from app.routes.auth import COOKIE_KWARGS
 
 import app.schemas.auth_requests as request_schema
 import app.schemas.auth_reponses as response_schema
-import app.schemas.users as users_schema 
+import app.schemas.users as users_schema
+import app.schemas.students as students_schema
 
 users_router = APIRouter(prefix='/users', tags=['users'])
 
@@ -44,8 +45,8 @@ def admin_init_page(current_user: user_dependency, db: db_dependency):
     )
 
 
-@users_router.post('', status_code=status.HTTP_201_CREATED)
-def create_user(payload: users_schema.CreateUserRequest, current_user: user_dependency, db: db_dependency):
+@users_router.post('/students', status_code=status.HTTP_201_CREATED, response_model=students_schema.StudentAccountResponse)
+def create_student_account(payload: users_schema.CreateUserRequest, current_user: user_dependency, db: db_dependency):
     if not current_user:
         raise credential_exception
     
@@ -80,7 +81,7 @@ def create_user(payload: users_schema.CreateUserRequest, current_user: user_depe
     db.commit()
     db.refresh(student)
 
-    return {"message": "Successfully created new user account."}
+    return student.user
 
 
 @users_router.post("/admin", status_code=status.HTTP_201_CREATED)
