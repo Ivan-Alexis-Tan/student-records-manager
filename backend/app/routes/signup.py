@@ -36,27 +36,33 @@ def get_signup_requests(current_user: user_dependency, db: db_dependency):
 
 @signup_router.post("/request", status_code=status.HTTP_201_CREATED)
 def create_signup_request(payload: CreateSignupRequest, db: db_dependency):
-    already_exists = db.query(models.RegistrationRequest).filter_by(email=payload.email).first()
+    request_exists = db.query(models.RegistrationRequest).filter_by(email=payload.email).first()
 
-    if already_exists:
+    if request_exists:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Already sent a request."
         )
     
-    students_id = set([student.id for student in db.query(models.Student.id).all()])
-    user_emails = set([user.email for user in db.query(models.User.email).all()])
+    student_exists = db.get(models.Student, payload.student_id)
+    user_exists = db.query(models.User).filter(models.User.email == payload.email).first()
 
-    if (payload.role == "student") & (payload.student_id not in students_id):
+    if (payload.role == "student") & (not student_exists):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="ID not found."
         )
     
-    if payload.email in user_emails:
+    if user_exists:
+        if (user_exists.role == 'student') & (payload.role == 'admin'):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Student cannot be an admin."
+            )
+        
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Account already exists."
+            detail="Email already taken."
         )
     
     refined = {}
