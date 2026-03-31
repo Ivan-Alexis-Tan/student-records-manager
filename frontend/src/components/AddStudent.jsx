@@ -7,8 +7,7 @@ import { schemaNewStudentForm } from "../schemas/schemas"
 import { capitalEveryWord } from "../services/helperFunctions"
 import { queryClient } from "../services/queryClient"
 import { queryKeys } from "../services/queryKeys"
-
-const messageDefault = {text: "", ok: false}
+import { useMessage } from "../hooks/useMessage"
 
 export default function AddStudent() {
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -16,7 +15,7 @@ export default function AddStudent() {
         defaultValues: { grade_lvl: 12 },
     })
 
-    const [message, setMessage] = useState(messageDefault)
+    const { message, setMessage, messageStyles } = useMessage()
     
     const createStudent = mutationCreateStudent({
         ifSuccess: (response) => {
@@ -24,6 +23,7 @@ export default function AddStudent() {
             queryClient.invalidateQueries({queryKey: queryKeys.students });
             setMessage({
                 ok: true,
+                header: `Successfully added new student.`,
                 text: `Successfully added ${newStudent.last_name}, ${newStudent.first_name}`,
             });
         },
@@ -33,34 +33,34 @@ export default function AddStudent() {
 
             setMessage({
                 ok: false,
+                header: `Failed to add new student`,
                 text: errMsg[0]?.msg ?? contingency
             })
         },
     })
 
     const errorFields = Object.keys(errors)
-    const messageStyle = (message.ok 
-        ? {color: 'hsl(113, 100%, 50%)', textAlign: 'center'}
-        : {color: 'hsl(9, 100%, 69%)', textAlign: 'center'}
-    )
 
     // Error message organizer
     useEffect(() => {
         if (errorFields.length == 0) return
 
-        setMessage(messageDefault)
-    }, [errors, errorFields])
+        setMessage({
+            ok: false,
+            header: `Invalid ${capitalEveryWord(errorFields[0], '_')}`,
+            text: errors[errorFields[0]]?.message,
+        })
+    }, [errors, errorFields.length])
 
     return (
         <div>
             <h1>Add Student</h1>
-            {message.text && <p style={messageStyle}><strong>{message.text}</strong></p>}
             
-            {/* Zod Error Message */}
-            {(errorFields.length !== 0) && (
-                <div style={{color: "hsl(9, 100%, 69%)", textAlign: 'center'}}>
-                    <p><strong>Invalid {capitalEveryWord(errorFields[0], '_')}</strong></p>
-                    <p>{errors[errorFields[0]]?.message}</p>
+            {/* Message */}
+            {(message.text) && (
+                <div style={messageStyles}>
+                    <p><strong>{message.header}</strong></p>
+                    <p>{message.text}</p>
                 </div>
             )}
 
@@ -74,7 +74,7 @@ export default function AddStudent() {
                 <br />
                 
                 <label>Grade: </label>
-                <input type="number" {...register('grade_lvl')} />
+                <input type="number" min={7} max={12} {...register('grade_lvl')} />
                 <br />
 
                 <button type="submit" title="Add new student">Add New Student</button>

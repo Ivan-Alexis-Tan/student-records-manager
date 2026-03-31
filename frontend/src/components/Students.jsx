@@ -7,8 +7,7 @@ import SearchData from "./SearchData"
 import { api } from "../services/axiosAPI"
 import { mutationRemoveStudents } from "../hooks/mutateFuncs"
 import { queryKeys } from "../services/queryKeys"
-
-const attribs = ['last_name', 'first_name', 'id']
+import { queryClient } from "../services/queryClient"
 
 export default function Students() {
     const {data: students, isLoading, error} = useQuery({
