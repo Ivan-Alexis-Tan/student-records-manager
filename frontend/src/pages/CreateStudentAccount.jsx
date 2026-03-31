@@ -78,8 +78,7 @@ export default function CreateStudentAccountPage() {
     if (loadingStudents) return <h1>Loading Students...</h1>
     if (!students) return <h1>Failed to load data, please retry.</h1>
 
-    function handleCreateAccount(data, e) {
-        e?.preventDefault()
+    function handleCreateAccount(data) {
         if (data.password !== confirmPassword) {
             setMessage({
                 ok: false,

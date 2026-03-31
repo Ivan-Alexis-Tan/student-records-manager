@@ -14,11 +14,15 @@ export default function UsersTable({ userData = [], adminId = "" }) {
     
     const delUserMutation = mutationDeleteUserAcc({
         ifSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: queryKeys.users });
-
             if (queryClient.getQueryData(queryKeys.teachers)) {
                 queryClient.invalidateQueries(queryKeys.teachers)
             };
+
+            if (queryClient.getQueryData(queryKeys.users)) {
+                queryClient.invalidateQueries({ queryKey: queryKeys.users });
+            }
+            
+            queryClient.invalidateQueries({ queryKey: queryKeys.adminInitPageData(adminId) })
         },
     })
 
