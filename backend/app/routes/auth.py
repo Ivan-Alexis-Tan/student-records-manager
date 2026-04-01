@@ -14,6 +14,7 @@ from app.auth.auth import hash_password, create_access_token
 
 from app.schemas.auth_requests import RegisterRequest
 import app.schemas.users as users_schema
+from app.core.config import IS_PRODUCTION
 
 router = APIRouter(
     prefix="/auth",
@@ -22,7 +23,7 @@ router = APIRouter(
 COOKIE_KWARGS = dict(
     httponly=True,
     secure=False,
-    samesite='lax'
+    samesite="none" if IS_PRODUCTION else "lax",
 )
 
 credential_exception = HTTPException(
