@@ -25,7 +25,7 @@ origins = [
     "http://localhost:5173",
     "http://localhost:3000",
     "http://localhost:8000",
-    "https://student-records-manager-frontend.vercel.app",
+    "https://student-records-manager-sand.vercel.app",
 ]
 
 app.add_middleware(
