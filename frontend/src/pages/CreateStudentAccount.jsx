@@ -53,7 +53,7 @@ export default function CreateStudentAccountPage() {
         const toSelect = students?.find(student => student.id === id)
         
         if (!toSelect) return
-        setSelected(students?.find(student => student.id === id))
+        setSelected(toSelect)
     }, [students])
 
     // Student ID setter
