@@ -1,4 +1,4 @@
-import { api } from "./axiosAPI"
+import { api, baseUrl } from "./axiosAPI"
 
 // Auth
 export async function submitLogin(loginDetails) {
@@ -6,7 +6,7 @@ export async function submitLogin(loginDetails) {
     refined.append("username", loginDetails.email)
     refined.append("password", loginDetails.password)
 
-    const res = await fetch("http://localhost:8000/auth/login", {
+    const res = await fetch(`${baseUrl}/auth/login`, {
         method: "POST",
         headers: {"Content-Type": "application/x-www-form-urlencoded"},
         credentials: 'include',

@@ -1,9 +1,10 @@
 import axios from "axios"
 
 let isLoggedIn = false
+export const baseUrl = "https://student-records-manager-backend.onrender.com"
 
 export const api = axios.create({
-    baseURL: "http://localhost:8000",
+    baseURL: baseUrl,
     withCredentials: true,
 });
 
@@ -36,7 +37,7 @@ api.interceptors.response.use(
         if (status === 401) {
             if (isLoggedIn) {
                 isLoggedIn = false
-                await axios.post(`http://localhost:8000/auth/logout`)
+                await axios.post(`/auth/logout`)
             }
         }
         
