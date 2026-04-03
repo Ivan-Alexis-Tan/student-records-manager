@@ -18,3 +18,14 @@ export const queryKeys = {
     // Admin
     adminInitPageData: (adminId) => ['adminInitPageData', adminId],
 }
+
+export const subjects = [
+    'Science', 
+    "Math", 
+    "English", 
+    "Aral. Pan.", 
+    "MAPEH",
+    "Filipino",
+    "ESP",
+    "TLE",
+].sort()

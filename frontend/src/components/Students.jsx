@@ -6,7 +6,7 @@ import SearchData from "./SearchData"
 
 import { api } from "../api/axiosAPI"
 import { mutationRemoveStudents } from "../hooks/mutateFuncs"
-import { queryKeys } from "../lib/queryKeys"
+import { queryKeys } from "../constants/index"
 import { queryClient } from "../lib/queryClient"
 
 export default function Students() {

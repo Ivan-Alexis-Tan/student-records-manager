@@ -7,17 +7,6 @@ export function getPrevUrl(path) {
     return splitted.slice(1, splitted.length - 1).join('/')
 }
 
-export const subjects = [
-    'Science', 
-    "Math", 
-    "English", 
-    "Aral. Pan.", 
-    "MAPEH",
-    "Filipino",
-    "ESP",
-    "TLE",
-].sort()
-
 export function capitalEveryWord(str, sep = ' ') {
     const strings = `${str}`.split(sep)
     const altered = strings.map(str => str.charAt(0).toUpperCase() + str.slice(1))

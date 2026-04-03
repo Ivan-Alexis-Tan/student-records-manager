@@ -10,7 +10,7 @@ import { mutationCreateStudentAcc } from "../hooks/mutateFuncs"
 import { schemaStudentForm } from "../schemas/schemas"
 import { api } from "../api/axiosAPI"
 import { capitalEveryWord } from "../utils/helperFunctions"
-import { queryKeys } from "../lib/queryKeys"
+import { queryKeys } from "../constants/index"
 import { useMessage } from "../hooks/useMessage"
 
 export default function CreateStudentAccountPage() {

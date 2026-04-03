@@ -4,7 +4,7 @@ import { useState } from "react"
 
 import { getQuizzes } from "../api/students"
 import { useAuth } from "../hooks/authQuery"
-import { queryKeys } from "../lib/queryKeys"
+import { queryKeys } from "../constants/index"
 import { useQuizEditor } from "../hooks/useQuizEditor"
 
 export default function QuizzesPage() {

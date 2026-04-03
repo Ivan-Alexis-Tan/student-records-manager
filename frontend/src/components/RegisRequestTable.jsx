@@ -5,7 +5,7 @@ import { queryClient } from "../lib/queryClient";
 import { getRegisRequests } from "../api/signup"
 import { mutationGrantRegisRequest, mutationRemoveRegisRequest } from "../hooks/mutateFuncs";
 import { capitalEveryWord } from "../utils/helperFunctions"
-import { queryKeys } from "../lib/queryKeys";
+import { queryKeys } from "../constants/index";
 
 export default function RegistrationRequestTable() {
     const { data, isLoading } = useQuery({

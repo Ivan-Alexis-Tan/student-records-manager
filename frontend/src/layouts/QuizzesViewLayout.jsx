@@ -1,6 +1,6 @@
 import { Link, Outlet, useParams} from 'react-router-dom'
 
-import { subjects } from "../utils/helperFunctions"
+import { subjects } from "../constants/index"
 
 export default function QuizzesViewLayout() {
     const { quarter, subject} = useParams()

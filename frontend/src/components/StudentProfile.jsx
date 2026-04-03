@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import { findStudent } from "../api/students"
 import { getStudentSelfDetails } from '../api/auth' 
 import { useAuth } from '../hooks/authQuery'
-import { queryKeys } from '../lib/queryKeys'
+import { queryKeys } from '../constants/index'
 
 const rolesAllowed = ["teacher", "admin"]
 

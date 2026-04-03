@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { mutationDeleteQuiz, mutationUpdateScore } from "./mutateFuncs";
 import { queryClient } from "../lib/queryClient";
-import { queryKeys } from "../lib/queryKeys";
+import { queryKeys } from "../constants/index";
 import { schemaEditQuizForm } from "../schemas/schemas";
 import { useMessage } from "./useMessage";
 import { capitalEveryWord } from "../utils/helperFunctions"

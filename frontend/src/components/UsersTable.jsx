@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { mutationDeleteUserAcc, mutationUpdateUserDetails } from "../hooks/mutateFuncs";
 import { capitalEveryWord } from "../utils/helperFunctions";
 import { queryClient } from "../lib/queryClient";
-import { queryKeys } from "../lib/queryKeys";
+import { queryKeys } from "../constants/index";
 import { useMessage } from "../hooks/useMessage"
 
 import EditableTableCell, { useCellState } from "./EditableTableCell";

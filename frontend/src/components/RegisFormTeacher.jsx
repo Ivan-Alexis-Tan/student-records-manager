@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 
-import { capitalEveryWord, subjects } from "../utils/helperFunctions";
+import { capitalEveryWord } from "../utils/helperFunctions";
+import { subjects } from "../constants/index"
 import { useRegistration } from "../hooks/useRegistration";
 
 const configsDefault = {

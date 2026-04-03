@@ -6,7 +6,7 @@ import { useAuth } from '../hooks/authQuery'
 import { submitLogin } from '../api/auth'
 import { queryClient } from '../lib/queryClient'
 import { capitalEveryWord } from "../utils/helperFunctions"
-import { queryKeys } from '../lib/queryKeys'
+import { queryKeys } from '../constants/index'
 
 export default function LoginPage() {
     const [loginAs, setLoginAs] = useState("teacher")

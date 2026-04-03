@@ -1,7 +1,7 @@
 import { Link, useParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 
-import { queryKeys } from "../lib/queryKeys"
+import { queryKeys } from "../constants/index"
 import { getAdminInitPageData } from "../api/users"
 
 import UsersTable from "../components/UsersTable"

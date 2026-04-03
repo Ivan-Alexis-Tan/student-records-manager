@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom"
 
 import { mutationDeleteTeacher, mutationUpdateTeacher } from "../hooks/mutateFuncs"
 import { queryClient } from "../lib/queryClient"
-import { queryKeys } from "../lib/queryKeys"
-import { subjects } from "../utils/helperFunctions"
+import { subjects, queryKeys } from "../constants/index"
 import { useMessage } from "../hooks/useMessage"
 
 import EditableTableCell, { useCellState } from "./EditableTableCell"

@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { schemaNewStudentForm } from "../schemas/schemas"
 import { capitalEveryWord } from "../utils/helperFunctions"
 import { queryClient } from "../lib/queryClient"
-import { queryKeys } from "../lib/queryKeys"
+import { queryKeys } from "../constants/index"
 import { useMessage } from "../hooks/useMessage"
 
 export default function AddStudent() {
