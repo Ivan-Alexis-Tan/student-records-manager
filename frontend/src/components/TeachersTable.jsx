@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { capitalEveryWord } from "../services/helperFunctions" 
 import { mutationDeleteTeacher, mutationUpdateTeacher } from "../hooks/mutateFuncs"
 import { queryClient } from "../services/queryClient"
 import { queryKeys } from "../services/queryKeys"
 import { subjects } from "../services/helperFunctions"
+import { useMessage } from "../hooks/useMessage"
 
 import EditableTableCell, { useCellState } from "./EditableTableCell"
 
 export default function TeachersTable({ teachersData = [], adminId = "" }) {
     const teachers = teachersData ?? []
     const navigate = useNavigate()
+    const { message, setMessage, messageStyles, resetMessage } = useMessage()
 
     const deleteTeacherAccMutation = mutationDeleteTeacher({
         ifSuccess: () => {
@@ -19,6 +20,14 @@ export default function TeachersTable({ teachersData = [], adminId = "" }) {
                 queryClient.invalidateQueries({ queryKey: queryKeys.teachers })
             }
             queryClient.invalidateQueries({ queryKey: queryKeys.adminInitPageData(adminId) })
+            resetMessage()
+        },
+        ifError: (error) => {
+            setMessage({
+                ok: false,
+                header: "Failed Deletion",
+                text: error.data?.detail ?? "Something went wrong.",
+            })
         },
     })
 
@@ -28,7 +37,15 @@ export default function TeachersTable({ teachersData = [], adminId = "" }) {
                 queryClient.invalidateQueries({ queryKey: queryKeys.teachers })
             }
             queryClient.invalidateQueries({ queryKey: queryKeys.adminInitPageData(adminId) })
-        }
+            resetMessage()
+        },
+        ifError: (error) => {
+            setMessage({
+                ok: false,
+                header: "Failed Updating",
+                text: error.data?.detail ?? "Something went wrong.",
+            })
+        },
     })
 
     const { cellStates, editDetails, coords, resetAll } = useCellState();
@@ -46,12 +63,22 @@ export default function TeachersTable({ teachersData = [], adminId = "" }) {
 
     return (
          <div className="teachers-table__container">
+
+                {/* Status Message */}
+                {message.text && <div style={messageStyles}>
+                    <p><strong>{message.header}</strong></p>
+                    <p>{message.text}</p>
+                </div>}
+
                 <div className="teachers-table__title-edit-delete-btn">
                     <h2>Teachers</h2>
 
                     <div>
                         {(coords.rowId !== "") 
-                            ? <button title="Cancel edit" onClick={_ => resetAll()}>❌</button>
+                            ? <button title="Cancel edit" onClick={_ => {
+                                resetAll()
+                                resetMessage()
+                            }}>❌</button>
                             : (isEditing === ""
                                 ? <>
                                     <button title="Create new teacher account" 
@@ -70,6 +97,7 @@ export default function TeachersTable({ teachersData = [], adminId = "" }) {
                                         title="Cancel"
                                         onClick={_ => {
                                             setIsEditing('')
+                                            resetMessage()
                                         }}
                                     >❌</button>
                                 </>

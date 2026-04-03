@@ -5,12 +5,14 @@ import { mutationDeleteUserAcc, mutationUpdateUserDetails } from "../hooks/mutat
 import { capitalEveryWord } from "../services/helperFunctions";
 import { queryClient } from "../services/queryClient";
 import { queryKeys } from "../services/queryKeys";
+import { useMessage } from "../hooks/useMessage"
 
 import EditableTableCell, { useCellState } from "./EditableTableCell";
 
 
 export default function UsersTable({ userData = [], adminId = "" }) {
     const users = userData ?? []
+    const { message, setMessage, messageStyles, resetMessage } = useMessage()
     
     const delUserMutation = mutationDeleteUserAcc({
         ifSuccess: () => {
@@ -23,7 +25,15 @@ export default function UsersTable({ userData = [], adminId = "" }) {
             }
             
             queryClient.invalidateQueries({ queryKey: queryKeys.adminInitPageData(adminId) })
+            resetMessage()
         },
+        ifError: (error) => {
+            setMessage({
+                ok: false,
+                header: "Failed Deletion",
+                text: error.data?.detail ?? "Something went wrong.",
+            })
+        }
     })
 
     const updateUserMutation = mutationUpdateUserDetails({
@@ -32,7 +42,15 @@ export default function UsersTable({ userData = [], adminId = "" }) {
                 queryClient.invalidateQueries({ queryKey: queryKeys.users })
             }
             queryClient.invalidateQueries({ queryKey: queryKeys.adminInitPageData(adminId) })
-        }
+            resetMessage()
+        },
+        ifError: (error) => {
+            setMessage({
+                ok: false,
+                header: "Failed Updating",
+                text: error.data?.detail ?? "Something went wrong.",
+            })
+        },
     })
 
     const { cellStates, editDetails, coords, resetAll } = useCellState()
@@ -53,6 +71,13 @@ export default function UsersTable({ userData = [], adminId = "" }) {
 
     return (
         <div className="users-table__container">
+
+            {/* Status Message */}
+            {message.text && <div style={messageStyles}>
+                <p><strong>{message.header}</strong></p>
+                <p>{message.text}</p>
+            </div>}
+
             <div className="users-table__title-save-cancel-button">
                 <h2>Users</h2>
                 
@@ -64,6 +89,7 @@ export default function UsersTable({ userData = [], adminId = "" }) {
                                 <button title="Cancel"
                                     onClick={_ => {
                                         setIsEditing('')
+                                        resetMessage()
                                 }}>❌</button>
                             </>
                             : <div className="users-table__add-and-delete-btn">
@@ -73,7 +99,10 @@ export default function UsersTable({ userData = [], adminId = "" }) {
                                         <Link to={'/create-student-account'}>Student</Link>
                                         <button 
                                             title="Cancel"
-                                            onClick={_ => setIsAddingNew(false)}
+                                            onClick={_ => {
+                                                setIsAddingNew(false)
+                                                resetMessage()
+                                            }}
                                         >❌</button>
                                     </div>
                                     :<button title="Add new account" onClick={_ => setIsAddingNew(true)}>➕</button>
