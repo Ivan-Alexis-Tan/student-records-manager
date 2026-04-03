@@ -6,9 +6,11 @@ from app.auth.dependencies import (
     db_dependency,
     credential_exception,
     permission_exception,
+    demo_edit_exception,
 )
 from app.auth.auth import hash_password
 from app.models.models import Teacher, User
+from app.demo.demo_accounts import teacher_demo_acc
 
 import app.schemas.teachers as teachers_schema 
 
@@ -93,6 +95,9 @@ def remove_teacher(id: str, current_user: user_dependency, db: db_dependency):
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Teacher does not exists.'
         )
+    
+    if teacher.user_id == teacher_demo_acc['id']:
+        raise demo_edit_exception
 
     teacher_acc = db.get(User, teacher.user_id)
     db.delete(teacher_acc)
@@ -113,6 +118,9 @@ def update_teacher_data(id: str, payload: teachers_schema.TeacherEditRequest, cu
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Teacher not found.'
         )
+    
+    if teacher.user_id == teacher_demo_acc['id']:
+        raise demo_edit_exception
 
     setattr(teacher, payload.column, payload.value)
     db.commit()

@@ -8,9 +8,11 @@ from app.auth.dependencies import (
     db_dependency,
     credential_exception, 
     permission_exception,
+    demo_edit_exception,
 )
 from app.auth.auth import hash_password, create_access_token
 from app.routes.auth import COOKIE_KWARGS
+import app.demo.demo_accounts as demo_accs
 
 import app.schemas.auth_requests as request_schema
 import app.schemas.auth_reponses as response_schema
@@ -124,6 +126,9 @@ def remove_user(id: str, db: db_dependency, current_user: user_dependency):
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Account does not exists.'
         )
+    
+    if user.id in set(demo_accs.ids_list):
+        raise demo_edit_exception
 
     db.delete(user)
     db.commit()
@@ -143,6 +148,9 @@ def update_user_details(id: str, payload: users_schema.UpdateUserRequest, curren
             status_code=status.HTTP_404_NOT_FOUND,
             detail='User does not exists.'
         )
+    
+    if user.id in set(demo_accs.ids_list):
+        raise demo_edit_exception
     
     setattr(user, payload.column, payload.value)
     db.commit()

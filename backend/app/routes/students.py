@@ -7,9 +7,11 @@ from app.auth.dependencies import (
     credential_exception, 
     permission_exception,
     usual_permissions,
+    demo_edit_exception,
 )
 from app.models.models import Student, Quiz
 from app.schemas.students import NewStudentRequest, NewStudentResponse
+from app.demo.demo_accounts import student_demo_acc
 
 student_router = APIRouter(prefix="/students", tags=['students'])
 
@@ -93,6 +95,9 @@ def remove_student(id: str, db: db_dependency, current_user: user_dependency):
             status_code=status.HTTP_404_NOT_FOUND,
             detail='Student does not exists.'
         )
+    
+    if student.id == student_demo_acc['id']:
+        raise demo_edit_exception
 
     db.delete(student)
     db.commit()
