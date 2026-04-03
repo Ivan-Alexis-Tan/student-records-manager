@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 
-import { queryClient } from "../services/queryClient"; 
-import { getRegisRequests } from "../services/studentsAPI"
+import { queryClient } from "../lib/queryClient"; 
+import { getRegisRequests } from "../api/signup"
 import { mutationGrantRegisRequest, mutationRemoveRegisRequest } from "../hooks/mutateFuncs";
-import { capitalEveryWord } from "../services/helperFunctions";
-import { queryKeys } from "../services/queryKeys";
+import { capitalEveryWord } from "../utils/helperFunctions"
+import { queryKeys } from "../lib/queryKeys";
 
 export default function RegistrationRequestTable() {
     const { data, isLoading } = useQuery({

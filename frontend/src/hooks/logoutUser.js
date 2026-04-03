@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 
-import { queryClient } from "../services/queryClient";
-import { api } from "../services/axiosAPI";
-import { queryKeys } from "../services/queryKeys";
+import { queryClient } from "../lib/queryClient";
+import { api } from "../api/axiosAPI";
+import { queryKeys } from "../lib/queryKeys";
 
 export default function logoutCurrentUser() {
     const logoutMutation = useMutation({

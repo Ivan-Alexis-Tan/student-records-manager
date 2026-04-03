@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 
-import {api} from "../services/axiosAPI"
-import { queryKeys } from "../services/queryKeys"
+import { api } from "../api/axiosAPI"
+import { queryKeys } from "../lib/queryKeys"
 
 export function useAuth() {
     return useQuery({

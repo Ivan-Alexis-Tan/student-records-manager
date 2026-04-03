@@ -4,10 +4,10 @@ import { useQuery } from '@tanstack/react-query'
 
 import SearchData from "./SearchData"
 
-import { api } from "../services/axiosAPI"
+import { api } from "../api/axiosAPI"
 import { mutationRemoveStudents } from "../hooks/mutateFuncs"
-import { queryKeys } from "../services/queryKeys"
-import { queryClient } from "../services/queryClient"
+import { queryKeys } from "../lib/queryKeys"
+import { queryClient } from "../lib/queryClient"
 
 export default function Students() {
     const {data: students, isLoading, error} = useQuery({

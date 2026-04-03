@@ -8,9 +8,9 @@ import SearchData from "../components/SearchData"
 
 import { mutationCreateStudentAcc } from "../hooks/mutateFuncs"
 import { schemaStudentForm } from "../schemas/schemas"
-import { api } from "../services/axiosAPI"
-import { capitalEveryWord } from "../services/helperFunctions"
-import { queryKeys } from "../services/queryKeys"
+import { api } from "../api/axiosAPI"
+import { capitalEveryWord } from "../utils/helperFunctions"
+import { queryKeys } from "../lib/queryKeys"
 import { useMessage } from "../hooks/useMessage"
 
 export default function CreateStudentAccountPage() {

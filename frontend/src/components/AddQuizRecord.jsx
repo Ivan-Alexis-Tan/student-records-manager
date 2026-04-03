@@ -6,9 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { schemaQuizForm } from "../schemas/schemas"
 import { useAuth } from "../hooks/authQuery"
 import { mutationCreateQuiz } from "../hooks/mutateFuncs"
-import { capitalEveryWord, subjects } from "../services/helperFunctions"
-import { queryClient } from "../services/queryClient"
-import { queryKeys } from "../services/queryKeys"
+import { capitalEveryWord, subjects } from "../utils/helperFunctions"
+import { queryClient } from "../lib/queryClient"
+import { queryKeys } from "../lib/queryKeys"
 
 const messageDefault = {text: '', ok: false}
 const subjectSelection = subjects.sort()

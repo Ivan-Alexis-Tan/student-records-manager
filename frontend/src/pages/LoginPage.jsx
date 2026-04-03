@@ -3,10 +3,10 @@ import { Navigate } from 'react-router-dom'
 import { useState } from 'react'
 
 import { useAuth } from '../hooks/authQuery'
-import { submitLogin } from '../services/studentsAPI'
-import { queryClient } from '../services/queryClient'
-import { capitalEveryWord } from '../services/helperFunctions'
-import { queryKeys } from '../services/queryKeys'
+import { submitLogin } from '../api/auth'
+import { queryClient } from '../lib/queryClient'
+import { capitalEveryWord } from "../utils/helperFunctions"
+import { queryKeys } from '../lib/queryKeys'
 
 export default function LoginPage() {
     const [loginAs, setLoginAs] = useState("teacher")

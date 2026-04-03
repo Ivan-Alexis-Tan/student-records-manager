@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { capitalEveryWord } from "../services/helperFunctions"
+import { capitalEveryWord } from "../utils/helperFunctions"
 
 const attribs = ["last_name", "first_name", "id"]
 

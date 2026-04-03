@@ -6,9 +6,10 @@ import {
 } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
-import { findStudent, getStudentSelfDetails } from '../services/studentsAPI'
+import { findStudent } from "../api/students"
+import { getStudentSelfDetails } from '../api/auth' 
 import { useAuth } from '../hooks/authQuery'
-import { queryKeys } from '../services/queryKeys'
+import { queryKeys } from '../lib/queryKeys'
 
 const rolesAllowed = ["teacher", "admin"]
 

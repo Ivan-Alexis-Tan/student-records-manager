@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query"
 import { Outlet, useParams, Link } from "react-router-dom"
 import { useState } from "react"
 
-import { getQuizes } from "../services/studentsAPI"
+import { getQuizzes } from "../api/students"
 import { useAuth } from "../hooks/authQuery"
-import { queryKeys } from "../services/queryKeys"
+import { queryKeys } from "../lib/queryKeys"
 import { useQuizEditor } from "../hooks/useQuizEditor"
 
 export default function QuizzesPage() {
@@ -15,7 +15,7 @@ export default function QuizzesPage() {
     // Fetch Student's Quiz Records
     const quizRecord = useQuery({
         queryKey: queryKeys.studentQuizzes(studentId),
-        queryFn: () => getQuizes(studentId),
+        queryFn: () => getQuizzes(studentId),
         select: (response) => {
             return {
                 quizzes: response.data,

@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import { mutationDeleteUserAcc, mutationUpdateUserDetails } from "../hooks/mutateFuncs";
-import { capitalEveryWord } from "../services/helperFunctions";
-import { queryClient } from "../services/queryClient";
-import { queryKeys } from "../services/queryKeys";
+import { capitalEveryWord } from "../utils/helperFunctions";
+import { queryClient } from "../lib/queryClient";
+import { queryKeys } from "../lib/queryKeys";
 import { useMessage } from "../hooks/useMessage"
 
 import EditableTableCell, { useCellState } from "./EditableTableCell";

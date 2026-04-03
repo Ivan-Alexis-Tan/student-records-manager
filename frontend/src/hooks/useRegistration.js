@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { schemaStudentForm, schemaTeacherForm, schemaUserForm } from "../schemas/schemas";
 import { useMessage } from "./useMessage";
-import { capitalEveryWord } from "../services/helperFunctions";
+import { capitalEveryWord } from "../utils/helperFunctions";
 
 export function useRegistration({ regisType = 'admin', submitFn = () => null } = {}) {
     const { message, setMessage, messageStyles, resetMessage } = useMessage()

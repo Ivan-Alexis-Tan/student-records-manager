@@ -3,8 +3,9 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 // Services and Helpers
-import { capitalEveryWord } from "../services/helperFunctions"
-import { createFirstAdmin, createSignupRequest, hasAdminFetch } from "../services/studentsAPI"
+import { capitalEveryWord } from "../utils/helperFunctions"
+import { createFirstAdmin } from "../api/users"
+import { createSignupRequest, hasAdminFetch } from "../api/signup"
 
 // Components
 import RegisFormStudent from "../components/RegisFormStudent"

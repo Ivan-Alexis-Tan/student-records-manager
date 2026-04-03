@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { mutationCreateStudent } from "../hooks/mutateFuncs"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod" 
 
 import { schemaNewStudentForm } from "../schemas/schemas"
-import { capitalEveryWord } from "../services/helperFunctions"
-import { queryClient } from "../services/queryClient"
-import { queryKeys } from "../services/queryKeys"
+import { capitalEveryWord } from "../utils/helperFunctions"
+import { queryClient } from "../lib/queryClient"
+import { queryKeys } from "../lib/queryKeys"
 import { useMessage } from "../hooks/useMessage"
 
 export default function AddStudent() {

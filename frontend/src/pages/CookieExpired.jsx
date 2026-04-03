@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { queryClient } from "../services/queryClient"
+import { queryClient } from "../lib/queryClient"
 
 export default function CookieExpired() {
     return (

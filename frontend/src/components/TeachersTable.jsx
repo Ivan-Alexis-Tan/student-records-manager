@@ -2,9 +2,9 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { mutationDeleteTeacher, mutationUpdateTeacher } from "../hooks/mutateFuncs"
-import { queryClient } from "../services/queryClient"
-import { queryKeys } from "../services/queryKeys"
-import { subjects } from "../services/helperFunctions"
+import { queryClient } from "../lib/queryClient"
+import { queryKeys } from "../lib/queryKeys"
+import { subjects } from "../utils/helperFunctions"
 import { useMessage } from "../hooks/useMessage"
 
 import EditableTableCell, { useCellState } from "./EditableTableCell"

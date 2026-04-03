@@ -1,20 +1,24 @@
 import { useMutation } from "@tanstack/react-query";
 
-import { 
-    createQuizRecord,
-    createStudent,
-    createStudentAccount,
-    createTeacherAccount,
-    deleteQuiz,
+import {
     deleteUserAccount,
-    grantRegisRequest,
-    removeRegisRequest,
-    removeStudents,
-    removeTeacher,
-    updateQuizScore,
-    updateTeacherDetails,
     updateUserDetails,
-} from "../services/studentsAPI";
+    createStudentAccount,
+} from "../api/users"
+
+import {
+    updateQuizScore,
+    createQuizRecord,
+    deleteQuiz,
+} from '../api/quizzes'
+
+import { removeRegisRequest, grantRegisRequest } from "../api/signup"
+import { createStudent, removeStudents } from "../api/students"
+import {
+    createTeacherAccount,
+    removeTeacher,
+    updateTeacherDetails,
+} from "../api/teachers"
 
 // User Mutations
 export function mutationDeleteUserAcc({ ifSuccess = () => {}, ifError = () => null } = {}) {

@@ -3,11 +3,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { mutationDeleteQuiz, mutationUpdateScore } from "./mutateFuncs";
-import { queryClient } from "../services/queryClient";
-import { queryKeys } from "../services/queryKeys";
+import { queryClient } from "../lib/queryClient";
+import { queryKeys } from "../lib/queryKeys";
 import { schemaEditQuizForm } from "../schemas/schemas";
 import { useMessage } from "./useMessage";
-import { capitalEveryWord } from "../services/helperFunctions";
+import { capitalEveryWord } from "../utils/helperFunctions"
 
 export function useQuizEditor({ studentId = '', onUpdateSuccess = () => null } = {}) {
     const {message, setMessage, messageStyles, resetMessage} = useMessage()
