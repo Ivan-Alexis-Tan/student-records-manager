@@ -21,6 +21,11 @@ permission_exception = HTTPException(
     detail="Not enough permission."
 )
 
+demo_edit_exception =  HTTPException(
+    status_code=status.HTTP_403_FORBIDDEN,
+    detail="Demo accounts can't be edited."
+)
+
 def get_user_by_username(db: Session, email: str) -> Optional[models.User]:
     return db.query(models.User).filter(models.User.email == email).first()
 
