@@ -92,8 +92,8 @@ Access is strictly controlled — every role sees only what they're authorized t
 | Layer | Platform |
 |---|---|
 | Frontend | Vercel |
-| Backend | [your backend platform, e.g. Railway] |
-| Database | [your database host, e.g. Railway / PlanetScale] |
+| Backend | Render |
+| Database | Railway |
 
 ---
 
