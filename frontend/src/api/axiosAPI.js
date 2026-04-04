@@ -1,7 +1,7 @@
 import axios from "axios"
 
+export const baseUrl = import.meta.env.VITE_API_BASE_URL
 let isLoggedIn = false
-export const baseUrl = "https://student-records-manager-backend.onrender.com"
 
 export const api = axios.create({
     baseURL: baseUrl,
