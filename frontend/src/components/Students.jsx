@@ -51,7 +51,7 @@ export default function Students() {
             <div className="students-page__search-and-buttons">
                 <SearchData setStateFn={setSearchedStudent} data={students} />
                 
-                <div>
+                <div className="students-page__btns">
                     <Link to={'/add_student'}><button title="Add student">➕</button></Link>
                     {isRemoving 
                         ? <button 

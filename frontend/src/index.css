@@ -189,6 +189,16 @@ table  td {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
+  > .students-page__btns {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+
+    @media(min-width: 360px) {
+      flex-direction: row;
+    }
+  }
 }
 
 /* Create Student Account */
