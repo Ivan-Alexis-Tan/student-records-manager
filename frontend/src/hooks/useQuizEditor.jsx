@@ -75,7 +75,8 @@ export function useQuizTable({ studentId = '', onUpdateSuccess = () => null } = 
         editForm: { register, reset }, 
         quizHookProps: { 
             submitEdit, 
-            editForm: { register, reset }, 
+            editForm: { register, reset },
+            deleteQuiz,
             message, 
             messageStyles, 
             resetMessage 
@@ -180,7 +181,10 @@ export default function QuizzesDataTable({ quizData, quizHookProps, userPermissi
                                 } { qz.quiz_num } {
                                     isEditing === 'delete' && (
                                         <button title="Delete quiz"
-                                            onClick={_ => deleteQuiz(qz.id)}
+                                            onClick={_ => {
+                                                const confirm = window.confirm(`Delete ${qz.quiz_num}?`)
+                                                if (confirm) quizHookProps.deleteQuiz(qz.id)
+                                            }}
                                         >🗑️</button>
                                     )
                                 }
