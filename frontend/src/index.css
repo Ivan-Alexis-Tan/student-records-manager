@@ -299,3 +299,7 @@ table  td {
     }
   }
 }
+
+.quiz-data-table-container {
+  overflow: auto;
+}
