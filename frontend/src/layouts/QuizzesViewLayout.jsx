@@ -9,26 +9,41 @@ export default function QuizzesViewLayout() {
         <div>
             <h1>Quizzes</h1>
 
-            <div className='quiz-nav__quarter-nav' style={quarterNavStyles}>
-                {[1, 2, 3, 4].map(num => <Link key={num} to={`${num}/${subject}`}>Quarter {num}</Link>)}
+            <h2 style={{ textAlign: "center" }}>Q{quarter} &ndash; {subject}</h2>
+
+            <div className='quiz-nav'>
+                <div className='quiz-quarter-nav' >
+                    <span>Quarter:</span>
+
+                    <div>
+                        {[1, 2, 3, 4].map(num => (
+                            <Link key={num} 
+                                to={`${num}/${subject}`}
+                                className={quarter === String(num) ? "isActive" : ""}
+                            >
+                                {num}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+
+                <div className='quiz-subject-nav' >
+                    <span>Subject:</span>
+                    
+                    <div>
+                        {subjects.map(subj => (
+                            <Link key={subj} 
+                                to={`${quarter}/${subj}`}
+                                className={subject === subj ? "isActive" : ""}
+                            >
+                                {subj}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
             </div>
 
-            <div className='quiz-nav__subject-nav' style={subjectNavStyles}>
-                {subjects.map(subj => <Link key={subj} to={`${quarter}/${subj}`}>{subj}</Link>)}
-            </div>
-
-            <h2>Q{quarter}, {subject}</h2>
             <Outlet />
         </div>
     )
-}
-
-const quarterNavStyles = {
-    display: 'flex',
-    gap: '2em',
-}
-
-const subjectNavStyles = {
-    display: 'flex',
-    gap: '1.5em'
 }

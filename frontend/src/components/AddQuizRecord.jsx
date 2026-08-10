@@ -102,49 +102,58 @@ export default function AddQuizRecord() {
             )}
 
             <form onSubmit={ handleSubmit(saveNewQuiz) }>
-                <label>Date: </label>
-                <input type="date" {...register('date')}  />
-                <br />
+                <div>
+                    <label>Date: </label>
+                    <input type="date" {...register('date')}  />
+                </div>
 
-                <label>Quarter: </label>
-                <input type="number" min={1} max={4} {...register('quarter')} />
-                <br />
+                <div>
+                    <label>Quarter: </label>
+                    <input type="number" min={1} max={4} {...register('quarter')} />
+                </div>
                 
-                <label>Subject: </label>
-                <select {...register('subject')}>
-                    {subjectSelection.map(subj => <option key={subj} value={subj}>
-                        {subj}
-                    </option>)} 
-                </select>
-                <br />
+                <div>
+                    <label>Subject: </label>
+                    <select {...register('subject')}>
+                        {subjectSelection.map(subj => <option key={subj} value={subj}>
+                            {subj}
+                        </option>)} 
+                    </select>
+                </div>
 
-                <label>Quiz Number: </label>
-                <input type="number" min={1} {...register('quiz_num')} />
-                <br />
+                <div>
+                    <label>Quiz Number: </label>
+                    <input type="number" min={1} {...register('quiz_num')} />
+                </div>
 
-                <label>Score: </label>
-                <input type="number" {...register('score')} />
-                <br />
+                <div>
+                    <label>Score: </label>
+                    <input type="number" {...register('score')} />
+                </div>
 
-                <label>Highest Possible Score: </label>
-                <input type="number" min={5} {...register('total_items')} />
-                <br />
+                <div>
+                    <label>Highest Possible Score: </label>
+                    <input type="number" min={5} {...register('total_items')} />
+                </div>
 
-                <label>Unit: </label>
-                <input type="number" min={1} {...register('unit')} />
-                <br />
+                <div>
+                    <label>Unit: </label>
+                    <input type="number" min={1} {...register('unit')} />
+                </div>
 
-                <label>Topic: </label>
-                <input type="text" placeholder="Topic" {...register('topic')} />
-                <br />
+                <div>
+                    <label>Topic: </label>
+                    <input type="text" placeholder="Topic" {...register('topic')} />
+                </div>
 
-                <button type="submit" title="Save">💾</button>
-                <button type="button" title="Cancel" onClick={_ => {
-                    navigate(-1)
-                    setMessage('')
-                }}>❌</button>
+                <div className="submit-btn">
+                    <button type="submit" title="Save">💾</button>
+                    <button type="button" title="Cancel" onClick={_ => {
+                        navigate(-1)
+                        setMessage('')
+                    }}>❌</button>
+                </div>
             </form>
-            <hr />
         </div>
     )
 }
