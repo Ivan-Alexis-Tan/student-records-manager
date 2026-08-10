@@ -29,7 +29,13 @@ export default function LoginPage() {
         }
     })
 
-    if (isLoading) return <h1>Loading...</h1>
+    if (isLoading) return (
+        <>
+            <h1>Loading...</h1>
+            <p>The app is in idle mode if unused for a while; loading may take a minute...</p>
+        </>
+    )
+
     if (user?.id) return <Navigate to={`/${user.role}/${user.id}`} replace/>
 
     // Login Submit Function
