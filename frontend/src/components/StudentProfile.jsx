@@ -3,6 +3,7 @@ import {
     Link, 
     Outlet,
     Navigate,
+    useLocation,
 } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
@@ -13,9 +14,15 @@ import { queryKeys } from '../constants/index'
 
 const rolesAllowed = ["teacher", "admin"]
 
+function mapProfileLinks(name, link, section) {
+    if (section === undefined) section = link
+    return { name, link, section }
+}
+
 export default function StudentProfile() {
     const {data: user} = useAuth();
     const params = useParams()
+    const { pathname } = useLocation()
     
     const isStudent = user.role === "student"
     const id = isStudent ? user.profile_id : params.id 
@@ -31,29 +38,43 @@ export default function StudentProfile() {
     if (!studentData) return <Navigate to={'/not-found'} replace />
     
     const profileHeadUrl = isStudent ? 'student' : 'student-profile'
+    const profileLinks = [
+        mapProfileLinks("Profile", `/${profileHeadUrl}/${id}`, "profile"),
+        mapProfileLinks("Records", "records"),
+        mapProfileLinks("Quizzes", "quizzes/1/Science", "quizzes"),
+        mapProfileLinks("Projects", "projects")
+    ]
+    const currSection = pathname.split("/")[3] ?? "profile"
 
     return (
         <div className='student-profile'>
+            {/* Profile Sections */}
+            <div id='student-profile__profile-records'>
+                {profileLinks.map(item => (
+                    <Link to={item.link}
+                        key={item.name}
+                        className={item.section === currSection ? "isActive" : ""}
+                    >
+                        <strong>{item.name}</strong>
+                    </Link>
+                ))}
+            </div>
+
             <div className='student-profile__name'>
                 <h2><strong>{studentData.last_name}</strong>, {studentData.first_name}</h2>
 
-                <div id='student-profile__profile-records' style={{display: 'flex', gap: '2em'}}>
-                    <Link to={`/${profileHeadUrl}/${id}`}><strong>Profile</strong></Link>
-                    <Link to={`records`}><strong>Records</strong></Link>
-                    <Link to={'quizzes/1/Science'}><strong>Quizzes</strong></Link>
-                    <Link to={`projects`}><strong>Projects</strong></Link>
-                </div>
+                {rolesAllowed.includes(user.role) 
+                    && <Link 
+                        className='student-profile__create-student-account'
+                        to={`create-account`}
+                    >
+                        <p><strong>Create student account</strong></p>
+                    </Link>
+                }
             </div>
 
             <h3>Grade {studentData.grade_lvl}</h3>
             <p><i>ID: {studentData.id}</i></p>
-            {rolesAllowed.includes(user.role) && <Link 
-                className='student-profile__create-student-account'
-                to={`create-account`}
-                >
-                <p><strong>Create student account</strong></p>
-            </Link>
-            }
 
             <Outlet />
         </div>

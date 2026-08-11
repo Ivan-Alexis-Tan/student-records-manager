@@ -12,6 +12,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  --fg: rgba(255, 255, 255, 0.87);
+  --bg: hsl(0, 0%, 14%);
+  --bg-lucent: hsla(0, 0%, 14%, 0.85);
   --accent-bg: rgba(47, 48, 58, 0.5);
 
   --link-clr: hsl(237, 100%, 70%);
@@ -112,12 +115,6 @@ table  td {
   border-radius: 10px;
 }
 
-.student-profile__name {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 /* Login and Sign Layout */
 .login-signup-page {
   display: flex;
@@ -202,6 +199,9 @@ table  td {
 }
 
 /* Create Student Account */
+.student-profile__create-student-account {
+  text-align: end;
+}
 .student-profile__create-student-account:hover {
   text-decoration: underline;
   color: hsl(155, 100%, 42%);
@@ -236,6 +236,42 @@ table  td {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+/* Student Profile Page */
+.student-profile {
+  margin-top: 0.5rem;
+
+  > .student-profile__name {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #student-profile__profile-records {
+    max-width: 500px;
+    gap: 0.5rem 2rem;
+    margin-inline: auto;
+    padding: 0.2rem 0.5rem;
+
+    /* position: sticky;
+    top: 70px; */
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    background-color: var(--bg-lucent);
+    border: 1px solid var(--link-hover-clr);
+    border-radius: 10px;
+
+    .isActive {
+      color: var(--fg);
+    }
+
+    @media(min-width: 360px) {
+      padding: 0.5rem;
+    }
+  }
 }
 
 /* Student Quizzes Page */
