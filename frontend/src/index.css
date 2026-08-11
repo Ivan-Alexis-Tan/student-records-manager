@@ -331,13 +331,20 @@ table  td {
     min-width: 0;
     border: 1px solid;
     border-radius: 1rem;
+    overflow: auto;
 
     > div {
       gap: 1rem;
       margin-bottom: 0.5rem;
       display: grid;
-      grid-template-columns: 200px 200px;
+      grid-template-columns: minmax(100px, 1fr) minmax(50px, 1fr);
       text-align: end;
+      align-items: center;
+
+      > input, select {
+        min-width: 0;
+        height: 22px;
+      }
     }
 
     > .submit-btn {
